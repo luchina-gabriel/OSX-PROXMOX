@@ -32,6 +32,12 @@ Voilà, install macOS! This is really and magic **easiest way**!
 - FOR DEV/STUDENT/TEST ONLY PURPOSES.
 - I'm not responsible for any problem and/or equipment damage or loss of files. Always back up everything before any changes to your computer.
 
+## Demonstration (in Portuguese/Brazil)
+
+https://youtu.be/G51z390XYMA
+
+\* Please use CC with Auto Translate to English for your convenience.
+
 ## Credits
 
 - Opencore/Acidanthera Team
