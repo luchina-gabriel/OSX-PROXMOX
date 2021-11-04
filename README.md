@@ -14,7 +14,7 @@ Voilà, install macOS! This is really and magic **easiest way**!
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/luchina-gabriel/OSX-PROXMOX/main/install.sh)"
 ```
 
-## Versions os macOS Supported
+## Versions of macOS Supported
 * macOS High Sierra - 10.13
 * macOS Mojave - 10.14
 * macOS Catalina - 10.15
