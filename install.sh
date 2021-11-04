@@ -8,10 +8,12 @@
 #
 #########################################################################################################################
 
-apt update > /dev/null 2>> /dev/null
-apt install git -y > /dev/null 2>> /dev/null
+apt update > /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
+apt install git -y > /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
 
-git clone https://github.com/luchina-gabriel/OSX-PROXMOX.git > /dev/null 2>> /dev/null
+git clone https://github.com/luchina-gabriel/OSX-PROXMOX.git > /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
+
+if [ $? -ne 0 ]; then echo "Problem to clone repository from GitHub"; exit; fi;
 
 if [ ! -e /root/OSX-PROXMOX ]; then mkdir -p /root/OSX-PROXMOX; fi;
 
