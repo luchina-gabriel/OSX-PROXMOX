@@ -2,6 +2,8 @@
 
 Install Proxmox VE v7.02 - Next, Next & Finish (NNF).
 
+> Important do not run any `apt upgrade` inside the shell of proxmox. This may lead to upgrade your Proxmox version and you will need to reinstall everything
+
 Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
 
 Copy, paste and execute.
