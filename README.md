@@ -1,6 +1,6 @@
 # OSX-PROXMOX - Run macOS on ANY Computer - AMD & Intel
 
-Install Proxmox VE v7.02 - Next, Next & Finish (NNF).
+Install Proxmox VE v7.XX - Next, Next & Finish (NNF).
 
 Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
 
