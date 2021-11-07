@@ -22,7 +22,7 @@ Voilà, install macOS! This is really and magic **easiest way**!
 * macOS Monterey - 12
 
 ## Versions of Proxmox VE Supported
-* 7.0-2 ~ 7.0-11
+* 7.XX
 
 ## Opencore version
 * November/2021 - 0.7.5 with SIP Enabled, DMG only signed by Apple and all features of securities.
