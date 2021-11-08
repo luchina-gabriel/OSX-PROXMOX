@@ -11,7 +11,7 @@ Voilà, install macOS! This is really and magic **easiest way**!
 ## COPY & PASTE - in shell of Proxmox
 
 ```
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/luchina-gabriel/OSX-PROXMOX/main/install.sh)"
+/bin/bash -c "$(curl -fsSL https://install.osx-proxmox.com)"
 ```
 
 ## Versions of macOS Supported
