@@ -1,6 +1,11 @@
 OpenCore Changelog
 ==================
 
+#### v1.1.1
+
+- Fix logic of messages in 'Activate support for Windows 11 natively' option;
+- Fix typo's;
+
 #### v1.1.0
 
 - Including support for Proxmox VE v7 family;
