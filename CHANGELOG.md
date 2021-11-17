@@ -1,6 +1,12 @@
 OpenCore Changelog
 ==================
 
+#### v1.2.0
+
+- Remove PVE/Kernel version from ```osx-setup``` menu;
+- Add option to define disk size in creation virtual machine section of ```osx-setup```;
+- Add script in tools, for create macOS Install ```ISO``` from genuine macOS Installer .app.
+
 #### v1.1.1
 
 - Fix logic of messages in 'Activate support for Windows 11 natively' option;
