@@ -1,6 +1,13 @@
 OpenCore Changelog
 ==================
 
+#### v1.3.0
+
+- Add script ```IOMMU-Groups.sh``` in tools;
+- Add option 'Fix issues to start macOS (stuck at Apple logo) for Proxmox VE v7.1.XX';
+- Add option 'Add Proxmox VE NO Subscription repository - for beta/non production upgrades';
+- Remove option 'Activate support for Windows 11 natively'.
+
 #### v1.2.0
 
 - Remove PVE/Kernel version from ```osx-setup``` menu;
