@@ -1,6 +1,10 @@
 OpenCore Changelog
 ==================
 
+#### v1.4.0
+
+- Add option to skip download and create recovery image of macOS;
+
 #### v1.3.0
 
 - Add script ```IOMMU-Groups.sh``` in tools;
