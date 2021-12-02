@@ -1,6 +1,11 @@
 OpenCore Changelog
 ==================
 
+#### v1.5.1
+
+- Fix Menu Option - # 200;
+- Cleaning some codes unnecessary in setup;
+
 #### v1.5.0
 
 - Fix QEMU 6.1 Passthrough in PVE 7.1+;
