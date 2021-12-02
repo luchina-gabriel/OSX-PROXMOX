@@ -1,6 +1,11 @@
 OpenCore Changelog
 ==================
 
+#### v1.5.0
+
+- Fix QEMU 6.1 Passthrough in PVE 7.1+;
+- Add option to "only ENTER" for exit osx-setup;
+
 #### v1.4.0
 
 - Add option to skip download and create recovery image of macOS;
