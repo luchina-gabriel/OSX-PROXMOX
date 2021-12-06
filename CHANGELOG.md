@@ -1,6 +1,13 @@
 OpenCore Changelog
 ==================
 
+#### v2.0.0
+
+- Upgrade to Opencore 0.7.6 (December/2021);
+- Update Lilu (kext);
+- Update VirtualSMC (kext);
+- Fully compatible with Intel 12th and activate of all cores (P+E) and HT (Hyper-Threading);
+
 #### v1.5.1
 
 - Fix Menu Option - # 200;
