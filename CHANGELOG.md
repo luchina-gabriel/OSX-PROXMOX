@@ -1,6 +1,10 @@
 OpenCore Changelog
 ==================
 
+#### v2.0.1
+
+- Fixed Opencore ISO disk size which was making booting impossible to install new virtual machines;
+
 #### v2.0.0
 
 - Upgrade to Opencore 0.7.6 (December/2021);
