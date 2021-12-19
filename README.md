@@ -25,7 +25,7 @@ Voilà, install macOS! This is really and magic **easiest way**!
 * 7.XX
 
 ## Opencore version
-* November/2021 - 0.7.5 with SIP Enabled, DMG only signed by Apple and all features of securities.
+* December/2021 - 0.7.6 with SIP Enabled, DMG only signed by Apple and all features of securities.
 
 ## Disclaimer
 
