@@ -44,3 +44,6 @@ https://youtu.be/G51z390XYMA
 - Corpnewt for Applications (ProperTree, genSMBIOS, etc)
 - Apple for macOS
 - Proxmox - Excelent and better documentation for Virtualization
+
+## Discord - Universo Hackintosh
+- [Access Discord](https://discord.universohackintosh.com.br)
