@@ -1,6 +1,15 @@
 OpenCore Changelog
 ==================
 
+#### v3.0.0
+
+- Upgrade Opencore to 0.7.7;
+- Upgrade Lilu and WhateverGreen Kexts;
+- Add function '201 - Update Opencore ISO file';
+- Add function '202 - Clear all Recovery Images';
+- Add option to choose Storage in create VM;
+- Fix minor bugs.
+
 #### v2.0.1
 
 - Fixed Opencore ISO disk size which was making booting impossible to install new virtual machines;
