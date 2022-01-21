@@ -27,6 +27,10 @@ Voilà, install macOS! This is really and magic **easiest way**!
 ## Opencore version
 * January/2022 - 0.7.7 with SIP Enabled, DMG only signed by Apple and all features of securities.
 
+## Cloud Support (Yes, install your Hackintosh in Cloud Environment)
+- [VultR](https://www.vultr.com/?ref=9035565-8H)
+- [Vídeo/Tutorial](https://youtu.be/8QsMyL-PNrM), please activate captions!
+
 ## Disclaimer
 
 - FOR DEV/STUDENT/TEST ONLY PURPOSES.
@@ -46,4 +50,4 @@ https://youtu.be/G51z390XYMA
 - Proxmox - Excelent and better documentation for Virtualization
 
 ## Discord - Universo Hackintosh
-- [Access Discord](https://discord.universohackintosh.com.br)
+- [Discord](https://discord.universohackintosh.com.br)

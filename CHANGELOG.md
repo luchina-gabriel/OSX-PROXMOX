@@ -1,6 +1,11 @@
 OpenCore Changelog
 ==================
 
+#### v3.1.0
+
+- Add support to run macOS in Cloud using this solution with VultR Provider;
+- Add option to 'Remove Proxmox Subscription Notice';
+
 #### v3.0.0
 
 - Upgrade Opencore to 0.7.7;
