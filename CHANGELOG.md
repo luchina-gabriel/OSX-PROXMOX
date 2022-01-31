@@ -1,6 +1,15 @@
 OpenCore Changelog
 ==================
 
+#### v3.2.0
+
+- Open SOURCE CODE of BINARY \o/
+- Alter function '201 - Update Opencore ISO file' to download .ISO directly from repository;
+- Add script in tools - CHECK-IOMMU.sh - Check if your IOMMU are ENABLED;
+- Update macrecovery tool for Opencore 0.7.7;
+- Update README;
+- Adjustments to copyright terms.
+
 #### v3.1.0
 
 - Add support to run macOS in Cloud using this solution with VultR Provider;

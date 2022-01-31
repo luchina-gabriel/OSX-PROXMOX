@@ -4,7 +4,7 @@ Install `** FRESH/CLEAN **` Proxmox VE v7.XX - Next, Next & Finish (NNF).
 
 Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
 
-Copy, paste and execute.
+Copy, paste and execute (code below).
 
 Voilà, install macOS! This is really and magic **easiest way**!
 
@@ -34,7 +34,8 @@ Voilà, install macOS! This is really and magic **easiest way**!
 ## Disclaimer
 
 - FOR DEV/STUDENT/TEST ONLY PURPOSES.
-- I'm not responsible for any problem and/or equipment damage or loss of files. Always back up everything before any changes to your computer.
+- I'm not responsible for any problem and/or equipment damage or loss of files. 
+- Always back up everything before any changes to your computer.
 
 ## Demonstration (in Portuguese/Brazil)
 
