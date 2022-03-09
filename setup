@@ -62,6 +62,27 @@ if [ ! -e ${LOGDIR} ]; then mkdir ${LOGDIR}; fi;
 ################################################################################################################################################################################################
 ################################################################################################################################################################################################
 
+# determines a valid core count to the power of 2
+determineCoreCount() {
+    CORE_COUNT=$1
+    VALID_CORE_COUNTS=(128 64 32 16 8 4 2 1)
+
+    for NEXT in "${VALID_CORE_COUNTS[@]}"
+    do
+        if [ $CORE_COUNT -ge $NEXT ] 
+        then
+            CORE_COUNT=$NEXT
+            break
+        fi
+    done
+
+    echo $CORE_COUNT
+}
+
+################################################################################################################################################################################################
+################################################################################################################################################################################################
+################################################################################################################################################################################################
+
 if [ ! -e /etc/pve/qemu-server/.osx-proxmox ]
 then
 	
@@ -232,10 +253,10 @@ do
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
 
 		echo " "
-		echo "Allocate CPU cores: "
+		echo "Allocate CPU cores [powers of 2]: "
 		read PROC_COUNT
 
-		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+		$PROC_COUNT=$( determineCoreCount $PROC_COUNT )
 
 		echo " "
 		echo "Allocate RAM [MiB]: "
@@ -423,10 +444,10 @@ do
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
 
 		echo " "
-		echo "Allocate CPU cores: "
+		echo "Allocate CPU cores [powers of 2]: "
 		read PROC_COUNT
 
-		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+		$PROC_COUNT=$( determineCoreCount $PROC_COUNT )
 
 		echo " "
 		echo "Allocate RAM [MiB]: "
@@ -614,10 +635,10 @@ do
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
 
 		echo " "
-		echo "Allocate CPU cores: "
+		echo "Allocate CPU cores [powers of 2]: "
 		read PROC_COUNT
 
-		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+		$PROC_COUNT=$( determineCoreCount $PROC_COUNT )
 
 		echo " "
 		echo "Allocate RAM [MiB]: "
@@ -805,10 +826,10 @@ do
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
 
 		echo " "
-		echo "Allocate CPU cores: "
+		echo "Allocate CPU cores [powers of 2]: "
 		read PROC_COUNT
 
-		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+		$PROC_COUNT=$( determineCoreCount $PROC_COUNT )
 
 		echo " "
 		echo "Allocate RAM [MiB]: "
@@ -996,10 +1017,10 @@ do
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
 
 		echo " "
-		echo "Allocate CPU cores: "
+		echo "Allocate CPU cores [powers of 2]: "
 		read PROC_COUNT
 
-		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+		$PROC_COUNT=$( determineCoreCount $PROC_COUNT )
 
 		echo " "
 		echo "Allocate RAM [MiB]: "
