@@ -205,13 +205,13 @@ do
 		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
 
 		echo " "
-		echo -n "Enter VM Name [Default: HACK-HIGHSIERRA]: "
+		echo -n "Enter VM Name [or ENTER for Default: HACK-HIGHSIERRA]: "
 		read VM_NAME
 
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}HIGHSIERRA"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -226,13 +226,13 @@ do
 		done
 		echo " "
 
-		echo -n "Enter which storage to create the VM [Default: local-lvm]: "
+		echo -n "Enter which storage to create the VM [or ENTER for Default: local-lvm]: "
 		read STORAGECRTVM
 
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
 
 		echo " "
-		echo -n "Allocate CPU cores: [Need Power of 2] "
+		echo -n "Allocate CPU cores [Need Power of 2] [or ENTER for Default: 4]: "
 		read PROC_COUNT
 
 		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
@@ -244,7 +244,7 @@ do
 		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
-		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
+		echo -n "Do you want to download and create the recovery image? [Y/N] [or ENTER for Default: Y]: "
 		read CRTRECODISK
 
 		if [ -z $CRTRECODISK ]; then CRTRECODISK="Y"; fi;
@@ -396,13 +396,13 @@ do
 		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
 
 		echo " "
-		echo -n "Enter VM Name [Default: HACK-MOJAVE]: "
+		echo -n "Enter VM Name [or ENTER for Default: HACK-MOJAVE]: "
 		read VM_NAME
 
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}MOJAVE"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -417,25 +417,25 @@ do
 		done
 		echo " "
 
-		echo -n "Enter which storage to create the VM [Default: local-lvm]: "
+		echo -n "Enter which storage to create the VM [or ENTER for Default: local-lvm]: "
 		read STORAGECRTVM
 
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
 
 		echo " "
-		echo -n "Allocate CPU cores: [Need Power of 2] "
+		echo -n "Allocate CPU cores [Need Power of 2] [or ENTER for Default: 4]: "
 		read PROC_COUNT
 
 		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
 
 		echo " "
-		echo -n "Allocate RAM [MiB] [Default: 4096]: "
+		echo -n "Allocate RAM [MiB] [or ENTER for Default: 4096]: "
 		read RAM_SIZE
 
 		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
-		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
+		echo -n "Do you want to download and create the recovery image? [Y/N] [or ENTER for Default: Y]: "
 		read CRTRECODISK
 
 		if [ -z $CRTRECODISK ]; then CRTRECODISK="Y"; fi;
@@ -581,19 +581,19 @@ do
 		echo " "
 		echo "macOS Catalina"
 		echo " "
-		echo "Enter the VM ID: "
+		echo -n "Enter the VM ID [or ENTER to automatically generate (${NEXTID})]: "
 		read VM_ID
 
 		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
 
 		echo " "
-		echo -n "Enter VM Name [Default: HACK-CATALINA]: "
+		echo -n "Enter VM Name [or ENTER for Default: HACK-CATALINA]: "
 		read VM_NAME
 
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}CATALINA"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -608,25 +608,25 @@ do
 		done
 		echo " "
 
-		echo -n "Enter which storage to create the VM [Default: local-lvm]: "
+		echo -n "Enter which storage to create the VM [or ENTER for Default: local-lvm]: "
 		read STORAGECRTVM
 
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
 
 		echo " "
-		echo -n "Allocate CPU cores: [Need Power of 2] "
+		echo -n "Allocate CPU cores [Need Power of 2] [or ENTER for Default: 4]: "
 		read PROC_COUNT
 
 		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
 
 		echo " "
-		echo -n "Allocate RAM [MiB] [Default: 4096]: "
+		echo -n "Allocate RAM [MiB] [or ENTER for Default: 4096]: "
 		read RAM_SIZE
 
 		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
-		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
+		echo -n "Do you want to download and create the recovery image? [Y/N] [or ENTER for Default: Y]: "
 		read CRTRECODISK
 
 		if [ -z $CRTRECODISK ]; then CRTRECODISK="Y"; fi;
@@ -778,13 +778,13 @@ do
 		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
 
 		echo " "
-		echo -n "Enter VM Name [Default: HACK-BIGSUR]: "
+		echo -n "Enter VM Name [or ENTER for Default: HACK-BIGSUR]: "
 		read VM_NAME
 
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}BIG-SUR"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -799,13 +799,13 @@ do
 		done
 		echo " "
 
-		echo -n "Enter which storage to create the VM [Default: local-lvm]: "
+		echo -n "Enter which storage to create the VM [or ENTER for Default: local-lvm]: "
 		read STORAGECRTVM
 
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
 
 		echo " "
-		echo -n "Allocate CPU cores: [Need Power of 2] "
+		echo -n "Allocate CPU cores [Need Power of 2] [or ENTER for Default: 4]: "
 		read PROC_COUNT
 
 		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
@@ -817,7 +817,7 @@ do
 		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
-		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
+		echo -n "Do you want to download and create the recovery image? [Y/N] [or ENTER for Default: Y]: "
 		read CRTRECODISK
 
 		if [ -z $CRTRECODISK ]; then CRTRECODISK="Y"; fi;
@@ -969,13 +969,13 @@ do
 		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
 
 		echo " "
-		echo -n "Enter VM Name [Default: HACK-MONTEREY]: "
+		echo -n "Enter VM Name [or ENTER for Default: HACK-MONTEREY]: "
 		read VM_NAME
 
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}MONTEREY"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -990,25 +990,25 @@ do
 		done
 		echo " "
 
-		echo -n "Enter which storage to create the VM [Default: local-lvm]: "
+		echo -n "Enter which storage to create the VM [or ENTER for Default: local-lvm]: "
 		read STORAGECRTVM
 
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
 
 		echo " "
-		echo -n "Allocate CPU cores: [Need Power of 2] "
+		echo -n "Allocate CPU cores [Need Power of 2] [or ENTER for Default: 4]: "
 		read PROC_COUNT
 
 		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
 
 		echo " "
-		echo -n "Allocate RAM [MiB] [Default: 4096]: "
+		echo -n "Allocate RAM [MiB] [or ENTER for Default: 4096]: "
 		read RAM_SIZE
 
 		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
-		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
+		echo -n "Do you want to download and create the recovery image? [Y/N] [or ENTER for Default: Y]: "
 		read CRTRECODISK
 
 		if [ -z $CRTRECODISK ]; then CRTRECODISK="Y"; fi;
