@@ -319,8 +319,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 ${STORAGECRTVM}:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
-			--ide2 ${STORAGECRTVM}:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			--ide2 local:iso/recovery-highsierra.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep "6.1" | wc -l` -eq 1 ]
@@ -359,8 +359,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 ${STORAGECRTVM}:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
-			--ide2 ${STORAGECRTVM}:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			--ide2 local:iso/recovery-highsierra.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep "6.1" | wc -l` -eq 1 ]
@@ -510,8 +510,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 ${STORAGECRTVM}:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
-			--ide2 ${STORAGECRTVM}:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			--ide2 local:iso/recovery-mojave.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep "6.1" | wc -l` -eq 1 ]
@@ -550,8 +550,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 ${STORAGECRTVM}:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
-			--ide2 ${STORAGECRTVM}:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			--ide2 local:iso/recovery-mojave.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep "6.1" | wc -l` -eq 1 ]
@@ -701,8 +701,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			 --ide0 ${STORAGECRTVM}:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
-			--ide2 ${STORAGECRTVM}:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			 --ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep "6.1" | wc -l` -eq 1 ]
@@ -741,8 +741,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			 --ide0 ${STORAGECRTVM}:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
-			--ide2 ${STORAGECRTVM}:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep "6.1" | wc -l` -eq 1 ]
@@ -892,8 +892,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 ${STORAGECRTVM}:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
-			--ide2 ${STORAGECRTVM}:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			--ide2 local:iso/recovery-bigsur.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep "6.1" | wc -l` -eq 1 ]
@@ -932,8 +932,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 ${STORAGECRTVM}:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
-			--ide2 ${STORAGECRTVM}:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			--ide2 local:iso/recovery-bigsur.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep "6.1" | wc -l` -eq 1 ]
@@ -1083,8 +1083,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 ${STORAGECRTVM}:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
-			--ide2 ${STORAGECRTVM}:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			--ide2 local:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep "6.1" | wc -l` -eq 1 ]
@@ -1123,8 +1123,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 ${STORAGECRTVM}:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
-			--ide2 ${STORAGECRTVM}:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			--ide2 local:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep "6.1" | wc -l` -eq 1 ]
