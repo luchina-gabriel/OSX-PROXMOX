@@ -51,6 +51,7 @@ ISODIR=/var/lib/vz/template/iso/
 HACKPXVERSION="3.2.0"
 OCVERSION="0.7.7"
 DEFAULT_VM_PREFIX="HACK-"
+DEFAULT_RAM_SIZE=4096
 
 if [ `lscpu | grep "Vendor ID" | grep -i amd | wc -l` -eq 1 ]; then OSX_PLATFORM="AMD"; else OSX_PLATFORM="INTEL"; fi
 
@@ -240,7 +241,7 @@ do
 		echo "Allocate RAM [MiB]: "
 		read RAM_SIZE
 
-		if [ -z $RAM_SIZE ]; then RAM_SIZE=4000; fi;
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
 		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
@@ -431,7 +432,7 @@ do
 		echo "Allocate RAM [MiB]: "
 		read RAM_SIZE
 
-		if [ -z $RAM_SIZE ]; then RAM_SIZE=4000; fi;
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
 		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
@@ -622,7 +623,7 @@ do
 		echo "Allocate RAM [MiB]: "
 		read RAM_SIZE
 
-		if [ -z $RAM_SIZE ]; then RAM_SIZE=4000; fi;
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
 		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
@@ -813,7 +814,7 @@ do
 		echo "Allocate RAM [MiB]: "
 		read RAM_SIZE
 
-		if [ -z $RAM_SIZE ]; then RAM_SIZE=4000; fi;
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
 		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
@@ -1004,7 +1005,7 @@ do
 		echo "Allocate RAM [MiB]: "
 		read RAM_SIZE
 
-		if [ -z $RAM_SIZE ]; then RAM_SIZE=4000; fi;
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
 		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
