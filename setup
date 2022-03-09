@@ -50,6 +50,8 @@ TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
 HACKPXVERSION="3.2.0"
 OCVERSION="0.7.9"
+DEFAULT_VM_PREFIX="HACK-"
+DEFAULT_RAM_SIZE=4096
 
 if [ `lscpu | grep "Vendor ID" | grep -i amd | wc -l` -eq 1 ]; then OSX_PLATFORM="AMD"; else OSX_PLATFORM="INTEL"; fi
 
@@ -197,6 +199,18 @@ do
 		echo " "
 		echo "macOS High Sierra"
 		echo " "
+		echo "Enter the VM ID: "
+		read VM_ID
+
+		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
+
+		echo " "
+		echo "Enter VM Name: "
+		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}HIGHSIERRA"; fi;
+
+		echo " "
 		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
 		read SIZEDISK
 
@@ -216,6 +230,18 @@ do
 		read STORAGECRTVM
 
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
+
+		echo " "
+		echo "Allocate CPU cores: "
+		read PROC_COUNT
+
+		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+
+		echo " "
+		echo "Allocate RAM [MiB]: "
+		read RAM_SIZE
+
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
 		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
@@ -269,19 +295,19 @@ do
 
 			LOGFILE=${LOGDIR}/crt-vm-amd-highsierra.log
 
-			qm create ${NEXTID} \
+			qm create ${VM_ID} \
 			--agent 1 \
 			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3 -cpu Penryn,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+ssse3,+sse4.2,+popcnt,+avx,+avx2,+aes,+fma,+bmi1,+bmi2,+xsave,+xsaveopt,check' \
 			--autostart 0 \
 			--balloon 0 \
 			--bios ovmf \
 			--boot 'order=ide0;sata0' \
-			--cores 4 \
+			--cores ${PROC_COUNT} \
 			--description ' Hackintosh VM - High Sierra' \
 			--efidisk0 ${STORAGECRTVM}:4 \
 			--machine q35 \
-			--memory 4096 \
-			--name 'HACK-HIGHSIERRA' \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
 			--net0 vmxnet3,bridge=vmbr0 \
 			--numa 0 \
 			--onboot 0 \
@@ -309,19 +335,19 @@ do
 			
 			LOGFILE=${LOGDIR}/crt-vm-intel-highsierra.log
 
-			qm create ${NEXTID} \
+			qm create ${VM_ID} \
 			--agent 1 \
 			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3 -cpu host,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc' \
 			--autostart 0 \
 			--balloon 0 \
 			--bios ovmf \
 			--boot 'order=ide0;sata0' \
-			--cores 4 \
+			--cores ${PROC_COUNT} \
 			--description ' Hackintosh VM - High Sierra' \
 			--efidisk0 ${STORAGECRTVM}:4 \
 			--machine q35 \
-			--memory 4096 \
-			--name 'HACK-HIGHSIERRA' \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
 			--net0 vmxnet3,bridge=vmbr0 \
 			--numa 0 \
 			--onboot 0 \
@@ -344,7 +370,7 @@ do
 
 		fi
 
-		echo "Virtual machine created successfully."
+		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
 		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
@@ -363,6 +389,18 @@ do
 		clear
 		echo " "
 		echo "macOS Mojave"
+		echo " "
+		echo "Enter the VM ID: "
+		read VM_ID
+
+		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
+
+		echo " "
+		echo "Enter VM Name: "
+		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}MOJAVE"; fi;
+
 		echo " "
 		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
 		read SIZEDISK
@@ -383,6 +421,18 @@ do
 		read STORAGECRTVM
 
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
+
+		echo " "
+		echo "Allocate CPU cores: "
+		read PROC_COUNT
+
+		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+
+		echo " "
+		echo "Allocate RAM [MiB]: "
+		read RAM_SIZE
+
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
 		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
@@ -436,19 +486,19 @@ do
 
 			LOGFILE=${LOGDIR}/crt-vm-amd-mojave.log
 
-			qm create ${NEXTID} \
+			qm create ${VM_ID} \
 			--agent 1 \
 			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3 -cpu Penryn,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+ssse3,+sse4.2,+popcnt,+avx,+avx2,+aes,+fma,+bmi1,+bmi2,+xsave,+xsaveopt,check' \
 			--autostart 0 \
 			--balloon 0 \
 			--bios ovmf \
 			--boot 'order=ide0;sata0' \
-			--cores 4 \
+			--cores ${PROC_COUNT} \
 			--description ' Hackintosh VM - Mojave' \
 			--efidisk0 ${STORAGECRTVM}:4 \
 			--machine q35 \
-			--memory 4096 \
-			--name 'HACK-MOJAVE' \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
 			--net0 vmxnet3,bridge=vmbr0 \
 			--numa 0 \
 			--onboot 0 \
@@ -476,19 +526,19 @@ do
 			
 			LOGFILE=${LOGDIR}/crt-vm-intel-mojave.log
 
-			qm create ${NEXTID} \
+			qm create ${VM_ID} \
 			--agent 1 \
 			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3 -cpu host,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc' \
 			--autostart 0 \
 			--balloon 0 \
 			--bios ovmf \
 			--boot 'order=ide0;sata0' \
-			--cores 4 \
+			--cores ${PROC_COUNT} \
 			--description ' Hackintosh VM - Mojave' \
 			--efidisk0 ${STORAGECRTVM}:4 \
 			--machine q35 \
-			--memory 4096 \
-			--name 'HACK-MOJAVE' \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
 			--net0 vmxnet3,bridge=vmbr0 \
 			--numa 0 \
 			--onboot 0 \
@@ -511,7 +561,7 @@ do
 
 		fi
 
-		echo "Virtual machine created successfully."
+		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
 		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
@@ -530,6 +580,18 @@ do
 		clear
 		echo " "
 		echo "macOS Catalina"
+		echo " "
+		echo "Enter the VM ID: "
+		read VM_ID
+
+		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
+
+		echo " "
+		echo "Enter VM Name: "
+		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}CATALINA"; fi;
+
 		echo " "
 		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
 		read SIZEDISK
@@ -550,6 +612,18 @@ do
 		read STORAGECRTVM
 
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
+
+		echo " "
+		echo "Allocate CPU cores: "
+		read PROC_COUNT
+
+		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+
+		echo " "
+		echo "Allocate RAM [MiB]: "
+		read RAM_SIZE
+
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
 		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
@@ -603,19 +677,19 @@ do
 
 			LOGFILE=${LOGDIR}/crt-vm-amd-catalina.log
 
-			qm create ${NEXTID} \
+			qm create ${VM_ID} \
 			--agent 1 \
 			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3 -cpu Penryn,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+ssse3,+sse4.2,+popcnt,+avx,+avx2,+aes,+fma,+bmi1,+bmi2,+xsave,+xsaveopt,check' \
 			--autostart 0 \
 			--balloon 0 \
 			--bios ovmf \
 			--boot 'order=ide0;virtio0' \
-			--cores 4 \
+			--cores ${PROC_COUNT} \
 			--description ' Hackintosh VM - Catalina' \
 			--efidisk0 ${STORAGECRTVM}:4 \
 			--machine q35 \
-			--memory 4096 \
-			--name 'HACK-CATALINA' \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
 			--net0 vmxnet3,bridge=vmbr0 \
 			--numa 0 \
 			--onboot 0 \
@@ -627,7 +701,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
+			 --ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=50M \
 			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
@@ -643,19 +717,19 @@ do
 			
 			LOGFILE=${LOGDIR}/crt-vm-intel-catalina.log
 
-			qm create ${NEXTID} \
+			qm create ${VM_ID} \
 			--agent 1 \
 			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3 -cpu host,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc' \
 			--autostart 0 \
 			--balloon 0 \
 			--bios ovmf \
 			--boot 'order=ide0;virtio0' \
-			--cores 4 \
+			--cores ${PROC_COUNT} \
 			--description ' Hackintosh VM - Catalina' \
 			--efidisk0 ${STORAGECRTVM}:4 \
 			--machine q35 \
-			--memory 4096 \
-			--name 'HACK-CATALINA' \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
 			--net0 vmxnet3,bridge=vmbr0 \
 			--numa 0 \
 			--onboot 0 \
@@ -678,7 +752,7 @@ do
 
 		fi
 
-		echo "Virtual machine created successfully."
+		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
 		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
@@ -697,6 +771,18 @@ do
 		clear
 		echo " "
 		echo "macOS Big Sur"
+		echo " "
+		echo "Enter the VM ID: "
+		read VM_ID
+
+		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
+
+		echo " "
+		echo "Enter VM Name: "
+		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}BIG-SUR"; fi;
+
 		echo " "
 		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
 		read SIZEDISK
@@ -717,6 +803,18 @@ do
 		read STORAGECRTVM
 
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
+
+		echo " "
+		echo "Allocate CPU cores: "
+		read PROC_COUNT
+
+		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+
+		echo " "
+		echo "Allocate RAM [MiB]: "
+		read RAM_SIZE
+
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
 		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
@@ -770,19 +868,19 @@ do
 
 			LOGFILE=${LOGDIR}/crt-vm-amd-bigsur.log
 
-			qm create ${NEXTID} \
+			qm create ${VM_ID} \
 			--agent 1 \
 			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3 -cpu Penryn,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+ssse3,+sse4.2,+popcnt,+avx,+avx2,+aes,+fma,+bmi1,+bmi2,+xsave,+xsaveopt,check' \
 			--autostart 0 \
 			--balloon 0 \
 			--bios ovmf \
 			--boot 'order=ide0;virtio0' \
-			--cores 4 \
+			--cores ${PROC_COUNT} \
 			--description ' Hackintosh VM - Big Sur' \
 			--efidisk0 ${STORAGECRTVM}:4 \
 			--machine q35 \
-			--memory 4096 \
-			--name 'HACK-BIGSUR' \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
 			--net0 vmxnet3,bridge=vmbr0 \
 			--numa 0 \
 			--onboot 0 \
@@ -810,19 +908,19 @@ do
 			
 			LOGFILE=${LOGDIR}/crt-vm-intel-bigsur.log
 
-			qm create ${NEXTID} \
+			qm create ${VM_ID} \
 			--agent 1 \
 			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3 -cpu host,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc' \
 			--autostart 0 \
 			--balloon 0 \
 			--bios ovmf \
 			--boot 'order=ide0;virtio0' \
-			--cores 4 \
+			--cores ${PROC_COUNT} \
 			--description ' Hackintosh VM - Big Sur' \
 			--efidisk0 ${STORAGECRTVM}:4 \
 			--machine q35 \
-			--memory 4096 \
-			--name 'HACK-BIGSUR' \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
 			--net0 vmxnet3,bridge=vmbr0 \
 			--numa 0 \
 			--onboot 0 \
@@ -845,7 +943,7 @@ do
 
 		fi
 
-		echo "Virtual machine created successfully."
+		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
 		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
@@ -864,6 +962,18 @@ do
 		clear
 		echo " "
 		echo "macOS Monterey"
+		echo " "
+		echo "Enter the VM ID: "
+		read VM_ID
+
+		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
+
+		echo " "
+		echo "Enter VM Name: "
+		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}MONTEREY"; fi;
+
 		echo " "
 		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
 		read SIZEDISK
@@ -884,6 +994,18 @@ do
 		read STORAGECRTVM
 
 		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
+
+		echo " "
+		echo "Allocate CPU cores: "
+		read PROC_COUNT
+
+		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+
+		echo " "
+		echo "Allocate RAM [MiB]: "
+		read RAM_SIZE
+
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
 		echo " "
 		echo -n "Do you want to download and create the recovery image? [Y/N] [Default: Y]: "
@@ -937,19 +1059,19 @@ do
 
 			LOGFILE=${LOGDIR}/crt-vm-amd-monterey.log
 
-			qm create ${NEXTID} \
+			qm create ${VM_ID} \
 			--agent 1 \
 			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3 -cpu Penryn,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+ssse3,+sse4.2,+popcnt,+avx,+avx2,+aes,+fma,+bmi1,+bmi2,+xsave,+xsaveopt,check' \
 			--autostart 0 \
 			--balloon 0 \
 			--bios ovmf \
 			--boot 'order=ide0;virtio0' \
-			--cores 4 \
+			--cores ${PROC_COUNT} \
 			--description ' Hackintosh VM - Monterey' \
 			--efidisk0 ${STORAGECRTVM}:4 \
 			--machine q35 \
-			--memory 4096 \
-			--name 'HACK-MONTEREY' \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
 			--net0 vmxnet3,bridge=vmbr0 \
 			--numa 0 \
 			--onboot 0 \
@@ -977,19 +1099,19 @@ do
 			
 			LOGFILE=${LOGDIR}/crt-vm-intel-monterey.log
 
-			qm create ${NEXTID} \
+			qm create ${VM_ID} \
 			--agent 1 \
 			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3 -cpu host,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc' \
 			--autostart 0 \
 			--balloon 0 \
 			--bios ovmf \
 			--boot 'order=ide0;virtio0' \
-			--cores 4 \
+			--cores ${PROC_COUNT} \
 			--description ' Hackintosh VM - Monterey' \
 			--efidisk0 ${STORAGECRTVM}:4 \
 			--machine q35 \
-			--memory 4096 \
-			--name 'HACK-MONTEREY' \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
 			--net0 vmxnet3,bridge=vmbr0 \
 			--numa 0 \
 			--onboot 0 \
@@ -1012,7 +1134,7 @@ do
 
 		fi
 
-		echo "Virtual machine created successfully."
+		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
 		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
