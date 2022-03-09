@@ -256,7 +256,7 @@ do
 		echo "Allocate CPU cores [powers of 2]: "
 		read PROC_COUNT
 
-		$PROC_COUNT=$( determineCoreCount $PROC_COUNT )
+		PROC_COUNT=$( determineCoreCount $PROC_COUNT )
 
 		echo " "
 		echo "Allocate RAM [MiB]: "
@@ -447,7 +447,7 @@ do
 		echo "Allocate CPU cores [powers of 2]: "
 		read PROC_COUNT
 
-		$PROC_COUNT=$( determineCoreCount $PROC_COUNT )
+		PROC_COUNT=$( determineCoreCount $PROC_COUNT )
 
 		echo " "
 		echo "Allocate RAM [MiB]: "
@@ -638,7 +638,7 @@ do
 		echo "Allocate CPU cores [powers of 2]: "
 		read PROC_COUNT
 
-		$PROC_COUNT=$( determineCoreCount $PROC_COUNT )
+		PROC_COUNT=$( determineCoreCount $PROC_COUNT )
 
 		echo " "
 		echo "Allocate RAM [MiB]: "
@@ -829,7 +829,7 @@ do
 		echo "Allocate CPU cores [powers of 2]: "
 		read PROC_COUNT
 
-		$PROC_COUNT=$( determineCoreCount $PROC_COUNT )
+		PROC_COUNT=$( determineCoreCount $PROC_COUNT )
 
 		echo " "
 		echo "Allocate RAM [MiB]: "
@@ -1020,7 +1020,7 @@ do
 		echo "Allocate CPU cores [powers of 2]: "
 		read PROC_COUNT
 
-		$PROC_COUNT=$( determineCoreCount $PROC_COUNT )
+		PROC_COUNT=$( determineCoreCount $PROC_COUNT )
 
 		echo " "
 		echo "Allocate RAM [MiB]: "
