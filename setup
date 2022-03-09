@@ -50,6 +50,7 @@ TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
 HACKPXVERSION="3.2.0"
 OCVERSION="0.7.7"
+DEFAULT_VM_PREFIX="HACK-"
 
 if [ `lscpu | grep "Vendor ID" | grep -i amd | wc -l` -eq 1 ]; then OSX_PLATFORM="AMD"; else OSX_PLATFORM="INTEL"; fi
 
@@ -205,6 +206,8 @@ do
 		echo " "
 		echo "Enter VM Name: "
 		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}HIGHSIERRA"; fi;
 
 		echo " "
 		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
@@ -366,7 +369,7 @@ do
 
 		fi
 
-		echo "Virtual machine created successfully."
+		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
 		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
@@ -394,6 +397,8 @@ do
 		echo " "
 		echo "Enter VM Name: "
 		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}MOJAVE"; fi;
 
 		echo " "
 		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
@@ -555,7 +560,7 @@ do
 
 		fi
 
-		echo "Virtual machine created successfully."
+		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
 		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
@@ -583,6 +588,8 @@ do
 		echo " "
 		echo "Enter VM Name: "
 		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}CATALINA"; fi;
 
 		echo " "
 		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
@@ -744,7 +751,7 @@ do
 
 		fi
 
-		echo "Virtual machine created successfully."
+		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
 		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
@@ -772,6 +779,8 @@ do
 		echo " "
 		echo "Enter VM Name: "
 		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}BIG-SUR"; fi;
 
 		echo " "
 		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
@@ -933,7 +942,7 @@ do
 
 		fi
 
-		echo "Virtual machine created successfully."
+		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
 		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
@@ -961,6 +970,8 @@ do
 		echo " "
 		echo "Enter VM Name: "
 		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}MONTEREY"; fi;
 
 		echo " "
 		echo -n "Enter a disk size [INTEGER] [Default: 64 Gb]: "
@@ -1122,7 +1133,7 @@ do
 
 		fi
 
-		echo "Virtual machine created successfully."
+		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
 		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
