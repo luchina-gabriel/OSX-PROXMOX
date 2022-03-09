@@ -1,6 +1,9 @@
 OpenCore Changelog
 ==================
 
+#### Latest versions
+- Check history of commits
+
 #### v3.2.0
 
 - Open SOURCE CODE of BINARY \o/
