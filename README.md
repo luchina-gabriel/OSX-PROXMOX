@@ -1,12 +1,14 @@
 # OSX-PROXMOX - Run macOS on ANY Computer - AMD & Intel
 
-Install `** FRESH/CLEAN **` Proxmox VE v7.XX - Next, Next & Finish (NNF).
+Install `** FRESH/CLEAN **` Proxmox VE v7.0.XX ~ 7.1.XX - Next, Next & Finish (NNF).
 
 Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
 
 Copy, paste and execute (code below).
 
 Voilà, install macOS! This is really and magic **easiest way**!
+
+![osx-proxmox](https://user-images.githubusercontent.com/23700365/170098148-574d5312-e396-4892-b9fb-9159d0e24cda.png)
 
 ## COPY & PASTE - in shell of Proxmox (for Install or Update this solution)
 
@@ -22,7 +24,7 @@ Voilà, install macOS! This is really and magic **easiest way**!
 * macOS Monterey - 12
 
 ## Versions of Proxmox VE Supported
-* 7.XX
+* v7.0.XX ~ 7.1.XX
 
 ## Opencore version
 * April/2022 - 0.8.0 with SIP Enabled, DMG only signed by Apple and all features of securities.
