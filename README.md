@@ -8,7 +8,7 @@ Copy, paste and execute (code below).
 
 Voilà, install macOS! This is really and magic **easiest way**!
 
-![osx-proxmox](https://user-images.githubusercontent.com/23700365/170098148-574d5312-e396-4892-b9fb-9159d0e24cda.png)
+![osx-proxmox](https://user-images.githubusercontent.com/23700365/170148046-2d1c4d25-078b-4310-89df-e965cfed5168.png)
 
 ## COPY & PASTE - in shell of Proxmox (for Install or Update this solution)
 
