@@ -7,13 +7,17 @@ Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
 Copy, paste and execute (code below).
 
 Voilà, install macOS! This is really and magic **easiest way**!
-
 ![osx-proxmox](https://user-images.githubusercontent.com/23700365/170728118-a59ef7ee-19ee-42bb-8682-2c74f2412aa7.png)
-
 ## COPY & PASTE - in shell of Proxmox (for Install or Update this solution)
 
 ```
 /bin/bash -c "$(curl -fsSL https://install.osx-proxmox.com)"
+```
+
+## For install EFI Package in macOS, first disable Gatekeeper
+
+```
+sudo spctl --master-disable
 ```
 
 ## Versions of macOS Supported
