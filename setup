@@ -48,8 +48,8 @@ SCRIPT_DIR=/root/OSX-PROXMOX
 LOGDIR=${SCRIPT_DIR}/logs
 TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
-HACKPXVERSION="202205271032"
-OCVERSION="0.8.0"
+HACKPXVERSION="202206132324"
+OCVERSION="0.8.1"
 DEFAULT_VM_PREFIX="HACK-"
 DEFAULT_RAM_SIZE=4096
 
@@ -164,6 +164,7 @@ do
 	echo " 3 - macOS Catalina - 10.15"
 	echo " 4 - macOS Big Sur - 11"
 	echo " 5 - macOS Monterey - 12"
+	echo " ? - macOS Ventura - 13 (coming soon)"
 	echo " "
 	echo " Next VM ID: ${NEXTID}"
 	echo " Opencore version: ${OCVERSION}"
