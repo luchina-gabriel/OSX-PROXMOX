@@ -26,6 +26,7 @@ sudo spctl --master-disable
 * macOS Catalina - 10.15
 * macOS Big Sur - 11
 * macOS Monterey - 12
+* macOS Ventura - 13 (Coming soon)
 
 ## Versions of Proxmox VE Supported
 * v7.0.XX ~ 7.1.XX
