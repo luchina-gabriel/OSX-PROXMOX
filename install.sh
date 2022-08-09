@@ -16,7 +16,7 @@ if [ -e /etc/apt/sources.list.d/pve-enterprise.list ]; then rm -rf /etc/apt/sour
 echo "Waiting install OSX-PROXMOX..."
 echo " "
 
-apt update > /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
+apt update >> /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
 
 if [ $? -ne 0 ]
 then 
