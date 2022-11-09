@@ -1159,7 +1159,7 @@ do
 
 	## macOS Ventura - 13
 
-	if [ ${OPT} -eq 5 ]
+	if [ ${OPT} -eq 6 ]
 	then
 		clear
 		echo " "
