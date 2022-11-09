@@ -48,8 +48,8 @@ SCRIPT_DIR=/root/OSX-PROXMOX
 LOGDIR=${SCRIPT_DIR}/logs
 TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
-HACKPXVERSION="202210061045"
-OCVERSION="0.8.5"
+HACKPXVERSION="202211091136"
+OCVERSION="0.8.6"
 DEFAULT_VM_PREFIX="HACK-"
 DEFAULT_RAM_SIZE=4096
 
@@ -1159,7 +1159,7 @@ do
 
 	## macOS Ventura - 13
 
-	if [ ${OPT} -eq 6 ]
+	if [ ${OPT} -eq 5 ]
 	then
 		clear
 		echo " "
@@ -1209,54 +1209,50 @@ do
 
 		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
-##		echo " "
-##		echo -n "Do you want to download and create the recovery image? [Y/N] [or ENTER for Default: Y]: "
-##		read CRTRECODISK
-##
-##		if [ -z $CRTRECODISK ]; then CRTRECODISK="Y"; fi;
-##		
-##		if [ "${CRTRECODISK}" == "Y" ] || [ "${CRTRECODISK}" == "y" ]
-##		then
-##			echo  " "		
-##			echo "Downloading and creating the recovery image for installation ..."
-##			
-##			LOGFILE=${LOGDIR}/crt-recovery-ventura.log
-##
-##			if [ ! -e ${ISODIR}/recovery-ventura.iso ]
-##			then
-##				dd if=/dev/zero of=${TMPDIR}/recovery-ventura.iso bs=1M count=800 > ${LOGFILE} 2>> ${LOGFILE}
-##				mkfs.msdos -F 32 ${TMPDIR}/recovery-ventura.iso -n VENTURA >> ${LOGFILE} 2>> ${LOGFILE}
-##				losetup /dev/loop0 ${TMPDIR}/recovery-ventura.iso >> ${LOGFILE} 2>> ${LOGFILE}
-##				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
-##				mount /dev/loop0 /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
-##
-##				mkdir /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
-##				cd /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
-##
-##				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-E43C1C25D4880AD6 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
-##
-##				cd ${SCRIPT_DIR}
-##
-##				umount /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
-##				rmdir /mnt/APPLE
-##				losetup -d /dev/loop0 >> ${LOGFILE} 2>> ${LOGFILE}
-##
-##				mv ${TMPDIR}/recovery-ventura.iso ${ISODIR}
-##
-##				rm -rf ${TMPDIR}
-##				echo "Download and recovery created successfully."
-##			else
-##				echo "Recovery image of macOS Ventura already exists."
-##			fi
-##		else
-##			echo " "
-##			echo "Skipping download and creating recovery image ..."
-##		fi
+		echo " "
+		echo -n "Do you want to download and create the recovery image? [Y/N] [or ENTER for Default: Y]: "
+		read CRTRECODISK
 
-		echo " "
-		echo -n "Please send your ISO of macOS Ventura Beta to Proxmox and replace in config of your VM!"
-		echo " "
+		if [ -z $CRTRECODISK ]; then CRTRECODISK="Y"; fi;
 		
+		if [ "${CRTRECODISK}" == "Y" ] || [ "${CRTRECODISK}" == "y" ]
+		then
+			echo  " "		
+			echo "Downloading and creating the recovery image for installation ..."
+			
+			LOGFILE=${LOGDIR}/crt-recovery-ventura.log
+
+			if [ ! -e ${ISODIR}/recovery-ventura.iso ]
+			then
+				dd if=/dev/zero of=${TMPDIR}/recovery-ventura.iso bs=1M count=800 > ${LOGFILE} 2>> ${LOGFILE}
+				mkfs.msdos -F 32 ${TMPDIR}/recovery-ventura.iso -n VENTURA >> ${LOGFILE} 2>> ${LOGFILE}
+				losetup /dev/loop0 ${TMPDIR}/recovery-ventura.iso >> ${LOGFILE} 2>> ${LOGFILE}
+				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
+				mount /dev/loop0 /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
+
+				mkdir /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
+				cd /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
+
+				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-B4831CEBD52A0C4C -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
+
+				cd ${SCRIPT_DIR}
+
+				umount /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
+				rmdir /mnt/APPLE
+				losetup -d /dev/loop0 >> ${LOGFILE} 2>> ${LOGFILE}
+
+				mv ${TMPDIR}/recovery-ventura.iso ${ISODIR}
+
+				rm -rf ${TMPDIR}
+				echo "Download and recovery created successfully."
+			else
+				echo "Recovery image of macOS Ventura already exists."
+			fi
+		else
+			echo " "
+			echo "Skipping download and creating recovery image ..."
+		fi
+
 		echo " "
 		echo "Creating virtual machine with macOS - Ventura ..."
 
@@ -1289,8 +1285,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M > ${LOGFILE} 2>> ${LOGFILE}
-			## --ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" | wc -l` -eq 1 ]
@@ -1329,8 +1325,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M > ${LOGFILE} 2>> ${LOGFILE}
-			## --ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" | wc -l` -eq 1 ]

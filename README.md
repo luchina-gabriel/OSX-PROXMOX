@@ -26,13 +26,13 @@ sudo spctl --master-disable
 * macOS Catalina - 10.15
 * macOS Big Sur - 11
 * macOS Monterey - 12
-* macOS Ventura - 13 (Coming soon)
+* macOS Ventura - 13
 
 ## Versions of Proxmox VE Supported
 * v7.0.XX ~ 7.1.XX
 
 ## Opencore version
-* October/2022 - 0.8.5 with SIP Enabled, DMG only signed by Apple and all features of securities.
+* November/2022 - 0.8.6 with SIP Enabled, DMG only signed by Apple and all features of securities.
 
 ## Cloud Support (Yes, install your Hackintosh in Cloud Environment)
 - [VultR](https://www.vultr.com/?ref=9035565-8H)
