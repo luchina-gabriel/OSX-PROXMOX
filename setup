@@ -48,8 +48,8 @@ SCRIPT_DIR=/root/OSX-PROXMOX
 LOGDIR=${SCRIPT_DIR}/logs
 TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
-HACKPXVERSION="202211091136"
-OCVERSION="0.8.6"
+HACKPXVERSION="202212061400"
+OCVERSION="0.8.7"
 DEFAULT_VM_PREFIX="HACK-"
 DEFAULT_RAM_SIZE=4096
 
@@ -108,7 +108,7 @@ then
 
 	if [ ${OSX_PLATFORM} == "AMD" ]
 	then
-		if [ `pveversion | grep -i 7.2 | wc -l` -eq 1 ]
+		if [ `pveversion | grep -i '7.2\|7.3' | wc -l` -eq 1 ]
 		then
 			sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt video=vesafb:off video=efifb:off initcall_blacklist=sysfb_init"/g' /etc/default/grub
 		else
@@ -118,7 +118,7 @@ then
 
 	if [ ${OSX_PLATFORM} == "INTEL" ]
 	then
-		if [ `pveversion | grep -i 7.2 | wc -l` -eq 1 ]
+		if [ `pveversion | grep -i '7.2\|7.3' | wc -l` -eq 1 ]
 		then
 			sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on iommu=pt video=vesafb:off video=efifb:off initcall_blacklist=sysfb_init"/g' /etc/default/grub
 		else
