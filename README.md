@@ -1,6 +1,6 @@
 # OSX-PROXMOX - Run macOS on ANY Computer - AMD & Intel
 
-Install `** FRESH/CLEAN **` Proxmox VE v7.0.XX ~ 7.2.XX - Next, Next & Finish (NNF).
+Install `** FRESH/CLEAN **` Proxmox VE v7.0.XX ~ 7.3.XX - Next, Next & Finish (NNF).
 
 Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
 
