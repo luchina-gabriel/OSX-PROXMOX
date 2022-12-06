@@ -108,7 +108,7 @@ then
 
 	if [ ${OSX_PLATFORM} == "AMD" ]
 	then
-		if [ `pveversion | grep -i 7.2 | wc -l` -eq 1 ]
+		if [ `pveversion | grep -i '7.2\|7.3' | wc -l` -eq 1 ]
 		then
 			sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt video=vesafb:off video=efifb:off initcall_blacklist=sysfb_init"/g' /etc/default/grub
 		else
@@ -118,7 +118,7 @@ then
 
 	if [ ${OSX_PLATFORM} == "INTEL" ]
 	then
-		if [ `pveversion | grep -i 7.2 | wc -l` -eq 1 ]
+		if [ `pveversion | grep -i '7.2\|7.3' | wc -l` -eq 1 ]
 		then
 			sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on iommu=pt video=vesafb:off video=efifb:off initcall_blacklist=sysfb_init"/g' /etc/default/grub
 		else
