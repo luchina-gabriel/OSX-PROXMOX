@@ -30,7 +30,6 @@ sudo spctl --master-disable
 
 ## Versions of Proxmox VE Supported
 * v7.0.XX ~ 7.3.XX
-* v7.3 not fully tested yet
 
 ## Opencore version
 * December/2022 - 0.8.7 with SIP Enabled, DMG only signed by Apple and all features of securities.
