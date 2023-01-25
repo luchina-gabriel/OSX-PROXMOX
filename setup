@@ -269,7 +269,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-highsierra.iso ]
 			then
-				dd if=/dev/zero of=${TMPDIR}/recovery-highsierra.iso bs=1M count=800 > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -l 800M ${TMPDIR}/recovery-highsierra.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-highsierra.iso -n HIGHSIERRA >> ${LOGFILE} 2>> ${LOGFILE}
 				losetup /dev/loop0 ${TMPDIR}/recovery-highsierra.iso >> ${LOGFILE} 2>> ${LOGFILE}
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -460,7 +460,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-mojave.iso ]
 			then
-				dd if=/dev/zero of=${TMPDIR}/recovery-mojave.iso bs=1M count=800 > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -l 800M ${TMPDIR}/recovery-mojave.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-mojave.iso -n MOJAVE >> ${LOGFILE} 2>> ${LOGFILE}
 				losetup /dev/loop0 ${TMPDIR}/recovery-mojave.iso >> ${LOGFILE} 2>> ${LOGFILE}
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -651,7 +651,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-catalina.iso ]
 			then
-				dd if=/dev/zero of=${TMPDIR}/recovery-catalina.iso bs=1M count=800 > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -l 800M ${TMPDIR}/recovery-catalina.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-catalina.iso -n CATALINA >> ${LOGFILE} 2>> ${LOGFILE}
 				losetup /dev/loop0 ${TMPDIR}/recovery-catalina.iso >> ${LOGFILE} 2>> ${LOGFILE}
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -842,7 +842,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-bigsur.iso ]
 			then
-				dd if=/dev/zero of=${TMPDIR}/recovery-bigsur.iso bs=1M count=800 > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -l 800M ${TMPDIR}/recovery-bigsur.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-bigsur.iso -n BIGSUR >> ${LOGFILE} 2>> ${LOGFILE}
 				losetup /dev/loop0 ${TMPDIR}/recovery-bigsur.iso >> ${LOGFILE} 2>> ${LOGFILE}
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -1033,7 +1033,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-monterey.iso ]
 			then
-				dd if=/dev/zero of=${TMPDIR}/recovery-monterey.iso bs=1M count=800 > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -l 800M ${TMPDIR}/recovery-monterey.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-monterey.iso -n MONTEREY >> ${LOGFILE} 2>> ${LOGFILE}
 				losetup /dev/loop0 ${TMPDIR}/recovery-monterey.iso >> ${LOGFILE} 2>> ${LOGFILE}
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -1224,7 +1224,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-ventura.iso ]
 			then
-				dd if=/dev/zero of=${TMPDIR}/recovery-ventura.iso bs=1M count=800 > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -l 800M ${TMPDIR}/recovery-ventura.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-ventura.iso -n VENTURA >> ${LOGFILE} 2>> ${LOGFILE}
 				losetup /dev/loop0 ${TMPDIR}/recovery-ventura.iso >> ${LOGFILE} 2>> ${LOGFILE}
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
