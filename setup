@@ -184,6 +184,7 @@ do
 	echo " 202 - Clear ALL macOS Recovery Images"
 	echo " 203 - Remove Proxmox Subscription Notice"
 	echo " 204 - Enable macOS in Cloud (VultR Provider)"
+	echo " 205 - Customize Opencore config.plist"
 	echo " "
 	echo " 0 - Quit (or press ENTER only)"
 	echo " "
@@ -1520,6 +1521,107 @@ do
 		sleep 5s && reboot
 
 	fi
+
+################################################################################################################################################################################################
+################################################################################################################################################################################################
+################################################################################################################################################################################################
+
+################################################################################################################################################################################################
+################################################################################################################################################################################################
+################################################################################################################################################################################################
+
+	## Customize Opencore config.plist
+
+	if [ ${OPT} -eq 205 ]
+	then
+
+		clear
+
+		LOGFILE=${LOGDIR}/custom-oc-config.plist.log
+
+		echo " "
+		echo "Customize Opencore config.plist"
+		echo " "
+
+		LOOPDEV=`losetup -f --show -P ${ISODIR}/opencore-osx-proxmox-vm.iso 2>> ${LOGFILE}`
+
+		mkdir -p /mnt/opencore > ${LOGFILE} 2>> ${LOGFILE}
+		mount ${LOOPDEV}p1 /mnt/opencore >> ${LOGFILE} 2>> ${LOGFILE}
+
+		if [ ! -e /mnt/opencore/EFI/OC/config.plist.backup ]
+		then
+			cp -v /mnt/opencore/EFI/OC/config.plist /mnt/opencore/EFI/OC/config.plist.backup >> ${LOGFILE} 2>> ${LOGFILE}
+		fi
+
+		PREV_LANG=`grep -E '..-..:0' /mnt/opencore/EFI/OC/config.plist | sed -e 's/.*\(..-..\).*/\1/'`
+		BOOT_ARGS=`grep '<key>boot-args' /mnt/opencore/EFI/OC/config.plist -A1 | tail -n1 | sed -e 's/.*>\(.*\)<.*/\1/'`
+		TIMEOUT=`grep -A1 '>Timeout<' /mnt/opencore/EFI/OC/config.plist | tail -n1 | sed -e 's/.*>\(.*\)<.*/\1/'`
+
+		echo " "
+		echo -n "Enter language-country code [or ENTER to keep the current one (${PREV_LANG})]: "
+		read NEW_PREV_LANG
+		if [ -z ${NEW_PREV_LANG} ]; then NEW_PREV_LANG=${PREV_LANG}; fi;
+		sed -i -e "s/..-..:0/${NEW_PREV_LANG}:0/" /mnt/opencore/EFI/OC/config.plist >> ${LOGFILE} 2>> ${LOGFILE}
+
+		echo " "
+		echo -n "Enter boot-args [or ENTER to keep the current one (${BOOT_ARGS})]: "
+		read NEW_BOOT_ARGS
+		if [ -z "${NEW_BOOT_ARGS}" ]; then NEW_BOOT_ARGS=${BOOT_ARGS}; fi;
+		sed -i -e "s/${BOOT_ARGS}/${NEW_BOOT_ARGS}/" /mnt/opencore/EFI/OC/config.plist >> ${LOGFILE} 2>> ${LOGFILE}
+
+		echo " "
+		echo -n "Remove csr-active-config (unlock SIP configuration) [Y/N] [or ENTER for Default: N]: "
+		read RM_CSR_LOCK
+		if [ -z ${RM_CSR_LOCK} ]; then RM_CSR_LOCK="N"; fi;
+
+		if [ "${RM_CSR_LOCK}" == "Y" ] || [ "${RM_CSR_LOCK}" == "y" ]
+		then
+			echo "--- a/mnt/opencore/EFI/OC/config.plist	2023-01-25 22:43:16.000000000 +0100
++++ b/mnt/opencore/EFI/OC/config.plist	2023-01-25 22:45:24.000000000 +0100
+@@ -450,2 +450,0 @@
+-				<key>csr-active-config</key>
+-				<data>AAAAAA==</data>
+" > ${TMPDIR}/rm-csr-lock.patch
+			cd /
+			patch -p1 < /root/OSX-PROXMOX/tmp/rm-csr-lock.patch >> ${LOGFILE} 2>> ${LOGFILE}
+			cd ${SCRIPT_DIR}
+			rm -f ${TMPDIR}/rm-csr-lock.patch
+			echo "Now you can use \`csrutil disable\` and \`csrutil authenticated-root disable\` in Recovery OS to disable SIP!"
+		fi
+
+		echo " "
+		echo -n "Enter timeout [or ENTER to keep the current one (${TIMEOUT} seconds)]: "
+		read NEW_TIMEOUT
+		if [ -z ${NEW_TIMEOUT} ]; then NEW_TIMEOUT=${TIMEOUT}; fi;
+
+		if [ ${NEW_TIMEOUT} -ne ${TIMEOUT} ]
+		then
+			echo "--- a/mnt/opencore/EFI/OC/config.plist	2023-01-25 22:43:16.000000000 +0100
++++ b/mnt/opencore/EFI/OC/config.plist	2023-01-25 22:45:24.000000000 +0100
+@@ -363,7 +363,7 @@
+ 			<key>TakeoffDelay</key>
+ 			<integer>0</integer>
+ 			<key>Timeout</key>
+-			<integer>${TIMEOUT}</integer>
++			<integer>${NEW_TIMEOUT}</integer>
+ 		</dict>
+ 		<key>Debug</key>
+ 		<dict>
+" > ${TMPDIR}/timeout.patch
+			cd /
+			patch -p1 < /root/OSX-PROXMOX/tmp/timeout.patch >> ${LOGFILE} 2>> ${LOGFILE}
+			cd ${SCRIPT_DIR}
+			rm -f ${TMPDIR}/timeout.patch
+		fi
+
+		diff -u --color /mnt/opencore/EFI/OC/config.plist.backup /mnt/opencore/EFI/OC/config.plist
+
+		umount /mnt/opencore >> ${LOGFILE} 2>> ${LOGFILE}
+		rmdir /mnt/opencore
+		losetup -d ${LOOPDEV} >> ${LOGFILE} 2>> ${LOGFILE}
+	fi
+
+	exit
 
 ################################################################################################################################################################################################
 ################################################################################################################################################################################################
