@@ -48,7 +48,7 @@ SCRIPT_DIR=/root/OSX-PROXMOX
 LOGDIR=${SCRIPT_DIR}/logs
 TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
-HACKPXVERSION="202302040059"
+HACKPXVERSION="202302041106"
 OCVERSION="0.8.8"
 DEFAULT_VM_PREFIX="HACK-"
 DEFAULT_RAM_SIZE=4096
@@ -275,8 +275,7 @@ do
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 				mount /dev/loop0 /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 
-				mkdir /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
-				cd /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
+				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
 				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-BE088AF8C5EB4FA2 -m 00000000000J80300 download >> ${LOGFILE} 2>> ${LOGFILE}
 
@@ -466,8 +465,7 @@ do
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 				mount /dev/loop0 /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 
-				mkdir /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
-				cd /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
+				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
 				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-7BA5B2DFE22DDD8C -m 00000000000KXPG00 download >> ${LOGFILE} 2>> ${LOGFILE}
 
@@ -657,8 +655,7 @@ do
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 				mount /dev/loop0 /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 
-				mkdir /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
-				cd /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
+				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
 				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-00BE6ED71E35EB86 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
 
@@ -848,8 +845,7 @@ do
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 				mount /dev/loop0 /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 
-				mkdir /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
-				cd /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
+				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
 				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-42FD25EABCABB274 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
 
@@ -1039,8 +1035,7 @@ do
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 				mount /dev/loop0 /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 
-				mkdir /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
-				cd /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
+				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
 				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-E43C1C25D4880AD6 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
 
@@ -1230,8 +1225,7 @@ do
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 				mount /dev/loop0 /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
 
-				mkdir /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
-				cd /mnt/APPLE/com.apple.recovery.boot >> ${LOGFILE} 2>> ${LOGFILE}
+				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
 				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-B4831CEBD52A0C4C -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
 
