@@ -1,6 +1,6 @@
 # OSX-PROXMOX - Run macOS on ANY Computer - AMD & Intel
 
-Install `** FRESH/CLEAN **` Proxmox VE v7.0.XX ~ 7.3.XX - Next, Next & Finish (NNF).
+Install `** FRESH/CLEAN **` Proxmox VE v7.0.XX ~ 7.4.XX - Next, Next & Finish (NNF).
 
 Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
 
@@ -29,10 +29,10 @@ sudo spctl --master-disable
 * macOS Ventura - 13
 
 ## Versions of Proxmox VE Supported
-* v7.0.XX ~ 7.3.XX
+* v7.0.XX ~ 7.4.XX
 
 ## Opencore version
-* April/2023 - 0.9.1 with SIP Enabled, DMG only signed by Apple and all features of securities.
+* May/2023 - 0.9.2 with SIP Enabled, DMG only signed by Apple and all features of securities.
 
 ## Cloud Support (Yes, install your Hackintosh in Cloud Environment)
 - [VultR](https://www.vultr.com/?ref=9035565-8H)
