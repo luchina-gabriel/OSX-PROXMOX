@@ -329,7 +329,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
+			--sata0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-highsierra.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -369,7 +369,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
+			--sata0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-highsierra.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -519,7 +519,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
+			--sata0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-mojave.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -559,7 +559,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
+			--sata0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-mojave.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -709,7 +709,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
+			--virtio0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			 --ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -749,7 +749,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
+			--virtio0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -899,7 +899,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
+			--virtio0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-bigsur.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -939,7 +939,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
+			--virtio0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-bigsur.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -1089,7 +1089,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
+			--virtio0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -1129,7 +1129,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
+			--virtio0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -1279,7 +1279,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
+			--virtio0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
@@ -1319,7 +1319,7 @@ do
 			--vga vmware \
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
-			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
+			--virtio0 ${STORAGECRTVM}:vm-${VM_ID}-disk-0.raw,cache=none,discard=on,size={SIZEDISK}G,ssd=1 \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
 			--ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
