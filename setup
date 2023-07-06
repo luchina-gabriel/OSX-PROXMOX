@@ -279,7 +279,7 @@ do
 
 				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
-				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-BE088AF8C5EB4FA2 -m 00000000000J80300 download >> ${LOGFILE} 2>> ${LOGFILE}
+				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-BE088AF8C5EB4FA2 -m 00000000000J80300 download >> ${LOGFILE} 2>> ${LOGFILE}
 
 				cd ${SCRIPT_DIR}
 
@@ -335,7 +335,7 @@ do
 			--ide2 local:iso/recovery-highsierra.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+bmi2,+xsave,+xsaveopt,check/+bmi2,+xsave,+xsaveopt,check -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -375,7 +375,7 @@ do
 			--ide2 local:iso/recovery-highsierra.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -469,7 +469,7 @@ do
 
 				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
-				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-7BA5B2DFE22DDD8C -m 00000000000KXPG00 download >> ${LOGFILE} 2>> ${LOGFILE}
+				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-7BA5B2DFE22DDD8C -m 00000000000KXPG00 download >> ${LOGFILE} 2>> ${LOGFILE}
 
 				cd ${SCRIPT_DIR}
 
@@ -525,7 +525,7 @@ do
 			--ide2 local:iso/recovery-mojave.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+bmi2,+xsave,+xsaveopt,check/+bmi2,+xsave,+xsaveopt,check -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -565,7 +565,7 @@ do
 			--ide2 local:iso/recovery-mojave.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -659,7 +659,7 @@ do
 
 				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
-				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-00BE6ED71E35EB86 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
+				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-00BE6ED71E35EB86 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
 
 				cd ${SCRIPT_DIR}
 
@@ -715,7 +715,7 @@ do
 			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+bmi2,+xsave,+xsaveopt,check/+bmi2,+xsave,+xsaveopt,check -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -755,7 +755,7 @@ do
 			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -849,7 +849,7 @@ do
 
 				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
-				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-42FD25EABCABB274 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
+				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-42FD25EABCABB274 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
 
 				cd ${SCRIPT_DIR}
 
@@ -905,7 +905,7 @@ do
 			--ide2 local:iso/recovery-bigsur.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+bmi2,+xsave,+xsaveopt,check/+bmi2,+xsave,+xsaveopt,check -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -945,7 +945,7 @@ do
 			--ide2 local:iso/recovery-bigsur.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1039,7 +1039,7 @@ do
 
 				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
-				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-E43C1C25D4880AD6 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
+				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-E43C1C25D4880AD6 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
 
 				cd ${SCRIPT_DIR}
 
@@ -1095,7 +1095,7 @@ do
 			--ide2 local:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+bmi2,+xsave,+xsaveopt,check/+bmi2,+xsave,+xsaveopt,check -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1135,7 +1135,7 @@ do
 			--ide2 local:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1229,7 +1229,7 @@ do
 
 				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
-				python3.9 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-B4831CEBD52A0C4C -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
+				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-B4831CEBD52A0C4C -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
 
 				cd ${SCRIPT_DIR}
 
@@ -1285,7 +1285,7 @@ do
 			--ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,kvm=on,vmware-cpuid-freq=on/+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,kvm=on,vmware-cpuid-freq=on -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1325,7 +1325,7 @@ do
 			--ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1358,12 +1358,23 @@ do
 		echo "Please wait ..."
 		echo " "
 
-		echo "deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pxve-no-sub.list
-		apt update -y >> ${LOGFILE} 2>> ${LOGFILE}
-		if [ $? -ne 0 ]; then echo "apt update error - check log file ${LOGFILE}"; exit; fi;
+		if [`pveversion | grep "pve-manager/[7]" | wc -l` -ne 1]
+		then
+			echo "deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pxve-no-sub.list
+			apt update -y >> ${LOGFILE} 2>> ${LOGFILE}
+			if [ $? -ne 0 ]; then echo "apt update error - check log file ${LOGFILE}"; exit; fi;
+			echo "Promox VE NO Subscription repository has been successfully added."	
+			exit
+		fi
 
-		echo "Promox VE NO Subscription repository has been successfully added."	
-		exit
+		if [`pveversion | grep "pve-manager/[8]" | wc -l` -ne 1]
+		then
+			echo "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pxve-no-sub.list
+			apt update -y >> ${LOGFILE} 2>> ${LOGFILE}
+			if [ $? -ne 0 ]; then echo "apt update error - check log file ${LOGFILE}"; exit; fi;
+			echo "Promox VE NO Subscription repository has been successfully added."	
+			exit
+		fi
 
 	fi
 
