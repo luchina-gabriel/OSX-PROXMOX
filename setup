@@ -114,6 +114,7 @@ then
 		else
 			sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt video=vesafb:off video=efifb:off"/g' /etc/default/grub
 		fi
+		echo "options kvm-amd nested=1" > /etc/modprobe.d/kvm-amd.conf
 	fi
 
 	if [ ${OSX_PLATFORM} == "INTEL" ]
