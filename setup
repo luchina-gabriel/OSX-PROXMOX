@@ -48,8 +48,8 @@ SCRIPT_DIR=/root/OSX-PROXMOX
 LOGDIR=${SCRIPT_DIR}/logs
 TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
-HACKPXVERSION="202306151642"
-OCVERSION="0.9.3"
+HACKPXVERSION="20230810T1839"
+OCVERSION="0.9.4"
 DEFAULT_VM_PREFIX="HACK-"
 DEFAULT_RAM_SIZE=4096
 
@@ -170,7 +170,7 @@ do
 	echo " "
 	echo " Enter the macOS version to be installed:"
 	echo " "
-	echo " 1 - macOS High Sierra - 10.13"
+	echo " 1 - macOS High Sierra - 10.13 (please use ISO for install)"
 	echo " 2 - macOS Mojave - 10.14"
 	echo " 3 - macOS Catalina - 10.15"
 	echo " 4 - macOS Big Sur - 11"
