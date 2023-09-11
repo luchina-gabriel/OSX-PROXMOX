@@ -33,7 +33,7 @@ sudo spctl --master-disable
 * v7.0.XX ~ 8.0.XX
 
 ## Opencore version
-* August/2023 - 0.9.4 with SIP Enabled, DMG only signed by Apple and all features of securities.
+* September/2023 - 0.9.5 with SIP Enabled, DMG only signed by Apple and all features of securities.
 
 ## Cloud Support (Yes, install your Hackintosh in Cloud Environment)
 - [VultR](https://www.vultr.com/?ref=9035565-8H)
