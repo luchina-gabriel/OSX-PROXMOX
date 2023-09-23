@@ -45,7 +45,7 @@ fi
 ################################################################################################################################################################################################
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"	# Get the directory of the script and assign it to SCRIPT_DIR
-PVEDIR=/etc/pve/nodes/${HOST}/qemu-server
+PVEDIR=/etc/pve/nodes/$(echo $HOST)/qemu-server
 LOGDIR=${SCRIPT_DIR}/logs
 TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
