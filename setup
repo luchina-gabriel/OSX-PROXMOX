@@ -36,7 +36,7 @@ clear
 if [ `pveversion | grep "pve-manager/[7,8]" | wc -l` -ne 1 ]
 then
 	echo "This version of Proxmox Virtual Environment are not supported"
-	echo "Please, utilize version: 7.XX or 8.XX"
+	echo "Please, utilize version: 7.XX or 8.0-2"
 	exit
 fi
 
@@ -48,7 +48,7 @@ SCRIPT_DIR=/root/OSX-PROXMOX
 LOGDIR=${SCRIPT_DIR}/logs
 TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
-HACKPXVERSION="20230911T1406"
+HACKPXVERSION="20230927T1738"
 OCVERSION="0.9.5"
 DEFAULT_VM_PREFIX="HACK-"
 DEFAULT_RAM_SIZE=4096
@@ -176,7 +176,7 @@ do
 	echo " 4 - macOS Big Sur - 11"
 	echo " 5 - macOS Monterey - 12"
 	echo " 6 - macOS Ventura - 13"
-	echo " 7 - macOS Sonoma - 14 (please use ISO for install)"
+	echo " 7 - macOS Sonoma - 14"
 	echo " "
 	echo " Next VM ID: ${NEXTID}"
 	echo " Opencore version: ${OCVERSION}"
@@ -1397,48 +1397,48 @@ do
 
 		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
 
-##		echo " "
-##		echo -n "Do you want to download and create the recovery image? [Y/N] [or ENTER for Default: Y]: "
-##		read CRTRECODISK
-##
-##		if [ -z $CRTRECODISK ]; then CRTRECODISK="Y"; fi;
-##		
-##		if [ "${CRTRECODISK}" == "Y" ] || [ "${CRTRECODISK}" == "y" ]
-##		then
-##			echo  " "		
-##			echo "Downloading and creating the recovery image for installation ..."
-##			
-##			LOGFILE=${LOGDIR}/crt-recovery-sonoma.log
-##
-##			if [ ! -e ${ISODIR}/recovery-sonoma.iso ]
-##			then
-##				fallocate -l 800M ${TMPDIR}/recovery-sonoma.iso > ${LOGFILE} 2>> ${LOGFILE}
-##				mkfs.msdos -F 32 ${TMPDIR}/recovery-sonoma.iso -n SONOMA >> ${LOGFILE} 2>> ${LOGFILE}
-##				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-sonoma.iso 2>> ${LOGFILE}`
-##				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
-##				mount ${LOOPDEV} /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
-##
-##				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
-##
-##				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-B4831CEBD52A0C4C -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
-##
-##				cd ${SCRIPT_DIR}
-##
-##				umount /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
-##				rmdir /mnt/APPLE
-##				losetup -d ${LOOPDEV} >> ${LOGFILE} 2>> ${LOGFILE}
-##
-##				mv ${TMPDIR}/recovery-sonoma.iso ${ISODIR}
-##
-##				rm -rf ${TMPDIR}
-##				echo "Download and recovery created successfully."
-##			else
-##				echo "Recovery image of macOS Sonoma already exists."
-##			fi
-##		else
-##			echo " "
-##			echo "Skipping download and creating recovery image ..."
-##		fi
+		echo " "
+		echo -n "Do you want to download and create the recovery image? [Y/N] [or ENTER for Default: Y]: "
+		read CRTRECODISK
+
+		if [ -z $CRTRECODISK ]; then CRTRECODISK="Y"; fi;
+		
+		if [ "${CRTRECODISK}" == "Y" ] || [ "${CRTRECODISK}" == "y" ]
+		then
+			echo  " "		
+			echo "Downloading and creating the recovery image for installation ..."
+			
+			LOGFILE=${LOGDIR}/crt-recovery-sonoma.log
+
+			if [ ! -e ${ISODIR}/recovery-sonoma.iso ]
+			then
+				fallocate -l 800M ${TMPDIR}/recovery-sonoma.iso > ${LOGFILE} 2>> ${LOGFILE}
+				mkfs.msdos -F 32 ${TMPDIR}/recovery-sonoma.iso -n SONOMA >> ${LOGFILE} 2>> ${LOGFILE}
+				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-sonoma.iso 2>> ${LOGFILE}`
+				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
+				mount ${LOOPDEV} /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
+
+				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
+
+				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-A61BADE1FDAD7B05 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
+
+				cd ${SCRIPT_DIR}
+
+				umount /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
+				rmdir /mnt/APPLE
+				losetup -d ${LOOPDEV} >> ${LOGFILE} 2>> ${LOGFILE}
+
+				mv ${TMPDIR}/recovery-sonoma.iso ${ISODIR}
+
+				rm -rf ${TMPDIR}
+				echo "Download and recovery created successfully."
+			else
+				echo "Recovery image of macOS Sonoma already exists."
+			fi
+		else
+			echo " "
+			echo "Skipping download and creating recovery image ..."
+		fi
 
 		echo " "
 		echo "Creating virtual machine with macOS - Sonoma ..."
@@ -1472,9 +1472,8 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M > ${LOGFILE} 2>> ${LOGFILE}
-			
-##			--ide2 local:iso/recovery-sonoma.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-sonoma.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" | wc -l` -eq 1 ]
