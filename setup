@@ -1549,7 +1549,7 @@ do
 		echo "Please wait ..."
 		echo " "
 
-		if [`pveversion | grep "pve-manager/[7]" | wc -l` -ne 1]
+		if [ `pveversion | grep "pve-manager/[7]" | wc -l` -ne 1 ]
 		then
 			echo "deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pxve-no-sub.list
 			apt update -y >> ${LOGFILE} 2>> ${LOGFILE}
@@ -1558,7 +1558,7 @@ do
 			exit
 		fi
 
-		if [`pveversion | grep "pve-manager/[8]" | wc -l` -ne 1]
+		if [ `pveversion | grep "pve-manager/[8]" | wc -l` -ne 1 ]
 		then
 			echo "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pxve-no-sub.list
 			apt update -y >> ${LOGFILE} 2>> ${LOGFILE}
