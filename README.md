@@ -1,6 +1,6 @@
 # OSX-PROXMOX - Run macOS on ANY Computer - AMD & Intel
 
-Install `** FRESH/CLEAN **` Proxmox VE v7.0.XX ~ 8.1.XX - Next, Next & Finish (NNF).
+Install `** FRESH/CLEAN **` Proxmox VE v7.0.XX ~ 8.2.XX - Next, Next & Finish (NNF).
 
 Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
 
@@ -30,7 +30,7 @@ sudo spctl --master-disable
 * macOS Sonoma - 14
 
 ## Versions of Proxmox VE Supported
-* v7.0.XX ~ 8.1.XX
+* v7.0.XX ~ 8.2.XX
 
 ## Opencore version
 * March/2024 - 0.9.9 with SIP Enabled, DMG only signed by Apple and all features of securities.

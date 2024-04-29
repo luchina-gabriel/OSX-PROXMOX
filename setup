@@ -36,7 +36,7 @@ clear
 if [ `pveversion | grep "pve-manager/[7,8]" | wc -l` -ne 1 ]
 then
 	echo "This version of Proxmox Virtual Environment are not supported"
-	echo "Please, utilize version: 7.XX or 8.1-1"
+	echo "Please, utilize version: 7.XX or 8.2"
 	exit
 fi
 
@@ -108,7 +108,7 @@ then
 
 	if [ ${OSX_PLATFORM} == "AMD" ]
 	then
-		if [ `pveversion | grep -i '7.2\|7.3\|7.4\|8.0\|8.1' | wc -l` -eq 1 ]
+		if [ `pveversion | grep -i '7.2\|7.3\|7.4\|8.0\|8.1\|8.2' | wc -l` -eq 1 ]
 		then
 			sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt video=vesafb:off video=efifb:off initcall_blacklist=sysfb_init"/g' /etc/default/grub
 		else
@@ -119,7 +119,7 @@ then
 
 	if [ ${OSX_PLATFORM} == "INTEL" ]
 	then
-		if [ `pveversion | grep -i '7.2\|7.3\|7.4\|8.0\|8.1' | wc -l` -eq 1 ]
+		if [ `pveversion | grep -i '7.2\|7.3\|7.4\|8.0\|8.1\|8.2' | wc -l` -eq 1 ]
 		then
 			sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on iommu=pt video=vesafb:off video=efifb:off initcall_blacklist=sysfb_init"/g' /etc/default/grub
 		else
@@ -1549,7 +1549,7 @@ do
 		echo "Please wait ..."
 		echo " "
 
-		if [`pveversion | grep "pve-manager/[7]" | wc -l` -ne 1]
+		if [ `pveversion | grep "pve-manager/[7]" | wc -l` -ne 1 ]
 		then
 			echo "deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pxve-no-sub.list
 			apt update -y >> ${LOGFILE} 2>> ${LOGFILE}
@@ -1558,7 +1558,7 @@ do
 			exit
 		fi
 
-		if [`pveversion | grep "pve-manager/[8]" | wc -l` -ne 1]
+		if [ `pveversion | grep "pve-manager/[8]" | wc -l` -ne 1 ]
 		then
 			echo "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pxve-no-sub.list
 			apt update -y >> ${LOGFILE} 2>> ${LOGFILE}
