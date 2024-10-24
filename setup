@@ -49,7 +49,7 @@ LOGDIR=${SCRIPT_DIR}/logs
 TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
 HACKPXVERSION="20240313T1034"
-OCVERSION="0.9.9"
+OCVERSION="1.0.2"
 DEFAULT_VM_PREFIX="HACK-"
 DEFAULT_RAM_SIZE=4096
 
@@ -177,6 +177,7 @@ do
 	echo " 5 - macOS Monterey - 12"
 	echo " 6 - macOS Ventura - 13"
 	echo " 7 - macOS Sonoma - 14"
+	echo " 8 - macOS Sequoia - 15"
 	echo " "
 	echo " Next VM ID: ${NEXTID}"
 	echo " Opencore version: ${OCVERSION}"
@@ -336,7 +337,7 @@ do
 			--ide2 local:iso/recovery-highsierra.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+bmi2,+xsave,+xsaveopt,check/+bmi2,+xsave,+xsaveopt,check -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -376,7 +377,7 @@ do
 			--ide2 local:iso/recovery-highsierra.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -526,7 +527,7 @@ do
 			--ide2 local:iso/recovery-mojave.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+bmi2,+xsave,+xsaveopt,check/+bmi2,+xsave,+xsaveopt,check -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -566,7 +567,7 @@ do
 			--ide2 local:iso/recovery-mojave.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -716,7 +717,7 @@ do
 			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+bmi2,+xsave,+xsaveopt,check/+bmi2,+xsave,+xsaveopt,check -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -756,7 +757,7 @@ do
 			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -906,7 +907,7 @@ do
 			--ide2 local:iso/recovery-bigsur.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+bmi2,+xsave,+xsaveopt,check/+bmi2,+xsave,+xsaveopt,check -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -946,7 +947,7 @@ do
 			--ide2 local:iso/recovery-bigsur.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1096,7 +1097,7 @@ do
 			--ide2 local:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+bmi2,+xsave,+xsaveopt,check/+bmi2,+xsave,+xsaveopt,check -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1136,7 +1137,7 @@ do
 			--ide2 local:iso/recovery-monterey.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1286,7 +1287,7 @@ do
 			--ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,kvm=on,vmware-cpuid-freq=on/+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,kvm=on,vmware-cpuid-freq=on -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1326,7 +1327,7 @@ do
 			--ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1476,7 +1477,7 @@ do
 			--ide2 local:iso/recovery-sonoma.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,kvm=on,vmware-cpuid-freq=on/+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,kvm=on,vmware-cpuid-freq=on -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1516,7 +1517,7 @@ do
 			--ide2 local:iso/recovery-sonoma.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
-			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" | wc -l` -eq 1 ]
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
 			then
 				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
 			fi
@@ -1530,6 +1531,197 @@ do
 		echo " "
 		exit
 	fi
+
+################################################################################################################################################################################################
+################################################################################################################################################################################################
+################################################################################################################################################################################################
+
+	## macOS Sequoia - 15
+
+	if [ ${OPT} -eq 8 ]
+	then
+		clear
+		echo " "
+		echo "macOS Sequoia"
+		echo " "
+		echo -n "Enter the VM ID [or ENTER to automatically generate (${NEXTID})]: "
+		read VM_ID
+
+		if [ -z $VM_ID ]; then VM_ID=$NEXTID; fi;
+
+		echo " "
+		echo -n "Enter VM Name [or ENTER for Default: HACK-SEQUOIA]: "
+		read VM_NAME
+
+		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}SEQUOIA"; fi;
+
+		echo " "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
+		read SIZEDISK
+
+		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
+		if ! [[ $SIZEDISK =~ $re ]] ; then echo "ERROR! SIZEDISK MUST HAVE INTEGER NUMBER!"; exit; fi;
+
+		echo " "
+		echo "Storages available:"
+		echo " "
+		for stg in `pvesh get storage --noborder --noheader`
+		do
+			echo "     - ${stg}"
+		done
+		echo " "
+
+		echo -n "Enter which storage to create the VM [or ENTER for Default: local-lvm]: "
+		read STORAGECRTVM
+
+		if [ -z $STORAGECRTVM ]; then STORAGECRTVM="local-lvm"; fi;
+
+		echo " "
+		echo -n "Allocate CPU cores [Need Power of 2] [or ENTER for Default: 4]: "
+		read PROC_COUNT
+
+		if [ -z $PROC_COUNT ]; then PROC_COUNT=4; fi;
+
+		echo " "
+		echo -n "Allocate RAM [MiB] [or ENTER for Default: 4096]: "
+		read RAM_SIZE
+
+		if [ -z $RAM_SIZE ]; then RAM_SIZE=$DEFAULT_RAM_SIZE; fi;
+
+		echo " "
+		echo -n "Do you want to download and create the recovery image? [Y/N] [or ENTER for Default: Y]: "
+		read CRTRECODISK
+
+		if [ -z $CRTRECODISK ]; then CRTRECODISK="Y"; fi;
+		
+		if [ "${CRTRECODISK}" == "Y" ] || [ "${CRTRECODISK}" == "y" ]
+		then
+			echo  " "		
+			echo "Downloading and creating the recovery image for installation ..."
+			
+			LOGFILE=${LOGDIR}/crt-recovery-sequoia.log
+
+			if [ ! -e ${ISODIR}/recovery-sequoia.iso ]
+			then
+				fallocate -l 920M ${TMPDIR}/recovery-sequoia.iso > ${LOGFILE} 2>> ${LOGFILE}
+				mkfs.msdos -F 32 ${TMPDIR}/recovery-sequoia.iso -n SEQUOIA >> ${LOGFILE} 2>> ${LOGFILE}
+				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-sequoia.iso 2>> ${LOGFILE}`
+				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
+				mount ${LOOPDEV} /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
+
+				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
+
+				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-7BA5B2D9E42DDD94 -m 00000000000000000 -os latest download >> ${LOGFILE} 2>> ${LOGFILE}
+
+				cd ${SCRIPT_DIR}
+
+				umount /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
+				rmdir /mnt/APPLE
+				losetup -d ${LOOPDEV} >> ${LOGFILE} 2>> ${LOGFILE}
+
+				mv ${TMPDIR}/recovery-sequoia.iso ${ISODIR}
+
+				rm -rf ${TMPDIR}
+				echo "Download and recovery created successfully."
+			else
+				echo "Recovery image of macOS Sequoia already exists."
+			fi
+		else
+			echo " "
+			echo "Skipping download and creating recovery image ..."
+		fi
+
+		echo " "
+		echo "Creating virtual machine with macOS - Sequoia ..."
+
+		if [ ${OSX_PLATFORM} == 'AMD' ]
+		then
+
+			LOGFILE=${LOGDIR}/crt-vm-amd-sequoia.log
+
+			qm create ${VM_ID} \
+			--agent 1 \
+			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device qemu-xhci -device usb-kbd -device usb-tablet -global nec-usb-xhci.msi=off -cpu Cascadelake-Server,vendor=GenuineIntel,+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,kvm=on,vmware-cpuid-freq=on' \
+			--autostart 0 \
+			--balloon 0 \
+			--bios ovmf \
+			--boot 'order=ide0;virtio0' \
+			--cores ${PROC_COUNT} \
+			--description ' Hackintosh VM - Sequoia' \
+			--efidisk0 ${STORAGECRTVM}:4 \
+			--machine q35 \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
+			--net0 vmxnet3,bridge=vmbr0 \
+			--numa 0 \
+			--onboot 0 \
+			--ostype other \
+			--sockets 1 \
+			--start 0 \
+			--tablet 1 \
+			--vga vmware \
+			--vmgenid 1 \
+			--scsihw virtio-scsi-pci \
+			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-sequoia.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+
+			## Fix for QEMU 6.1 for PCI Passthrough
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
+			then
+				sed -i 's/+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,kvm=on,vmware-cpuid-freq=on/+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,kvm=on,vmware-cpuid-freq=on -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
+			fi
+
+		fi
+
+		if [ ${OSX_PLATFORM} == 'INTEL' ]
+		then
+			
+			LOGFILE=${LOGDIR}/crt-vm-intel-sequoia.log
+
+			qm create ${VM_ID} \
+			--agent 1 \
+			--args '-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2 -device qemu-xhci -device usb-kbd -device usb-tablet -global nec-usb-xhci.msi=off -cpu host,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc' \
+			--autostart 0 \
+			--balloon 0 \
+			--bios ovmf \
+			--boot 'order=ide0;virtio0' \
+			--cores ${PROC_COUNT} \
+			--description ' Hackintosh VM - Sequoia' \
+			--efidisk0 ${STORAGECRTVM}:4 \
+			--machine q35 \
+			--memory ${RAM_SIZE} \
+			--name ${VM_NAME} \
+			--net0 vmxnet3,bridge=vmbr0 \
+			--numa 0 \
+			--onboot 0 \
+			--ostype other \
+			--sockets 1 \
+			--start 0 \
+			--tablet 1 \
+			--vga vmware \
+			--vmgenid 1 \
+			--scsihw virtio-scsi-pci \
+			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-seqquoia.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+
+			## Fix for QEMU 6.1 for PCI Passthrough
+			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
+			then
+				sed -i 's/+kvm_pv_eoi,+hypervisor,+invtsc/+kvm_pv_eoi,+hypervisor,+invtsc -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off/g' /etc/pve/qemu-server/${VM_ID}.conf
+			fi
+
+		fi
+
+		echo "Virtual machine (${VM_NAME}) created successfully."
+		echo " "
+		echo "Access the Proxmox Web Panel to continue with the installation ..."
+		echo "https://`ip address show vmbr0 | grep -w "inet" | awk -F " " '{ print $2 }' | awk -F "/" '{ print $1 }'`:8006"
+		echo " "
+		exit
+	fi
+
 
 ################################################################################################################################################################################################
 ################################################################################################################################################################################################

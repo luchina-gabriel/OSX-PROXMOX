@@ -7,7 +7,7 @@ Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
 Copy, paste and execute (code below).
 
 Voilà, install macOS! This is really and magic **easiest way**!
-![overview](https://github.com/luchina-gabriel/OSX-PROXMOX/assets/23700365/c86c53f9-cc05-459a-b8dc-b81d90d8ee73)
+![overview](./Artefacts/proxmox-screen.png)
 ## COPY & PASTE - in shell of Proxmox (for Install or Update this solution)
 
 ```
@@ -28,12 +28,13 @@ sudo spctl --master-disable
 * macOS Monterey - 12
 * macOS Ventura - 13
 * macOS Sonoma - 14
+* macOS Sequoia - 15
 
 ## Versions of Proxmox VE Supported
 * v7.0.XX ~ 8.2.XX
 
 ## Opencore version
-* March/2024 - 0.9.9 with SIP Enabled, DMG only signed by Apple and all features of securities.
+* Oct/2024 - 1.0.2 Added support to macOS Sequoia
 
 ## Cloud Support (Yes, install your Hackintosh in Cloud Environment)
 - [VultR](https://www.vultr.com/?ref=9035565-8H)
