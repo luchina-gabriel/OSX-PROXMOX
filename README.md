@@ -7,7 +7,7 @@ Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
 Copy, paste and execute (code below).
 
 Voilà, install macOS! This is really and magic **easiest way**!
-![overview](./Artifacts/proxmox-screen.png)
+![overview](./Artefacts/proxmox-screen.png)
 ## COPY & PASTE - in shell of Proxmox (for Install or Update this solution)
 
 ```
