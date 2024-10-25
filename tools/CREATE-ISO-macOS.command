@@ -24,7 +24,7 @@ echo " "
 ## Core 
 cd ${TEMPDIR} > /dev/null 2> /dev/null
 rm -rf macOS-install* > /dev/null 2> /dev/null
-hdiutil create -o macOS-install -size 15.2g -layout GPTSPUD -fs HFS+J > /dev/null 2> /dev/null
+hdiutil create -o macOS-install -size 16g -layout GPTSPUD -fs HFS+J > /dev/null 2> /dev/null
 hdiutil attach -noverify -mountpoint /Volumes/install_build macOS-install.dmg > /dev/null 2> /dev/null
 sudo "${APPOSX}/Contents/Resources/createinstallmedia" --volume /Volumes/install_build --nointeraction
 hdiutil detach -force "/Volumes/Install macOS"* > /dev/null 2> /dev/null && sleep 3s > /dev/null 2> /dev/null
