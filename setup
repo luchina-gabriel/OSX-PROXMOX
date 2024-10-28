@@ -1704,7 +1704,7 @@ do
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
 			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-seqquoia.iso,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide2 local:iso/recovery-sequoia.iso,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" | wc -l` -eq 1 ]
