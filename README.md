@@ -68,6 +68,30 @@ Below is a possible workaround from here: https://www.nicksherlock.com/2022/10/i
 2. Or try to activate TSC force in GRUB by adding boot flags `clocksource=tsc tsc=reliable` in the `GRUB_CMDLINE_LINUX_DEFAULT` and call `update-grub`. In this case host OS probably could work unstable in some cases.
 3. Check the current TSC by call `cat /sys/devices/system/clocksource/clocksource0/current_clocksource` must be `tsc`.
 
+## Troubleshooting
+
+### High Siearra and below installation issues
+
+To solve error *The Recovery Server Could Not Be Contacted* you need to change the protocol from `https://` to `http://`. To do this, follow:
+- start installation and get error *The Recovery Server Could Not Be Contacted*, hold the window with error opened
+- open Window -> Installer Log
+- search for the line "Failed to load catalog" -> select line in log windows -> Edit -Copy
+- close the error message and return to `macOS Utilities` window
+- open Utilities -> Terminal, right click -> paste
+- edit the pasted data, remove everything except URL, like `https://blablabla.sucatalog`
+- change https -> http
+- adjust the command to be like: nvram IASUCatalogURL="<your HTTP URL here>"
+- press enter, quit Terminal and try to start installation again
+
+After this, no additional ISO needed, HighSierra must be installed well from recovey.
+
+Here a sample how need to change the error message to the final URL:
+
+`nIUvram IASUCatalogURL="http://swscan.apple.com/content/catalogs/others/index-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog"`
+
+The solution took from here: https://mrmacintosh.com/how-to-fix-the-recovery-server-could-not-be-contacted-error-high-sierra-recovery-is-still-online-but-broken/
+
+
 ## Demonstration (in Portuguese/Brazil)
 
 https://youtu.be/dil6iRWiun0
