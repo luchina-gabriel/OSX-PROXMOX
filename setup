@@ -273,7 +273,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-highsierra.iso ]
 			then
-				fallocate -l 800M ${TMPDIR}/recovery-highsierra.iso > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -x -l 800M ${TMPDIR}/recovery-highsierra.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-highsierra.iso -n HIGHSIERRA >> ${LOGFILE} 2>> ${LOGFILE}
 				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-highsierra.iso 2>> ${LOGFILE}`
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -463,7 +463,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-mojave.iso ]
 			then
-				fallocate -l 800M ${TMPDIR}/recovery-mojave.iso > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -x -l 800M ${TMPDIR}/recovery-mojave.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-mojave.iso -n MOJAVE >> ${LOGFILE} 2>> ${LOGFILE}
 				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-mojave.iso 2>> ${LOGFILE}`
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -653,7 +653,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-catalina.iso ]
 			then
-				fallocate -l 800M ${TMPDIR}/recovery-catalina.iso > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -x -l 800M ${TMPDIR}/recovery-catalina.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-catalina.iso -n CATALINA >> ${LOGFILE} 2>> ${LOGFILE}
 				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-catalina.iso 2>> ${LOGFILE}`
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -843,7 +843,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-bigsur.iso ]
 			then
-				fallocate -l 1024M ${TMPDIR}/recovery-bigsur.iso > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -x -l 1024M ${TMPDIR}/recovery-bigsur.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-bigsur.iso -n BIGSUR >> ${LOGFILE} 2>> ${LOGFILE}
 				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-bigsur.iso 2>> ${LOGFILE}`
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -1033,7 +1033,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-monterey.iso ]
 			then
-				fallocate -l 1024M ${TMPDIR}/recovery-monterey.iso > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -x -l 1024M ${TMPDIR}/recovery-monterey.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-monterey.iso -n MONTEREY >> ${LOGFILE} 2>> ${LOGFILE}
 				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-monterey.iso 2>> ${LOGFILE}`
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -1223,7 +1223,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-ventura.iso ]
 			then
-				fallocate -l 1024M ${TMPDIR}/recovery-ventura.iso > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -x -l 1024M ${TMPDIR}/recovery-ventura.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-ventura.iso -n VENTURA >> ${LOGFILE} 2>> ${LOGFILE}
 				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-ventura.iso 2>> ${LOGFILE}`
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -1413,7 +1413,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-sonoma.iso ]
 			then
-				fallocate -l 1450M ${TMPDIR}/recovery-sonoma.iso > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -x -l 1450M ${TMPDIR}/recovery-sonoma.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-sonoma.iso -n SONOMA >> ${LOGFILE} 2>> ${LOGFILE}
 				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-sonoma.iso 2>> ${LOGFILE}`
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
@@ -1603,7 +1603,7 @@ do
 
 			if [ ! -e ${ISODIR}/recovery-sequoia.iso ]
 			then
-				fallocate -l 1450M ${TMPDIR}/recovery-sequoia.iso > ${LOGFILE} 2>> ${LOGFILE}
+				fallocate -x -l 1450M ${TMPDIR}/recovery-sequoia.iso > ${LOGFILE} 2>> ${LOGFILE}
 				mkfs.msdos -F 32 ${TMPDIR}/recovery-sequoia.iso -n SEQUOIA >> ${LOGFILE} 2>> ${LOGFILE}
 				LOOPDEV=`losetup -f --show ${TMPDIR}/recovery-sequoia.iso 2>> ${LOGFILE}`
 				mkdir -p /mnt/APPLE >> ${LOGFILE} 2>> ${LOGFILE}
