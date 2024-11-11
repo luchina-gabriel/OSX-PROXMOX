@@ -1421,7 +1421,7 @@ do
 
 				cd /mnt/APPLE/ >> ${LOGFILE} 2>> ${LOGFILE}
 
-				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-A61BADE1FDAD7B05 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
+				python3 ${SCRIPT_DIR}/tools/macrecovery/macrecovery.py -b Mac-827FAC58A8FDFA22 -m 00000000000000000 download >> ${LOGFILE} 2>> ${LOGFILE}
 
 				cd ${SCRIPT_DIR}
 
