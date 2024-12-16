@@ -35,8 +35,8 @@ clear
 
 if [ `pveversion | grep "pve-manager/[7,8]" | wc -l` -ne 1 ]
 then
-	echo "This version of Proxmox Virtual Environment are not supported"
-	echo "Please, utilize version: 7.XX or 8.2"
+	echo "This version of Proxmox Virtual Environment is not supported"
+	echo "Please use version: 7.XX or 8.2"
 	exit
 fi
 
@@ -93,9 +93,8 @@ then
 	then 
 		echo "Error with 'apt-get update' ..."
 		echo "Trying to change /etc/apt/sources.list"
-
-		sed -i 's/ftp.br.debian.org/ftp.debian.org/g' /etc/apt/sources.list
-		
+ 		Country=$(curl -s https://ipinfo.io/country | tr '[:upper:]' '[:lower:]')
+		sed -i "s/ftp.$Country.debian.org/ftp.debian.org/g" /etc/apt/sources.list
 		echo "Retrying 'apt-get update'"
 		apt-get update >> ${LOGFILE} 2>> ${LOGFILE}
 		if [ $? -ne 0 ]; then echo "Error with `apt-get update ...`"; exit; fi
