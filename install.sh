@@ -13,8 +13,8 @@ clear
 if [ -e /root/OSX-PROXMOX ]; then rm -rf /root/OSX-PROXMOX; fi;
 if [ -e /etc/apt/sources.list.d/pve-enterprise.list ]; then rm -rf /etc/apt/sources.list.d/pve-enterprise.list; fi;
 if [ -e /etc/apt/sources.list.d/ceph.list ]; then rm -rf /etc/apt/sources.list.d/ceph.list; fi;
-
-echo "Waiting install OSX-PROXMOX..."
+# Is this better?
+echo "Waiting to install OSX-PROXMOX..."
 echo " "
 
 apt update > /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
@@ -25,8 +25,10 @@ then
 	echo "Error with 'apt-get update' ..."
 	echo "Trying to change /etc/apt/sources.list"
 	echo " "
-
-	sed -i 's/ftp.br.debian.org/ftp.debian.org/g' /etc/apt/sources.list
+	# Always using a Brazilian server will not be fast...
+ 	# I suggest using the users home country, As it will always be faster.
+ 	Country=$(curl -s https://ipinfo.io/country | tr '[:upper:]' '[:lower:]')
+	sed -i "s/ftp.$Country.debian.org/ftp.debian.org/g" /etc/apt/sources.list
 		
 	echo "Retrying 'apt-get update' ..."
 	echo " "
