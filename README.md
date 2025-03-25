@@ -1,109 +1,159 @@
-# OSX-PROXMOX - Run macOS on ANY Computer - AMD & Intel
+<div align="center">
+  
+# 🚀 OSX-PROXMOX - Run macOS on ANY Computer (AMD & Intel)
 
-Install `** FRESH/CLEAN **` Proxmox VE v7.0.XX ~ 8.2.XX - Next, Next & Finish (NNF).
+![GitHub stars](https://img.shields.io/github/stars/luchina-gabriel/osx-proxmox?style=flat-square)
+![GitHub forks](https://img.shields.io/github/forks/luchina-gabriel/OSX-PROXMOX?style=flat-square)
+![GitHub license](https://img.shields.io/github/license/luchina-gabriel/osx-proxmox?style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/luchina-gabriel/osx-proxmox?style=flat-square)
 
-Open Proxmox Web Console -> Datacenter > NAME OF YOUR HOST > Shell.
+</div>
 
-Copy, paste and execute (code below).
+![image](https://github.com/user-attachments/assets/4e9027d1-6bf8-464c-8ee4-b85b97da6c7f)
 
-Voilà, install macOS! This is really and magic **easiest way**!
-![overview](./Artefacts/proxmox-screen.png)
-## COPY & PASTE - in shell of Proxmox (for Install or Update this solution)
 
-```
+Easily install macOS on Proxmox VE with just a few steps! This guide provides the simplest and most effective way to set up macOS on Proxmox, whether you're using AMD or Intel hardware.
+
+---
+
+## 🛠 Installation Guide
+
+1. Install a **FRESH/CLEAN** version of Proxmox VE (v7.0.XX ~ 8.2.XX) - just follow the Next, Next & Finish (NNF) approach.
+2. Open the **Proxmox Web Console** → Navigate to `Datacenter > YOUR_HOST_NAME > Shell`.
+3. Copy, paste, and execute the command below:
+
+```bash
 /bin/bash -c "$(curl -fsSL https://install.osx-proxmox.com)"
 ```
 
-## For install EFI Package in macOS, first disable Gatekeeper
+🎉 Voilà! You can now install macOS!
 
-```
+![overview](./Artefacts/proxmox-screen.png)
+
+---
+
+## 🔧 Additional Configuration
+
+### Install EFI Package in macOS (Disable Gatekeeper First)
+
+```bash
 sudo spctl --master-disable
 ```
 
-## Versions of macOS Supported
-* macOS High Sierra - 10.13
-* macOS Mojave - 10.14
-* macOS Catalina - 10.15
-* macOS Big Sur - 11
-* macOS Monterey - 12
-* macOS Ventura - 13
-* macOS Sonoma - 14
-* macOS Sequoia - 15
+---
 
-## Versions of Proxmox VE Supported
-* v7.0.XX ~ 8.2.XX
+## 🍏 macOS Versions Supported
+✅ macOS High Sierra - 10.13  
+✅ macOS Mojave - 10.14  
+✅ macOS Catalina - 10.15  
+✅ macOS Big Sur - 11  
+✅ macOS Monterey - 12  
+✅ macOS Ventura - 13  
+✅ macOS Sonoma - 14  
+✅ macOS Sequoia - 15  
 
-## Opencore version
-* Oct/2024 - 1.0.2 Added support to macOS Sequoia
+---
 
-## Cloud Support (Yes, install your Hackintosh in Cloud Environment)
-- [VultR](https://www.vultr.com/?ref=9035565-8H)
-- [Vídeo/Tutorial](https://youtu.be/8QsMyL-PNrM), please activate captions!
+## 🖥 Proxmox VE Versions Supported
+✅ v7.0.XX ~ 8.2.XX
 
-## Disclaimer
+### 🔄 OpenCore Version
+- **Oct/2024 - 1.0.2** → Added support for macOS Sequoia
 
-- FOR DEV/STUDENT/TEST ONLY PURPOSES.
-- I'm not responsible for any problem and/or equipment damage or loss of files. 
-- Always back up everything before any changes to your computer.
+---
 
-## Requirements
+## ☁️ Cloud Support (Run Hackintosh in the Cloud!)
+- [🌍 VultR](https://www.vultr.com/?ref=9035565-8H)
+- [📺 Video Tutorial](https://youtu.be/8QsMyL-PNrM) (Enable captions for better understanding)
 
-Since Monterey, your host must have a working TSC (timestamp counter), because otherwise if you give the VM more than one core, macOS will observe the skew between cores and **kernel/memory panic** when it sees time ticking backwards. To check this, on Proxmox run:
+---
 
-```
+## ⚠️ Disclaimer
+
+🚨 **FOR DEVELOPMENT, STUDENT, AND TESTING PURPOSES ONLY.**
+
+I am **not responsible** for any issues, damage, or data loss. Always back up your system before making any changes.
+
+---
+
+## 📌 Requirements
+
+Since macOS Monterey, your host must have a **working TSC (timestamp counter)**. Otherwise, if you assign multiple cores to the VM, macOS may **crash due to time inconsistencies**. To check if your host is compatible, run the following command in Proxmox:
+
+```bash
 dmesg | grep -i -e tsc -e clocksource
-...
-# for working host must be:
-...
-clocksource: Switched to clocksource tsc
-...
+```
 
-# for broken host could be:
+### ✅ Expected Output (for working hosts):
+```
+clocksource: Switched to clocksource tsc
+```
+
+### ❌ Problematic Output (for broken hosts):
+```
 tsc: Marking TSC unstable due to check_tsc_sync_source failed
 clocksource: Switched to clocksource hpet
 ```
-Below is a possible workaround from here: https://www.nicksherlock.com/2022/10/installing-macos-13-ventura-on-proxmox/comment-page-1/#comment-55532
 
-1. Try to turn off “ErP mode” or any C state power saving modes your BIOS supports and poweroff/poweron device (including physical cable). It could help host OS to init TSC correctly, but no guarantee.
-2. Or try to activate TSC force in GRUB by adding boot flags `clocksource=tsc tsc=reliable` in the `GRUB_CMDLINE_LINUX_DEFAULT` and call `update-grub`. In this case host OS probably could work unstable in some cases.
-3. Check the current TSC by call `cat /sys/devices/system/clocksource/clocksource0/current_clocksource` must be `tsc`.
+### 🛠 Possible Fixes
+1. Disable "ErP mode" and **all C-state power-saving modes** in your BIOS. Then power off your machine completely and restart.
+2. Try forcing TSC in GRUB:
+   - Edit `/etc/default/grub` and add:
+     ```bash
+     clocksource=tsc tsc=reliable
+     ```
+   - Run `update-grub` and reboot (This may cause instability).
+3. Verify the TSC clock source:
+   ```bash
+   cat /sys/devices/system/clocksource/clocksource0/current_clocksource
+   ```
+   The output **must be `tsc`**.
 
-## Troubleshooting
+[Read More](https://www.nicksherlock.com/2022/10/installing-macos-13-ventura-on-proxmox/comment-page-1/#comment-55532)
 
-### High Siearra and below installation issues
+---
 
-To solve error *The Recovery Server Could Not Be Contacted* you need to change the protocol from `https://` to `http://`. To do this, follow:
-- start installation and get error *The Recovery Server Could Not Be Contacted*, hold the window with error opened
-- open Window -> Installer Log
-- search for the line "Failed to load catalog" -> select line in log windows -> Edit -Copy
-- close the error message and return to `macOS Utilities` window
-- open Utilities -> Terminal, right click -> paste
-- edit the pasted data, remove everything except URL, like `https://blablabla.sucatalog`
-- change https -> http
-- adjust the command to be like: nvram IASUCatalogURL="<your HTTP URL here>"
-- press enter, quit Terminal and try to start installation again
+## 🔍 Troubleshooting
 
-After this, no additional ISO needed, HighSierra must be installed well from recovey.
+### ❌ High Sierra & Below - *Recovery Server Could Not Be Contacted*
 
-Here a sample how need to change the error message to the final URL:
+If you encounter this error, you need to switch from **HTTPS** to **HTTP** in the installation URL:
 
-`nIUvram IASUCatalogURL="http://swscan.apple.com/content/catalogs/others/index-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog"`
+1. When the error appears, leave the window open.
+2. Open **Installer Log** (`Window > Installer Log`).
+3. Search for "Failed to load catalog" → Copy the log entry.
+4. Close the error message and return to `macOS Utilities`.
+5. Open **Terminal**, paste the copied data, and **remove everything except the URL** (e.g., `https://example.sucatalog`).
+6. Change `https://` to `http://`.
+7. Run the command:
 
-The solution took from here: https://mrmacintosh.com/how-to-fix-the-recovery-server-could-not-be-contacted-error-high-sierra-recovery-is-still-online-but-broken/
+   ```bash
+   nvram IASUCatalogURL="http://your-http-url.sucatalog"
+   ```
 
+8. Quit Terminal and restart the installation.
 
-## Demonstration (in Portuguese/Brazil)
+[Reference & More Details](https://mrmacintosh.com/how-to-fix-the-recovery-server-could-not-be-contacted-error-high-sierra-recovery-is-still-online-but-broken/)
 
-https://youtu.be/dil6iRWiun0
+---
 
-\* Please use CC with Auto Translate to English for your convenience.
+## 🎥 Demonstration (in Portuguese)
 
-## Credits
+📽️ [Watch on YouTube](https://youtu.be/dil6iRWiun0)  
+*(Enable auto-translate captions for English subtitles!)*
 
-- Opencore/Acidanthera Team
-- Corpnewt for Applications (ProperTree, genSMBIOS, etc)
-- Apple for macOS
-- Proxmox - Excelent and better documentation for Virtualization
+---
 
-## Discord - Universo Hackintosh
-- [Discord](https://discord.universohackintosh.com.br)
+## 🎖 Credits
+
+- **OpenCore/Acidanthera Team** - Open-source bootloader
+- **Corpnewt** - Tools (ProperTree, GenSMBIOS, etc.)
+- **Apple** - macOS
+- **Proxmox** - Fantastic virtualization platform & documentation
+
+---
+
+## 🌎 Join Our Community - Universo Hackintosh Discord
+
+💬 [**Join Here!**](https://discord.universohackintosh.com.br)
+
