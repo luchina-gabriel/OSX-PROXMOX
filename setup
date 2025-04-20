@@ -1712,7 +1712,7 @@ do
 			fi
 
 		fi
-
+		sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/${VM_ID}.conf
 		echo "Virtual machine (${VM_NAME}) created successfully."
 		echo " "
 		echo "Access the Proxmox Web Panel to continue with the installation ..."
