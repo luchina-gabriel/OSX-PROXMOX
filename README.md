@@ -18,7 +18,7 @@ Easily install macOS on Proxmox VE with just a few steps! This guide provides th
 
 ## 🛠 Installation Guide
 
-1. Install a **FRESH/CLEAN** version of Proxmox VE (v7.0.XX ~ 8.2.XX) - just follow the Next, Next & Finish (NNF) approach.
+1. Install a **FRESH/CLEAN** version of Proxmox VE (v7.0.XX ~ 8.3.XX) - just follow the Next, Next & Finish (NNF) approach.
 2. Open the **Proxmox Web Console** → Navigate to `Datacenter > YOUR_HOST_NAME > Shell`.
 3. Copy, paste, and execute the command below:
 
@@ -55,10 +55,10 @@ sudo spctl --master-disable
 ---
 
 ## 🖥 Proxmox VE Versions Supported
-✅ v7.0.XX ~ 8.2.XX
+✅ v7.0.XX ~ 8.3.XX
 
 ### 🔄 OpenCore Version
-- **Oct/2024 - 1.0.2** → Added support for macOS Sequoia
+- **April/2025 - 1.0.4** → Added support for macOS Sequoia
 
 ---
 
