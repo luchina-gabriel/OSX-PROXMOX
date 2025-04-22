@@ -9,9 +9,7 @@
 
 </div>
 
-![image](https://github.com/user-attachments/assets/4e9027d1-6bf8-464c-8ee4-b85b97da6c7f)
-
-
+![pve-web](https://github.com/user-attachments/assets/90935675-f87b-45d2-883d-ac05a96084ab)
 Easily install macOS on Proxmox VE with just a few steps! This guide provides the simplest and most effective way to set up macOS on Proxmox, whether you're using AMD or Intel hardware.
 
 ---
