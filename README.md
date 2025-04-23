@@ -52,9 +52,10 @@ sudo spctl --master-disable
 
 ## 🖥 Proxmox VE Versions Supported
 ✅ v7.0.XX ~ 8.3.XX
+⚠️ v8.4.XX is not supported yet
 
 ### 🔄 OpenCore Version
-- **April/2025 - 1.0.4** → Added support for macOS Sequoia
+- **April/2025 - 1.0.4** → with SIP Enabled, DMG only signed by Apple and all features of securities
 
 ---
 
