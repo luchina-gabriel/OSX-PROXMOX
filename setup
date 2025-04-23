@@ -332,8 +332,11 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-highsierra.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-highsierra.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
@@ -372,8 +375,11 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-highsierra.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-highsierra.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
@@ -522,8 +528,11 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-mojave.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-mojave.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
 
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
@@ -562,9 +571,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-mojave.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-mojave.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -712,9 +724,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			 --ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			 --ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-catalina.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -752,9 +767,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-catalina.iso,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-catalina.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -902,9 +920,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-bigsur.iso,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-bigsur.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -942,9 +963,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-bigsur.iso,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-bigsur.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -1092,9 +1116,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-monterey.iso,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-monterey.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -1132,9 +1159,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-monterey.iso,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-monterey.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -1282,9 +1312,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-ventura.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -1322,9 +1355,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-ventura.iso,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-ventura.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -1472,9 +1508,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-sonoma.iso,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-sonoma.iso,media=cdrom,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -1512,9 +1551,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-sonoma.iso,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-sonoma.iso,media=cdrom,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -1662,9 +1704,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-sequoia.iso,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-sequoia.iso,media=cdrom,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
@@ -1702,9 +1747,12 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,cache=unsafe,size=80M \
-			--ide2 local:iso/recovery-sequoia.iso,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide2 local:iso/recovery-sequoia.iso,media=cdrom,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
 
+			## Fix media cdrom to disk, because PVE 8.4
+			sed -i 's/media=cdrom/media=disk/' /etc/pve/qemu-server/$VM_ID.conf
+			
 			## Fix for QEMU 6.1 for PCI Passthrough
 			if [ `qemu-system-x86_64 --version | grep -e "6.1" -e "6.2" -e "7.1" -e "7.2" -e "8.0" -e "8.1" -e "9.0.2" -e "9.2.0" | wc -l` -eq 1 ]
 			then
