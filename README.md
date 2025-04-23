@@ -51,7 +51,7 @@ sudo spctl --master-disable
 ---
 
 ## 🖥 Proxmox VE Versions Supported
-✅ v7.0.XX ~ 8.3.XX
+✅ v7.0.XX ~ 8.3.XX <br>
 ⚠️ v8.4.XX is not supported yet
 
 ### 🔄 OpenCore Version
