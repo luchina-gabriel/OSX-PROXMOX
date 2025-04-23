@@ -25,7 +25,7 @@ Easily install macOS on Proxmox VE with just a few steps! This guide provides th
 ```
 
 🎉 Voilà! You can now install macOS!
-![osx-terminal](https://github.com/user-attachments/assets/57d87b1e-8254-446d-811e-d0030ca936ae)
+![osx-terminal](https://github.com/user-attachments/assets/ea81b920-f3e2-422e-b1ff-0d9045adc55e)
 ---
 
 ## 🔧 Additional Configuration
