@@ -332,7 +332,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-highsierra.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -375,7 +375,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-highsierra.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -528,7 +528,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-mojave.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -571,7 +571,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--sata0 ${STORAGECRTVM}:${SIZEDISK},cache=none,ssd=1,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-mojave.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -724,7 +724,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			 --ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			 --ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-catalina.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -767,7 +767,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-catalina.iso,media=cdrom,cache=unsafe,size=800M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -920,7 +920,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-bigsur.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -963,7 +963,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-bigsur.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -1116,7 +1116,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-monterey.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -1159,7 +1159,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-monterey.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -1312,7 +1312,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-ventura.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -1355,7 +1355,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-ventura.iso,media=cdrom,cache=unsafe,size=1024M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -1508,7 +1508,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-sonoma.iso,media=cdrom,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -1551,7 +1551,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-sonoma.iso,media=cdrom,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -1704,7 +1704,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-sequoia.iso,media=cdrom,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
@@ -1747,7 +1747,7 @@ do
 			--vmgenid 1 \
 			--scsihw virtio-scsi-pci \
 			--virtio0 ${STORAGECRTVM}:${SIZEDISK},cache=none,discard=on \
-			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=80M \
+			--ide0 local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M \
 			--ide2 local:iso/recovery-sequoia.iso,media=cdrom,cache=unsafe,size=1450M > ${LOGFILE} 2>> ${LOGFILE}
 
 			## Fix media cdrom to disk, because PVE 8.4
