@@ -131,6 +131,13 @@ If you encounter this error, you need to switch from **HTTPS** to **HTTP** in th
 
 [Reference & More Details](https://mrmacintosh.com/how-to-fix-the-recovery-server-could-not-be-contacted-error-high-sierra-recovery-is-still-online-but-broken/)
 
+### ❌ Problem for GPU Passthrough
+
+In some environments it is necessary to segment the IOMMU Groups to be able to pass the GPU to the VM.
+
+1. Add the content `pcie_acs_override=downstream,multifunction pci=nommconf` in the file `/etc/default/grub` at the end of the line `GRUB_CMDLINE_LINUX_DEFAULT`;
+2. After changing the grub file, run the command `update-grub` and reboot your PVE.
+
 ---
 
 ## 🎥 Demonstration (in Portuguese)
