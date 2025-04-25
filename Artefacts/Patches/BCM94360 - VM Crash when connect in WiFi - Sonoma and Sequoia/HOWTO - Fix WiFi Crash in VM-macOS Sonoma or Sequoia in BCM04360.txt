@@ -1,0 +1,18 @@
+macOS/VM Crash when try connect in WiFi [for BCM94360, in macOS Sonoma or Sequoia]
+
+1. Run osx-setup and choose option '200 - Add Promox VE NO Subscription repository'
+
+2. Install Kernel/PVE pve-kernel-5.15.53-1-pve
+
+apt update
+apt install pve-kernel-5.15.53-1-pve
+
+3. Add in the proxmox-boot-tool and pin kernel version '5.15.53-1-pve'
+
+proxmox-boot-tool kernel list
+proxmox-boot-tool kernel add 5.15.53-1-pve
+proxmox-boot-tool refresh
+proxmox-boot-tool kernel pin 5.15.53-1-pve
+proxmox-boot-tool kernel list
+
+4. Reboot and try connect WiFi in macOS
