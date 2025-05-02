@@ -225,7 +225,7 @@ do
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}HIGHSIERRA"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 GB]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
