@@ -48,7 +48,7 @@ SCRIPT_DIR=/root/OSX-PROXMOX
 LOGDIR=${SCRIPT_DIR}/logs
 TMPDIR=${SCRIPT_DIR}/tmp
 ISODIR=/var/lib/vz/template/iso/
-HACKPXVERSION="20250423T1631"
+HACKPXVERSION="20250502T1020"
 OCVERSION="1.0.4"
 DEFAULT_VM_PREFIX="HACK-"
 DEFAULT_RAM_SIZE=4096
@@ -421,7 +421,7 @@ do
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}MOJAVE"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 GB]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -617,7 +617,7 @@ do
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}CATALINA"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 GB]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -813,7 +813,7 @@ do
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}BIG-SUR"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 GB]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -1009,7 +1009,7 @@ do
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}MONTEREY"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 GB]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -1205,7 +1205,7 @@ do
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}VENTURA"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 GB]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -1401,7 +1401,7 @@ do
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}SONOMA"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 GB]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
@@ -1597,7 +1597,7 @@ do
 		if [ -z $VM_NAME ]; then VM_NAME="${DEFAULT_VM_PREFIX}SEQUOIA"; fi;
 
 		echo " "
-		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 Gb]: "
+		echo -n "Enter a disk size [INTEGER] [or ENTER for Default: 64 GB]: "
 		read SIZEDISK
 
 		if [ -z $SIZEDISK ]; then SIZEDISK=64; fi;
