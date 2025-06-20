@@ -133,6 +133,8 @@ If you encounter this error, you need to switch from **HTTPS** to **HTTP** in th
 
 ### ❌ Problem for GPU Passthrough
 
+If you see an Apple logo and the bar doesn’t move on your external display, you need to disable “above 4g decoding” in the motherboard’s BIOS.
+
 In some environments it is necessary to segment the IOMMU Groups to be able to pass the GPU to the VM.
 
 1. Add the content `pcie_acs_override=downstream,multifunction pci=nommconf` in the file `/etc/default/grub` at the end of the line `GRUB_CMDLINE_LINUX_DEFAULT`;
