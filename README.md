@@ -61,6 +61,7 @@ sudo spctl --master-disable
 ## ☁️ Cloud Support (Run Hackintosh in the Cloud!)
 - [🌍 VultR](https://www.vultr.com/?ref=9035565-8H)
 - [📺 Video Tutorial](https://youtu.be/8QsMyL-PNrM) (Enable captions for better understanding)
+- Now has configurable bridges, and can add as many bridges and sprcify the subnet for them.
 
 ---
 

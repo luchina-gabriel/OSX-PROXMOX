@@ -3,45 +3,80 @@
 #########################################################################################################################
 #
 # Script: install
-#
-# https://luchina.com.br
+# Purpose: Install OSX-PROXMOX
+# Source: https://luchina.com.br
 #
 #########################################################################################################################
 
-clear
+# Exit on any error
+set -e
 
-if [ -e /root/OSX-PROXMOX ]; then rm -rf /root/OSX-PROXMOX; fi;
-if [ -e /etc/apt/sources.list.d/pve-enterprise.list ]; then rm -rf /etc/apt/sources.list.d/pve-enterprise.list; fi;
-if [ -e /etc/apt/sources.list.d/ceph.list ]; then rm -rf /etc/apt/sources.list.d/ceph.list; fi;
-# Is this better?
-echo "Waiting to install OSX-PROXMOX..."
-echo " "
-
-apt update > /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
-
-if [ $? -ne 0 ]
-then 
-	echo " "
-	echo "Error with 'apt-get update' ..."
-	echo "Trying to change /etc/apt/sources.list"
-	echo " "
-	# Always using a Brazilian server will not be fast...
- 	# I suggest using the users home country, As it will always be faster.
- 	Country=$(curl -s https://ipinfo.io/country | tr '[:upper:]' '[:lower:]')
-	sed -i "s/ftp.$Country.debian.org/ftp.debian.org/g" /etc/apt/sources.list
-		
-	echo "Retrying 'apt-get update' ..."
-	echo " "
-
-	apt-get update >> /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
-	
-	if [ $? -ne 0 ]; then echo "Error with 'apt-get update' ..."; exit; fi		
+# Check if running as root
+if [ "$EUID" -ne 0 ]; then
+	echo "This script must be run as root."
+	exit 1
 fi
 
-apt install git -y >> /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
+# Define log file
+LOG_FILE="/root/install-osx-proxmox.log"
 
-git clone https://github.com/luchina-gabriel/OSX-PROXMOX.git >> /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
+# Function to log messages
+log_message() {
+    echo "$1" | tee -a "$LOG_FILE"
+}
 
-if [ ! -e /root/OSX-PROXMOX ]; then mkdir -p /root/OSX-PROXMOX; fi;
+# Function to check command success
+check_status() {
+    if [ $? -ne 0 ]; then
+        log_message "Error: $1"
+        exit 1
+    fi
+}
 
-/root/OSX-PROXMOX/setup
+# Clear screen
+clear
+
+# Clean up existing files
+log_message "Cleaning up existing files..."
+[ -d "/root/OSX-PROXMOX" ] && rm -rf "/root/OSX-PROXMOX"
+[ -f "/etc/apt/sources.list.d/pve-enterprise.list" ] && rm -f "/etc/apt/sources.list.d/pve-enterprise.list"
+[ -f "/etc/apt/sources.list.d/ceph.list" ] && rm -f "/etc/apt/sources.list.d/ceph.list"
+
+log_message "Preparing to install OSX-PROXMOX..."
+
+# Update package lists
+log_message "Updating package lists..."
+apt-get update >> "$LOG_FILE" 2>&1
+if [ $? -ne 0 ]; then
+    log_message "Initial apt-get update failed. Attempting to fix sources..."
+    
+    # Use main Debian mirror instead of country-specific
+    sed -i 's/ftp\.[a-z]\{2\}\.debian\.org/ftp.debian.org/g' /etc/apt/sources.list
+    
+    log_message "Retrying apt-get update..."
+    apt-get update >> "$LOG_FILE" 2>&1
+    check_status "Failed to update package lists after source modification"
+fi
+
+# Install git
+log_message "Installing git..."
+apt-get install -y git >> "$LOG_FILE" 2>&1
+check_status "Failed to install git"
+
+# Clone repository
+log_message "Cloning OSX-PROXMOX repository..."
+git clone https://github.com/luchina-gabriel/OSX-PROXMOX.git /root/OSX-PROXMOX >> "$LOG_FILE" 2>&1
+check_status "Failed to clone repository"
+
+# Ensure directory exists and setup is executable
+if [ -f "/root/OSX-PROXMOX/setup" ]; then
+    chmod +x "/root/OSX-PROXMOX/setup"
+    log_message "Running setup script..."
+    /root/OSX-PROXMOX/setup 2>&1 | tee -a "$LOG_FILE" 
+    check_status "Failed to run setup script"
+else
+    log_message "Error: Setup script not found in /root/OSX-PROXMOX"
+    exit 1
+fi
+
+log_message "Installation completed successfully"
