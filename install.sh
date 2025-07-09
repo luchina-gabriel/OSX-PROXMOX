@@ -1,47 +1,106 @@
 #!/bin/bash
 
-#########################################################################################################################
-#
-# Script: install
-#
-# https://luchina.com.br
-#
-#########################################################################################################################
+############################################################################################################
+# Script: install.sh
+# Purpose: Automated setup for OSX-PROXMOX environment on Proxmox VE
+# Source: https://luchina.com.br
+# Author: luchina-gabriel (https://github.com/luchina-gabriel/OSX-PROXMOX)
+############################################################################################################
 
 clear
 
-if [ -e /root/OSX-PROXMOX ]; then rm -rf /root/OSX-PROXMOX; fi;
-if [ -e /etc/apt/sources.list.d/pve-enterprise.list ]; then rm -rf /etc/apt/sources.list.d/pve-enterprise.list; fi;
-if [ -e /etc/apt/sources.list.d/ceph.list ]; then rm -rf /etc/apt/sources.list.d/ceph.list; fi;
-# Is this better?
-echo "Waiting to install OSX-PROXMOX..."
-echo " "
+# Function to render a simple progress bar
+progress_bar() {
+    local percent=$1
+    local bar=""
+    for ((i=0; i<percent/2; i++)); do bar+="█"; done
+    printf "\rProgress: [%-50s] %d%%" "$bar" "$percent"
+}
 
-apt update > /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
+echo "Initializing OSX-PROXMOX installation..."
+sleep 1
 
-if [ $? -ne 0 ]
-then 
-	echo " "
-	echo "Error with 'apt-get update' ..."
-	echo "Trying to change /etc/apt/sources.list"
-	echo " "
-	# Always using a Brazilian server will not be fast...
- 	# I suggest using the users home country, As it will always be faster.
- 	Country=$(curl -s https://ipinfo.io/country | tr '[:upper:]' '[:lower:]')
-	sed -i "s/ftp.$Country.debian.org/ftp.debian.org/g" /etc/apt/sources.list
-		
-	echo "Retrying 'apt-get update' ..."
-	echo " "
+TOTAL_STEPS=8
+CURRENT_STEP=0
 
-	apt-get update >> /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
-	
-	if [ $? -ne 0 ]; then echo "Error with 'apt-get update' ..."; exit; fi		
+# Progress bar updater
+update_progress() {
+    CURRENT_STEP=$((CURRENT_STEP + 1))
+    progress_bar $((CURRENT_STEP * 100 / TOTAL_STEPS))
+    sleep 0.3
+}
+
+# Initialize progress display
+progress_bar 0
+sleep 1
+
+# Step 1: Cleanup previous installations
+echo "[*] Cleaning up previous installation (if any)..."
+rm -rf /root/OSX-PROXMOX
+rm -f /etc/apt/sources.list.d/pve-enterprise.list
+rm -f /etc/apt/sources.list.d/ceph.list
+update_progress
+
+# Step 2: Update system packages
+echo -e "\n[*] Updating package lists..."
+apt update > /tmp/install-osx-proxmox.log 2>&1
+if [ $? -ne 0 ]; then
+    echo "[!] 'apt update' failed. Attempting to fix mirrors..."
+
+    # Auto-detect user's country for better mirror selection
+    COUNTRY=$(curl -s https://ipinfo.io/country | tr '[:upper:]' '[:lower:]')
+    MIRROR="ftp.${COUNTRY}.debian.org"
+
+    if ! grep -q "$MIRROR" /etc/apt/sources.list; then
+        echo "[*] Updating Debian mirror in sources.list..."
+        sed -i "s|$MIRROR|ftp.debian.org|g" /etc/apt/sources.list
+    fi
+
+    echo "[*] Retrying 'apt update'..."
+    apt update >> /tmp/install-osx-proxmox.log 2>&1
+    if [ $? -ne 0 ]; then
+        echo "[!] Failed to update package list even after adjusting mirrors. Aborting."
+        exit 1
+    fi
 fi
+update_progress
 
-apt install git -y >> /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
+# Step 3: Install Git
+echo "[*] Installing Git..."
+apt install -y git >> /tmp/install-osx-proxmox.log 2>&1
+update_progress
 
-git clone https://github.com/luchina-gabriel/OSX-PROXMOX.git >> /tmp/install-osx-proxmox.log 2>> /tmp/install-osx-proxmox.log
+# Step 4: Clone OSX-PROXMOX repository
+echo "[*] Cloning OSX-PROXMOX repository..."
+git clone https://github.com/luchina-gabriel/OSX-PROXMOX.git /root/OSX-PROXMOX >> /tmp/install-osx-proxmox.log 2>&1
+if [ $? -ne 0 ]; then
+    echo "[!] Failed to clone the repository. Check your internet connection or GitHub availability."
+    exit 1
+fi
+update_progress
 
-if [ ! -e /root/OSX-PROXMOX ]; then mkdir -p /root/OSX-PROXMOX; fi;
+# Step 5: Validate setup script presence
+if [ ! -f /root/OSX-PROXMOX/setup ]; then
+    echo "[!] Setup script not found in the repository. Aborting installation."
+    exit 1
+fi
+update_progress
 
-/root/OSX-PROXMOX/setup
+# Step 6: Make the setup script executable
+chmod +x /root/OSX-PROXMOX/setup
+update_progress
+
+# Step 7: Run the setup
+echo -e "\n[*] Executing OSX-PROXMOX setup script..."
+cd /root/OSX-PROXMOX && ./setup
+if [ $? -ne 0 ]; then
+    echo -e "\n[!] An error occurred during setup. Please check the log at: /tmp/install-osx-proxmox.log"
+    exit 1
+fi
+update_progress
+
+# Step 8: Finalization
+echo -e "\n[+] OSX-PROXMOX setup completed successfully!"
+update_progress
+
+echo -e "\nInstallation finished.\n"
