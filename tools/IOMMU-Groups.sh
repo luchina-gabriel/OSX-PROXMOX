@@ -5,15 +5,15 @@
 # 
 # Author: Gabriel Luchina
 # https://luchina.com.br
-# 20211118T0010
+# 20250627T2331
 
+#!/bin/bash
 shopt -s nullglob
 
-for group in `ls /sys/kernel/iommu_groups/  | sort -V`
-do
-    echo "IOMMU Group ${group##*/}:"
-    for device in /sys/kernel/iommu_groups/$group/devices/*
-    do
-        echo -e "\t$(lspci -nns ${device##*/})"
+for iommu_group in $(ls /sys/kernel/iommu_groups/ | sort -V); do
+    echo "IOMMU Group ${iommu_group}:"
+    for pci_device in /sys/kernel/iommu_groups/$iommu_group/devices/*; do
+        echo -e "\t$(lspci -nns ${pci_device##*/})"
     done
 done
+
