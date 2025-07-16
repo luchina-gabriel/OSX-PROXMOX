@@ -36,7 +36,6 @@ set -e
 SCRIPT_DIR="/root/OSX-PROXMOX"
 LOGDIR="${SCRIPT_DIR}/logs"
 TMPDIR="${SCRIPT_DIR}/tmp"
-ISODIR="/var/lib/vz/template/iso"
 HACKPXVERSION="2025.06.27"
 OCVERSION="1.0.4"
 DEFAULT_VM_PREFIX="HACK-"
@@ -126,7 +125,7 @@ version_compare() {
   return 0
 }
 
-# Function to get available storages
+# Function to get available storages for VMs
 get_available_storages() {
   local logfile="${LOGDIR}/storage-detection.log"
   local storages=()
@@ -150,6 +149,94 @@ get_available_storages() {
   [[ ${#storages[@]} -eq 0 || -z "$default_storage" ]] && log_and_exit "No active storages found" "$logfile"
   for storage in "${storages[@]}"; do echo "$storage"; done
   echo "$default_storage"
+}
+
+# Function to get available storages for ISOs
+get_available_iso_storages() {
+  local logfile="${LOGDIR}/iso-storage-detection.log"
+  local storages=()
+  local max_space=0
+  local default_storage=""
+
+  local storage_list
+  storage_list=$(pvesm status --content iso 2>>"$logfile") || log_and_exit "Failed to retrieve ISO storage list" "$logfile"
+  while IFS= read -r line; do
+    [[ "$line" =~ ^Name.* ]] && continue
+    read -r storage_name type status total used avail percent <<< "$line"
+    [[ "$status" != "active" || ! "$avail" =~ ^[0-9]+$ || "$avail" -eq 0 ]] && continue
+    local avail_space_gb=$(echo "scale=2; $avail / 1024 / 1024" | bc 2>/dev/null)
+    storages+=("$storage_name|$avail|$avail_space_gb")
+    if [[ $(echo "$avail > $max_space" | bc -l) -eq 1 ]]; then
+      max_space=$avail
+      default_storage="$storage_name"
+    fi
+  done <<< "$storage_list"
+
+  [[ ${#storages[@]} -eq 0 || -z "$default_storage" ]] && log_and_exit "No active ISO storages found" "$logfile"
+  for storage in "${storages[@]}"; do echo "$storage"; done
+  echo "$default_storage"
+}
+
+# Function to ensure jq is installed
+ensure_jq_dependency() {
+  local logfile="${LOGDIR}/jq-dependency.log"
+  if ! command -v jq >/dev/null 2>&1; then
+    echo "Installing jq..." | tee -a "$logfile"
+    apt-get update >>"$logfile" 2>&1 || log_and_exit "Failed to update apt" "$logfile"
+    apt-get install -y jq >>"$logfile" 2>&1 || log_and_exit "Failed to install jq" "$logfile"
+  fi
+}
+
+# Function to set ISODIR based on selected ISO storage
+set_isodir() {
+  local logfile="${LOGDIR}/iso-storage-detection.log"
+  ensure_jq_dependency
+  local storage_output=$(get_available_iso_storages) || { echo "Failed to retrieve ISO storages"; read -n 1 -s; return 1; }
+  local storages=() default_storage=""
+  while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    [[ -z "$default_storage" && ! "$line" =~ \| ]] && default_storage="$line" || storages+=("$line")
+  done <<< "$storage_output"
+
+  if ((${#storages[@]} == 0)); then
+    log_and_exit "No ISO storages found" "$logfile"
+  fi
+
+  if ((${#storages[@]} == 1)); then
+    storage_iso="${storages[0]%%|*}"
+    echo "Using ISO storage: $storage_iso"
+  else
+    while true; do
+      echo "Available ISO storages:"
+      for s in "${storages[@]}"; do
+        storage_name="${s%%|*}"
+        avail_space="${s##*|}"
+        echo "  - $storage_name ($avail_space GB)"
+      done
+      read -rp "ISO Storage [${default_storage}]: " storage_iso
+      storage_iso=${storage_iso:-$default_storage}
+      local valid=false
+      for s in "${storages[@]}"; do
+        if [[ "$storage_iso" == "${s%%|*}" ]]; then
+          valid=true
+          break
+        fi
+      done
+      if $valid; then
+        echo "Selected ISO storage: $storage_iso"
+        break
+      else
+        echo "Invalid ISO storage. Please try again."
+      fi
+    done
+  fi
+
+  local storage_iso_path
+  storage_iso_path=$(pvesh get /storage/"${storage_iso}" --output-format json | jq -r '.path') || log_and_exit "Failed to retrieve path for storage $storage_iso" "$logfile"
+  [[ -z "$storage_iso_path" ]] && log_and_exit "Storage path for $storage_iso is empty" "$logfile"
+  ISODIR="${storage_iso_path}/template/iso/"
+  mkdir -p "$ISODIR" || log_and_exit "Failed to create ISODIR: $ISODIR" "$logfile"
+  echo "ISODIR set to: $ISODIR" | tee -a "$logfile"
 }
 
 # Function to get available bridges
@@ -205,7 +292,7 @@ setup_prerequisites() {
     sed -i "s/ftp.$country.debian.org/ftp.debian.org/g" /etc/apt/sources.list
     apt-get update >>"$logfile" 2>&1 || log_and_exit "Failed to update apt" "$logfile"
   }
-  apt-get install -y vim unzip zip sysstat parted wget iptraf git htop jq ipcalc >>"$logfile" 2>&1 || log_and_exit "Failed to install packages" "$logfile"
+  apt-get install -y vim unzip zip sysstat parted wget iptraf git htop ipcalc >>"$logfile" 2>&1 || log_and_exit "Failed to install packages" "$logfile"
   sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/g' /etc/default/grub
   local grub_cmd="quiet"
   if [[ $OSX_PLATFORM == "AMD" ]]; then
@@ -287,8 +374,8 @@ create_vm() {
     --onboot 0 --ostype other --sockets 1 --start 0 --tablet 1 \
     --vga vmware --vmgenid 1 --scsihw virtio-scsi-pci \
     --"$disk_type" "${storage}:${disk_size},cache=none,discard=on" \
-    --ide0 "local:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M" \
-    --ide2 "local:iso/recovery-${version_name,,}.iso,media=cdrom,cache=unsafe,size=${iso_size}" >>"$logfile" 2>&1 || log_and_exit "Failed to create VM" "$logfile"
+    --ide0 "${storage_iso}:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M" \
+    --ide2 "${storage_iso}:iso/recovery-${version_name,,}.iso,media=cdrom,cache=unsafe,size=${iso_size}" >>"$logfile" 2>&1 || log_and_exit "Failed to create VM" "$logfile"
   sed -i 's/media=cdrom/media=disk/' "/etc/pve/qemu-server/$vm_id.conf" >>"$logfile" 2>&1 || log_and_exit "Failed to update VM config" "$logfile"
 
   echo "VM ($vm_name) created successfully" | tee -a "$logfile"
@@ -947,6 +1034,12 @@ main_menu() {
 # Main script
 clear
 check_proxmox_version
+set_isodir
+# Check if OpenCore ISO exists, and install if not in the ISODIR.
+if [ ! -f "${ISODIR}/opencore-osx-proxmox-vm.iso" ]; then
+  update_opencore_iso
+fi
+sleep 4
 OSX_PLATFORM=$(detect_cpu_platform)
 init_dirs
 [[ ! -e /etc/pve/qemu-server/.osx-proxmox ]] && setup_prerequisites
