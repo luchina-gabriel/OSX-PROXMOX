@@ -271,7 +271,15 @@ init_dirs() {
 
 # Function to check Proxmox version
 check_proxmox_version() {
-  pveversion | grep -qE "pve-manager/[7,8]" || log_and_exit "Unsupported Proxmox version. Use 7.x or 8.x" "${LOGDIR}/proxmox-version.log"
+  local version_log="${LOGDIR}/proxmox-version.log"
+  if ! pveversion | grep -qE "pve-manager/[7-9]"; then
+    log_and_exit "Unsupported Proxmox version. Use 7.x, 8.x, or 9.x" "$version_log"
+  fi
+
+  if pveversion | grep -q "pve-manager/9"; then
+    echo "Proxmox 9 is in preliminary testing. Use at your own risk."
+    sleep 5
+  fi
 }
 
 # Function to detect CPU platform
@@ -302,7 +310,7 @@ setup_prerequisites() {
     grub_cmd="quiet intel_iommu=on iommu=pt video=vesafb:off video=efifb:off"
     printf "options kvm-intel nested=Y\n" > /etc/modprobe.d/kvm-intel.conf
   fi
-  pveversion | grep -qE "pve-manager/(7.[2-4]|8.[0-4])" && grub_cmd="$grub_cmd initcall_blacklist=sysfb_init"
+  pveversion | grep -qE "pve-manager/(7.[2-4]|8.[0-4]|9)" && grub_cmd="$grub_cmd initcall_blacklist=sysfb_init"
   sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"$grub_cmd\"/g" /etc/default/grub
   printf "vfio\nvfio_iommu_type1\nvfio_pci\nvfio_virqfd\n" >> /etc/modules
   printf "blacklist nouveau\nblacklist nvidia\nblacklist snd_hda_codec_hdmi\nblacklist snd_hda_intel\nblacklist snd_hda_codec\nblacklist snd_hda_core\nblacklist radeon\nblacklist amdgpu\n" >> /etc/modprobe.d/pve-blacklist.conf
@@ -393,6 +401,9 @@ add_no_subscription_repo() {
     printf "deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription\n" > /etc/apt/sources.list.d/pve-no-sub.list
   elif pveversion | grep -q "pve-manager/[8]"; then
     printf "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription\n" > /etc/apt/sources.list.d/pve-no-sub.list
+  elif pveversion | grep -q "pve-manager/[9]"; then
+    printf "Types: deb\nURIs: http://download.proxmox.com/debian/pve\nSuites: trixie\nComponents: pve-no-subscription\nSigned-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
+\n" > /etc/apt/sources.list.d/pve-no-sub.sources
   else
     log_and_exit "Unsupported Proxmox version" "$logfile"
   fi
@@ -409,7 +420,7 @@ update_opencore_iso() {
   wget -q https://github.com/luchina-gabriel/OSX-PROXMOX/raw/main/EFI/opencore-osx-proxmox-vm.iso >>"$logfile" 2>&1 || log_and_exit "Failed to download OpenCore ISO" "$logfile"
   cd ~
   echo "OpenCore ISO updated" | tee -a "$logfile"
-  read -n 1 -sp "Press any key to return to menu..."
+  sleep 5
 }
 
 # Function to clear recovery images
@@ -1033,6 +1044,7 @@ main_menu() {
 
 # Main script
 clear
+init_dirs
 check_proxmox_version
 set_isodir
 # Check if OpenCore ISO exists, and install if not in the ISODIR.
@@ -1041,6 +1053,5 @@ if [ ! -f "${ISODIR}/opencore-osx-proxmox-vm.iso" ]; then
 fi
 sleep 4
 OSX_PLATFORM=$(detect_cpu_platform)
-init_dirs
 [[ ! -e /etc/pve/qemu-server/.osx-proxmox ]] && setup_prerequisites
 main_menu
