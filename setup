@@ -35,6 +35,7 @@ set -e
 # Constants
 SCRIPT_DIR="/root/OSX-PROXMOX"
 LOGDIR="${SCRIPT_DIR}/logs"
+MAIN_LOG="${LOGDIR}/main.log"
 TMPDIR="${SCRIPT_DIR}/tmp"
 HACKPXVERSION="2025.06.27"
 OCVERSION="1.0.4"
@@ -60,15 +61,26 @@ declare -A MACOS_CONFIG=(
   ["8"]="Sequoia|15|Mac-7BA5B2D9E42DDD94|00000000000000000|1450M|virtio0"
 )
 
+# Display and log function
+display_and_log() {
+  local message="$1"
+  local specific_logfile="$2"
+  echo "$message"
+  echo "$(date '+%Y-%m-%d %H:%M:%S') - $message" >> "$MAIN_LOG"
+  if [[ -n "$specific_logfile" ]]; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $message" >> "$specific_logfile"
+  fi
+}
+
 # Cleanup function for mounts and temp files
 cleanup() {
   local logfile="${LOGDIR}/cleanup.log"
   if mountpoint -q /mnt/APPLE 2>/dev/null; then
-    umount /mnt/APPLE >>"$logfile" 2>&1 || echo "Failed to unmount /mnt/APPLE" | tee -a "$logfile"
+    umount /mnt/APPLE >>"$logfile" 2>&1 || display_and_log "Failed to unmount /mnt/APPLE" "$logfile"
     rmdir /mnt/APPLE 2>/dev/null
   fi
   if mountpoint -q /mnt/opencore 2>/dev/null; then
-    umount /mnt/opencore >>"$logfile" 2>&1 || echo "Failed to unmount /mnt/opencore" | tee -a "$logfile"
+    umount /mnt/opencore >>"$logfile" 2>&1 || display_and_log "Failed to unmount /mnt/opencore" "$logfile"
     rmdir /mnt/opencore 2>/dev/null
   fi
   losetup -a | grep -q "$TMPDIR" && losetup -d $(losetup -j "$TMPDIR"/* | awk -F: '{print $1}') >>"$logfile" 2>&1
@@ -96,7 +108,7 @@ next_power_of_2() {
 log_and_exit() {
   local message=$1
   local logfile=$2
-  echo "$message" | tee -a "$logfile" >&2
+  display_and_log "$message" "$logfile"
   exit 1
 }
 
@@ -181,7 +193,7 @@ get_available_iso_storages() {
 ensure_jq_dependency() {
   local logfile="${LOGDIR}/jq-dependency.log"
   if ! command -v jq >/dev/null 2>&1; then
-    echo "Installing jq..." | tee -a "$logfile"
+    display_and_log "Installing jq..." "$logfile"
     apt-get update >>"$logfile" 2>&1 || log_and_exit "Failed to update apt" "$logfile"
     apt-get install -y jq >>"$logfile" 2>&1 || log_and_exit "Failed to install jq" "$logfile"
   fi
@@ -191,7 +203,7 @@ ensure_jq_dependency() {
 set_isodir() {
   local logfile="${LOGDIR}/iso-storage-detection.log"
   ensure_jq_dependency
-  local storage_output=$(get_available_iso_storages) || { echo "Failed to retrieve ISO storages"; read -n 1 -s; return 1; }
+  local storage_output=$(get_available_iso_storages) || { display_and_log "Failed to retrieve ISO storages"; read -n 1 -s; return 1; }
   local storages=() default_storage=""
   while IFS= read -r line; do
     [[ -z "$line" ]] && continue
@@ -204,14 +216,14 @@ set_isodir() {
 
   if ((${#storages[@]} == 1)); then
     storage_iso="${storages[0]%%|*}"
-    echo "Using ISO storage: $storage_iso"
+    display_and_log "Using ISO storage: $storage_iso" "$logfile"
   else
     while true; do
-      echo "Available ISO storages:"
+      display_and_log "Available ISO storages:" "$logfile"
       for s in "${storages[@]}"; do
         storage_name="${s%%|*}"
         avail_space="${s##*|}"
-        echo "  - $storage_name ($avail_space GB)"
+        display_and_log "  - $storage_name ($avail_space GB)" "$logfile"
       done
       read -rp "ISO Storage [${default_storage}]: " storage_iso
       storage_iso=${storage_iso:-$default_storage}
@@ -223,10 +235,10 @@ set_isodir() {
         fi
       done
       if $valid; then
-        echo "Selected ISO storage: $storage_iso"
+        display_and_log "Selected ISO storage: $storage_iso" "$logfile"
         break
       else
-        echo "Invalid ISO storage. Please try again."
+        display_and_log "Invalid ISO storage. Please try again." "$logfile"
       fi
     done
   fi
@@ -236,7 +248,7 @@ set_isodir() {
   [[ -z "$storage_iso_path" ]] && log_and_exit "Storage path for $storage_iso is empty" "$logfile"
   ISODIR="${storage_iso_path}/template/iso/"
   mkdir -p "$ISODIR" || log_and_exit "Failed to create ISODIR: $ISODIR" "$logfile"
-  echo "ISODIR set to: $ISODIR" | tee -a "$logfile"
+  display_and_log "ISODIR set to: $ISODIR" "$logfile"
 }
 
 # Function to get available bridges
@@ -267,17 +279,22 @@ get_available_bridges() {
 # Function to initialize directories
 init_dirs() {
   mkdir -p "$LOGDIR" "$TMPDIR" || log_and_exit "Failed to create directories" "${LOGDIR}/init-dirs.log"
+  touch "$MAIN_LOG"  # Ensure main log exists
 }
 
 # Function to check Proxmox version
 check_proxmox_version() {
-  local version_log="${LOGDIR}/proxmox-version.log"
-  if ! pveversion | grep -qE "pve-manager/[7-9]"; then
-    log_and_exit "Unsupported Proxmox version. Use 7.x, 8.x, or 9.x" "$version_log"
+  local log_file="${LOGDIR}/proxmox-version.log"
+
+  # Check supported Proxmox versions
+  local version=$(pveversion | grep -oE "pve-manager/[0-9.]+")
+  if [[ "$version" != pve-manager/[7-9].* ]]; then
+    log_and_exit "Unsupported Proxmox version. Use 7.x, 8.x, or 9.x" "$log_file"
   fi
 
-  if pveversion | grep -q "pve-manager/9"; then
-    echo "Proxmox 9 is in preliminary testing. Use at your own risk."
+  # Warn about preliminary Proxmox 9 support
+  if [[ "$version" == pve-manager/9.* ]]; then
+    display_and_log "Proxmox 9 is in preliminary testing. Use at your own risk." "$log_file"
     sleep 5
   fi
 }
@@ -319,7 +336,7 @@ setup_prerequisites() {
   [ -f /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js ] && sed -i.backup -z "s/res === null || res === undefined || \!res || res\n\t\t\t.data.status.toLowerCase() \!== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
   touch /etc/pve/qemu-server/.osx-proxmox
   update-grub >>"$logfile" 2>&1 || log_and_exit "Failed to update GRUB" "$logfile"
-  echo "Prerequisites setup complete. Rebooting in 15 seconds..." | tee -a "$logfile"
+  display_and_log "Prerequisites setup complete. Rebooting in 15 seconds..." "$logfile"
   sleep 15 && reboot
 }
 
@@ -329,8 +346,8 @@ download_recovery_image() {
   local logfile="${LOGDIR}/crt-recovery-${version_name,,}.log"
   local iso_path="${ISODIR}/recovery-${version_name,,}.iso"
 
-  [[ -e "$iso_path" ]] && { echo "Recovery image for $version_name exists" | tee -a "$logfile"; return; }
-  echo "Creating recovery image for $version_name..." | tee -a "$logfile"
+  [[ -e "$iso_path" ]] && { display_and_log "Recovery image for $version_name exists" "$logfile"; return; }
+  display_and_log "Creating recovery image for $version_name..." "$logfile"
   fallocate -x -l "$iso_size" "${TMPDIR}/recovery-${version_name,,}.iso" >>"$logfile" 2>&1 || log_and_exit "Failed to allocate image" "$logfile"
   mkfs.msdos -F 32 "${TMPDIR}/recovery-${version_name,,}.iso" -n "${version_name^^}" >>"$logfile" 2>&1 || log_and_exit "Failed to format image" "$logfile"
   local loopdev=$(losetup -f --show "${TMPDIR}/recovery-${version_name,,}.iso") || log_and_exit "Failed to set up loop device" "$logfile"
@@ -344,7 +361,7 @@ download_recovery_image() {
   umount /mnt/APPLE >>"$logfile" 2>&1 || log_and_exit "Failed to unmount image" "$logfile"
   losetup -d "$loopdev" >>"$logfile" 2>&1 || log_and_exit "Failed to detach loop device" "$logfile"
   mv "${TMPDIR}/recovery-${version_name,,}.iso" "$iso_path" >>"$logfile" 2>&1 || log_and_exit "Failed to move image" "$logfile"
-  echo "Recovery image created successfully" | tee -a "$logfile"
+  display_and_log "Recovery image created successfully" "$logfile"
 }
 
 # Function to create VM
@@ -386,12 +403,12 @@ create_vm() {
     --ide2 "${storage_iso}:iso/recovery-${version_name,,}.iso,media=cdrom,cache=unsafe,size=${iso_size}" >>"$logfile" 2>&1 || log_and_exit "Failed to create VM" "$logfile"
   sed -i 's/media=cdrom/media=disk/' "/etc/pve/qemu-server/$vm_id.conf" >>"$logfile" 2>&1 || log_and_exit "Failed to update VM config" "$logfile"
 
-  echo "VM ($vm_name) created successfully" | tee -a "$logfile"
+  display_and_log "VM ($vm_name) created successfully" "$logfile"
   local bridge_ip=$(ip -4 addr show "$bridge" | awk '/inet/ {print $2}' | cut -d'/' -f1 || echo "unknown")
   if [[ "$version_name" =~ "High Sierra" ]]; then
-    printf "\nNOTE: High Sierra has a 'The Recovery Server Could Not Be Contacted' Error!\n - Goto https://mrmacintosh.com/how-to-fix-the-recovery-server-could-not-be-contacted-error-high-sierra-recovery-is-still-online-but-broken/ and do the Fix #3\n\n"
+    display_and_log "\nNOTE: High Sierra has a 'The Recovery Server Could Not Be Contacted' Error!\n - Goto https://mrmacintosh.com/how-to-fix-the-recovery-server-could-not-be-contacted-error-high-sierra-recovery-is-still-online-but-broken/ and do the Fix #3\n\n" "$logfile"
   fi
-  echo "Access Proxmox Web Panel: https://$bridge_ip:8006" | tee -a "$logfile"
+  display_and_log "Access Proxmox Web Panel: https://$bridge_ip:8006" "$logfile"
 }
 
 # Function to add Proxmox VE no-subscription repository
@@ -408,33 +425,38 @@ add_no_subscription_repo() {
     log_and_exit "Unsupported Proxmox version" "$logfile"
   fi
   apt update -y >>"$logfile" 2>&1 || log_and_exit "Failed to update apt" "$logfile"
-  echo "Repository added successfully" | tee -a "$logfile"
+  display_and_log "Repository added successfully" "$logfile"
   read -n 1 -sp "Press any key to return to menu..."
 }
 
 # Function to update OpenCore ISO
 update_opencore_iso() {
   local logfile="${LOGDIR}/update-opencore-iso.log"
-  cd "$ISODIR"
-  rm -f opencore-osx-proxmox-vm.iso >>"$logfile" 2>&1
-  wget -q https://github.com/luchina-gabriel/OSX-PROXMOX/raw/main/EFI/opencore-osx-proxmox-vm.iso >>"$logfile" 2>&1 || log_and_exit "Failed to download OpenCore ISO" "$logfile"
-  cd ~
-  echo "OpenCore ISO updated" | tee -a "$logfile"
+  local iso_url="https://github.com/luchina-gabriel/OSX-PROXMOX/raw/main/EFI/opencore-osx-proxmox-vm.iso"
+  local iso_path="${ISODIR}/opencore-osx-proxmox-vm.iso"
+
+  rm -f "$iso_path" >>"$logfile" 2>&1
+  if ! wget -q -O "$iso_path" "$iso_url" >>"$logfile" 2>&1; then
+    log_and_exit "Failed to download OpenCore ISO" "$logfile"
+  fi
+
+  display_and_log "OpenCore ISO updated" "$logfile"
   sleep 5
 }
 
 # Function to clear recovery images
 clear_recovery_images() {
-  rm -f "${ISODIR}/recovery-"*.iso "${LOGDIR}/crt-recovery-"*.log 2>/dev/null
-  echo "All recovery images cleared"
+  find "$ISODIR" -type f -name "recovery-*.iso" -delete
+  find "$LOGDIR" -type f -name "crt-recovery-*.log" -delete
+  display_and_log "All recovery images cleared"
   read -n 1 -sp "Press any key to return to menu..."
 }
 
 # Function to remove subscription notice
 remove_subscription_notice() {
-  echo "DPkg::Post-Invoke { \"dpkg -V proxmox-widget-toolkit | grep -q '/proxmoxlib\.js$'; if [ \$? -eq 1 ]; then { echo 'Removing subscription nag from UI...'; sed -i '/.*data\.status.*{/{s/\!//;s/active/NoMoreNagging/}' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js; }; fi\"; };" >/etc/apt/apt.conf.d/no-nag-script
+  echo "DPkg::Post-Invoke { \"if [ -s /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js ] && ! grep -q -F 'NoMoreNagging' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js; then echo 'Removing subscription nag from UI...'; sed -i '/data\.status/{s/\!//;s/active/NoMoreNagging/}' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js; fi\" };" >/etc/apt/apt.conf.d/no-nag-script
   apt --reinstall install proxmox-widget-toolkit &>/dev/null
-  echo "Subscription notice removed"
+  display_and_log "Subscription notice removed"
   read -n 1 -sp "Press any key to return to menu..."
 }
 
@@ -444,16 +466,16 @@ configure_network_bridge() {
   
   # Logging functions
   die() {
-    echo "ERROR: $*" | tee -a "$logfile" >&2
+    display_and_log "ERROR: $*" "$logfile"
     exit 1
   }
 
   warn() {
-    echo "WARNING: $*" | tee -a "$logfile" >&2
+    display_and_log "WARNING: $*" "$logfile"
   }
 
   info() {
-    echo "INFO: $*" | tee -a "$logfile"
+    display_and_log "INFO: $*" "$logfile"
   }
 
   # Restore backup function
@@ -732,7 +754,7 @@ configure_network_bridge() {
         echo "$value"
         return
       fi
-      echo "Press any key to return to the main menu..."
+      display_and_log "Press any key to return to the main menu..."
       read -n 1 -s
       return 1
     done
@@ -778,7 +800,7 @@ configure_network_bridge() {
   [[ "${answer,,}" =~ ^(y|)$ ]] && info "DHCP Range: ${network_info[range_start]} - ${network_info[range_end]}"
   info "Network config: $NETWORK_INTERFACES_FILE"
   [[ "${answer,,}" =~ ^(y|)$ ]] && info "DHCP config: $DHCP_CONF_DIR/vmbr$bridge_num.conf"
-  echo "Press any key to return to the main menu..."
+  display_and_log "Press any key to return to the main menu..."
   read -n 1 -s
 }
 
@@ -801,7 +823,7 @@ customize_opencore_config() {
   read -rp "Remove csr-active-config (unlock SIP)? [Y/N] [N]: " RM_CSR_LOCK
   if [[ "${RM_CSR_LOCK:-N}" =~ ^[Yy]$ ]]; then
     sed -i '/<key>csr-active-config>/,+1d' "$config" >>"$logfile" 2>&1 || log_and_exit "Failed to remove csr-active-config" "$logfile"
-    echo "SIP unlocked. Use 'csrutil disable' in Recovery OS" | tee -a "$logfile"
+    display_and_log "SIP unlocked. Use 'csrutil disable' in Recovery OS" "$logfile"
   fi
   read -rp "Enter timeout [${timeout}]: " NEW_TIMEOUT
   NEW_TIMEOUT=${NEW_TIMEOUT:-$timeout}
@@ -811,7 +833,7 @@ customize_opencore_config() {
   diff -u "$config.backup" "$config" || true
   umount /mnt/opencore >>"$logfile" 2>&1 || log_and_exit "Failed to unmount ISO" "$logfile"
   losetup -d "$loopdev" >>"$logfile" 2>&1 || log_and_exit "Failed to detach loop device" "$logfile"
-  echo "OpenCore config customized" | tee -a "$logfile"
+  display_and_log "OpenCore config customized" "$logfile"
   read -n 1 -sp "Press any key to return to menu..."
 }
 
@@ -824,7 +846,7 @@ configure_macos_vm() {
   local default_vm_name="${DEFAULT_VM_PREFIX}$(echo "$version_name" | tr -s ' ' | sed 's/^[ ]*//;s/[ ]*$//;s/[ ]/-/g' | tr '[:lower:]' '[:upper:]' | sed 's/-*$//')"
   validate_vm_name "$default_vm_name" || log_and_exit "Invalid default VM name: $default_vm_name" "${LOGDIR}/main-menu.log"
   clear
-  echo "macOS $version_name"
+  display_and_log "macOS $version_name"
 
   # VM ID
   while true; do
@@ -833,7 +855,7 @@ configure_macos_vm() {
     if [[ "$VM_ID" =~ ^[0-9]+$ && ! -e "/etc/pve/qemu-server/$VM_ID.conf" ]]; then
       break
     else
-      echo "Invalid or existing VM ID. Please try again."
+      display_and_log "Invalid or existing VM ID. Please try again."
     fi
   done
 
@@ -844,7 +866,7 @@ configure_macos_vm() {
     if validate_vm_name "$VM_NAME"; then
       break
     else
-      echo "Invalid VM name. Please use alphanumeric characters, -, _, .; no spaces."
+      display_and_log "Invalid VM name. Please use alphanumeric characters, -, _, .; no spaces."
     fi
   done
 
@@ -856,30 +878,30 @@ configure_macos_vm() {
     if [[ "$SIZEDISK" =~ ^[0-9]+$ ]]; then
       break
     else
-      echo "Disk size must be an integer. Please try again."
+      display_and_log "Disk size must be an integer. Please try again."
     fi
   done
 
   # Storage Selection
-  local storage_output=$(get_available_storages) || { echo "Failed to retrieve storages"; read -n 1 -s; return 1; }
+  local storage_output=$(get_available_storages) || { display_and_log "Failed to retrieve storages"; read -n 1 -s; return 1; }
   local storages=() default_storage=""
   while IFS= read -r line; do
     [[ -z "$line" ]] && continue
     [[ -z "$default_storage" && ! "$line" =~ \| ]] && default_storage="$line" || storages+=("$line")
   done <<< "$storage_output"
   if ((${#storages[@]} == 0)); then
-    echo "No storages found"; read -n 1 -s; return 1
+    display_and_log "No storages found"; read -n 1 -s; return 1
   fi
   if ((${#storages[@]} == 1)); then
     STORAGECRTVM="${storages[0]%%|*}"
-    echo "Using storage: $STORAGECRTVM"
+    display_and_log "Using storage: $STORAGECRTVM"
   else
     while true; do
-      echo "Available storages:"
+      display_and_log "Available storages:"
       for s in "${storages[@]}"; do
         storage_name="${s%%|*}"
         avail_space="${s##*|}"
-        echo "  - $storage_name ($avail_space GB)"
+        display_and_log "  - $storage_name ($avail_space GB)"
       done
       read -rp "Storage [${default_storage}]: " STORAGECRTVM
       STORAGECRTVM=${STORAGECRTVM:-$default_storage}
@@ -891,16 +913,16 @@ configure_macos_vm() {
         fi
       done
       if $valid; then
-        echo "Selected storage: $STORAGECRTVM"
+        display_and_log "Selected storage: $STORAGECRTVM"
         break
       else
-        echo "Invalid storage. Please try again."
+        display_and_log "Invalid storage. Please try again."
       fi
     done
   fi
 
   # Bridge Selection
-  local bridge_output=$(get_available_bridges) || { echo "Failed to retrieve bridges"; read -n 1 -s; return 1; }
+  local bridge_output=$(get_available_bridges) || { display_and_log "Failed to retrieve bridges"; read -n 1 -s; return 1; }
   local bridges=() default_bridge=""
   while IFS= read -r line; do
     line=$(echo "$line" | tr -d '\r')
@@ -912,7 +934,7 @@ configure_macos_vm() {
     fi
   done <<< "$bridge_output"
   if ((${#bridges[@]} == 0)); then
-    echo "No bridges found"; read -n 1 -s; return 1
+    display_and_log "No bridges found"; read -n 1 -s; return 1
   fi
 
   declare -A bridge_info
@@ -928,27 +950,27 @@ configure_macos_vm() {
     name="${sorted_names[0]}"
     ip_info="${bridge_info[$name]}"
     BRIDGECRTVM="$name"
-    echo "Using bridge: $BRIDGECRTVM ($ip_info)"
+    display_and_log "Using bridge: $BRIDGECRTVM ($ip_info)"
   else
     while true; do
-      echo "Available bridges:"
+      display_and_log "Available bridges:"
       for name in "${sorted_names[@]}"; do
         bridge_num=${name#vmbr}
         ip_info="${bridge_info[$name]}"
-        echo "  - $bridge_num ($name, $ip_info)"
+        display_and_log "  - $bridge_num ($name, $ip_info)"
       done
       read -rp "Bridge number [${default_bridge_num}]: " BRIDGE_NUM
       BRIDGE_NUM=${BRIDGE_NUM:-$default_bridge_num}
       if [[ "$BRIDGE_NUM" =~ ^[0-9]+$ ]]; then
         BRIDGECRTVM="vmbr$BRIDGE_NUM"
         if [[ -v bridge_info[$BRIDGECRTVM] ]]; then
-          echo "Selected bridge: $BRIDGECRTVM"
+          display_and_log "Selected bridge: $BRIDGECRTVM"
           break
         else
-          echo "Invalid bridge number. Please try again."
+          display_and_log "Invalid bridge number. Please try again."
         fi
       else
-        echo "Bridge number must be an integer. Please try again."
+        display_and_log "Bridge number must be an integer. Please try again."
       fi
     done
   fi
@@ -960,11 +982,11 @@ configure_macos_vm() {
     if [[ "$PROC_COUNT" =~ ^[0-9]+$ ]]; then
       if ! is_power_of_2 "$PROC_COUNT"; then
         PROC_COUNT=$(next_power_of_2 "$PROC_COUNT")
-        echo "Adjusted to next power of 2: $PROC_COUNT"
+        display_and_log "Adjusted to next power of 2: $PROC_COUNT"
       fi
       break
     else
-      echo "CPU cores must be an integer. Please try again."
+      display_and_log "CPU cores must be an integer. Please try again."
     fi
   done
   ((PROC_COUNT > MAX_CORES)) && PROC_COUNT=$MAX_CORES
@@ -977,7 +999,7 @@ configure_macos_vm() {
     if [[ "$RAM_SIZE" =~ ^[0-9]+$ ]]; then
       break
     else
-      echo "RAM must be an integer. Please try again."
+      display_and_log "RAM must be an integer. Please try again."
     fi
   done
 
