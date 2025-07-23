@@ -6,21 +6,21 @@
 # https://luchina.com.br
 #
 # COPYRIGHT - 2021, 2022
-# 
-# All rights reserved - You may not copy, reproduce, distribute, publish, display, perform, modify, 
-# create derivative works, transmit, or in any way exploit any such content, nor may you distribute 
-# any part of this content over any network, including a local area network, sell or offer it for 
-# sale, or use such content to construct any kind of database. 
-# 
-# You may not alter or remove any copyright or other notice from copies of the content on any scripts 
-# in the solution of 'OSX-PROXMOX Solution - GABRIEL LUCHINA'. 
 #
-# Copying or storing any content except as provided above is expressly prohibited without prior 
-# written permission of copyright holder identified in the individual content’s copyright notice. 
-# 
-# For permission to use the content 'OSX-PROXMOX Solution - GABRIEL LUCHINA', 
+# All rights reserved - You may not copy, reproduce, distribute, publish, display, perform, modify,
+# create derivative works, transmit, or in any way exploit any such content, nor may you distribute
+# any part of this content over any network, including a local area network, sell or offer it for
+# sale, or use such content to construct any kind of database.
+#
+# You may not alter or remove any copyright or other notice from copies of the content on any scripts
+# in the solution of 'OSX-PROXMOX Solution - GABRIEL LUCHINA'.
+#
+# Copying or storing any content except as provided above is expressly prohibited without prior
+# written permission of copyright holder identified in the individual content’s copyright notice.
+#
+# For permission to use the content 'OSX-PROXMOX Solution - GABRIEL LUCHINA',
 # please contact legal@luchina.com.br
-# 
+#
 # FOR DEV/STUDENT ONLY PURPOSES - NOT COMERCIAL
 #
 # Credits:
@@ -37,7 +37,7 @@ SCRIPT_DIR="/root/OSX-PROXMOX"
 LOGDIR="${SCRIPT_DIR}/logs"
 MAIN_LOG="${LOGDIR}/main.log"
 TMPDIR="${SCRIPT_DIR}/tmp"
-HACKPXVERSION="2025.06.27"
+HACKPXVERSION="2025.07.23"
 OCVERSION="1.0.4"
 DEFAULT_VM_PREFIX="HACK-"
 BASE_RAM_SIZE=4096
@@ -48,6 +48,7 @@ MAX_CORES=16
 DHCP_CONF_DIR="/etc/dhcp/dhcpd.d"
 NETWORK_INTERFACES_FILE="/etc/network/interfaces"
 DHCP_USER="dhcpd"
+OPENCORE_ISO="opencore-osx-proxmox-vm.iso"
 
 # macOS version configuration
 declare -A MACOS_CONFIG=(
@@ -199,6 +200,26 @@ ensure_jq_dependency() {
   fi
 }
 
+# Function to ensure xmlstarlet is installed
+ensure_xmlstarlet_dependency() {
+  local logfile="${LOGDIR}/xmlstarlet-dependency.log"
+  if ! command -v xmlstarlet >/dev/null 2>&1; then
+    display_and_log "Installing xmlstarlet..." "$logfile"
+    apt-get update >>"$logfile" 2>&1 || log_and_exit "Failed to update apt" "$logfile"
+    apt-get install -y xmlstarlet >>"$logfile" 2>&1 || log_and_exit "Failed to install xmlstarlet" "$logfile"
+  fi
+}
+
+# Function to ensure base64 and xxd are available
+ensure_base64_xxd_dependency() {
+  local logfile="${LOGDIR}/base64-xxd-dependency.log"
+  if ! command -v base64 >/dev/null || ! command -v xxd >/dev/null; then
+    display_and_log "Installing base64 and xxd..." "$logfile"
+    apt-get update >>"$logfile" 2>&1 || log_and_exit "Failed to update apt" "$logfile"
+    apt-get install -y coreutils xxd vim-common >>"$logfile" 2>&1 || display_and_log "Failed to install base64 and xxd. Editing ROM in base64 format." "$logfile"
+  fi
+}
+
 # Function to set ISODIR based on selected ISO storage
 set_isodir() {
   local logfile="${LOGDIR}/iso-storage-detection.log"
@@ -317,7 +338,7 @@ setup_prerequisites() {
     sed -i "s/ftp.$country.debian.org/ftp.debian.org/g" /etc/apt/sources.list
     apt-get update >>"$logfile" 2>&1 || log_and_exit "Failed to update apt" "$logfile"
   }
-  apt-get install -y vim unzip zip sysstat parted wget iptraf git htop ipcalc >>"$logfile" 2>&1 || log_and_exit "Failed to install packages" "$logfile"
+  apt-get install -y vim unzip zip sysstat parted wget iptraf git htop ipcalc coreutils vim-common xmlstarlet >>"$logfile" 2>&1 || log_and_exit "Failed to install packages" "$logfile"
   sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/g' /etc/default/grub
   local grub_cmd="quiet"
   if [[ $OSX_PLATFORM == "AMD" ]]; then
@@ -366,8 +387,12 @@ download_recovery_image() {
 
 # Function to create VM
 create_vm() {
-  local version_name=$1 vm_id=$2 vm_name=$3 disk_size=$4 storage=$5 core_count=$6 ram_size=$7 iso_size=$8 disk_type=$9 bridge=${10}
+  local iso_file version_name=$1 vm_id=$2 vm_name=$3 disk_size=$4 storage=$5 core_count=$6 ram_size=$7 iso_size=$8 disk_type=$9 bridge=${10}
   local logfile="${LOGDIR}/crt-vm-${OSX_PLATFORM,,}-${version_name,,}.log"
+  iso_file="${OPENCORE_ISO}"
+  if [ ! -f "${ISODIR}/$iso_file" ]; then
+    update_opencore_iso
+  fi
   [[ ! -d "/sys/class/net/$bridge" ]] && log_and_exit "Bridge $bridge does not exist" "$logfile"
 
   local cpu_args device_args='-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2'
@@ -399,7 +424,7 @@ create_vm() {
     --onboot 0 --ostype other --sockets 1 --start 0 --tablet 1 \
     --vga vmware --vmgenid 1 --scsihw virtio-scsi-pci \
     --"$disk_type" "${storage}:${disk_size},cache=none,discard=on" \
-    --ide0 "${storage_iso}:iso/opencore-osx-proxmox-vm.iso,media=cdrom,cache=unsafe,size=96M" \
+    --ide0 "${storage_iso}:iso/${iso_file},media=cdrom,cache=unsafe,size=96M" \
     --ide2 "${storage_iso}:iso/recovery-${version_name,,}.iso,media=cdrom,cache=unsafe,size=${iso_size}" >>"$logfile" 2>&1 || log_and_exit "Failed to create VM" "$logfile"
   sed -i 's/media=cdrom/media=disk/' "/etc/pve/qemu-server/$vm_id.conf" >>"$logfile" 2>&1 || log_and_exit "Failed to update VM config" "$logfile"
 
@@ -419,8 +444,7 @@ add_no_subscription_repo() {
   elif pveversion | grep -q "pve-manager/[8]"; then
     printf "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription\n" > /etc/apt/sources.list.d/pve-no-sub.list
   elif pveversion | grep -q "pve-manager/[9]"; then
-    printf "Types: deb\nURIs: http://download.proxmox.com/debian/pve\nSuites: trixie\nComponents: pve-no-subscription\nSigned-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
-\n" > /etc/apt/sources.list.d/pve-no-sub.sources
+    printf "Types: deb\nURIs: http://download.proxmox.com/debian/pve\nSuites: trixie\nComponents: pve-no-subscription\nSigned-By: /usr/share/keyrings/proxmox-archive-keyring.gpg\n" > /etc/apt/sources.list.d/pve-no-sub.sources
   else
     log_and_exit "Unsupported Proxmox version" "$logfile"
   fi
@@ -429,16 +453,407 @@ add_no_subscription_repo() {
   read -n 1 -sp "Press any key to return to menu..."
 }
 
+# Cleaned function to update the SMBIOS in the OpenCore ISO
+update_opencore_smbios() {
+  local iso_path=$1 oc_json_path=$2
+  local logfile="${LOGDIR}/update-opencore-smbios.log"
+  ensure_xmlstarlet_dependency
+  ensure_base64_xxd_dependency "$logfile"
+  ensure_jq_dependency
+
+  if [[ ! -f "$oc_json_path" ]]; then
+    read -rp "No Serial number generated. Do you want to generate a unique serial number? [Y/n]: " GENSMBIOS
+    if [[ "${GENSMBIOS:-Y}" =~ ^[Yy]$ ]]; then
+      SystemProductName="iMacPro1,1"
+      read -e -p "Enter System Product Name (press Enter to keep current): " -i "$SystemProductName" new_value
+        if [ -n "$new_value" ] && [ "$new_value" != "$SystemProductName" ]; then
+          SystemProductName="$new_value"
+        fi
+      python3 "$SCRIPT_DIR"/tools/GenSMBIOS/GenSMBIOS.py --install
+      python3 "$SCRIPT_DIR"/tools/GenSMBIOS/GenSMBIOS.py --generate "$SystemProductName" -j "$oc_json_path" >>"$logfile" 2>&1 || log_and_exit "Failed to generate SMBIOS" "$logfile"
+    else
+      display_and_log "Skipping SMBIOS generation" "$logfile"
+      return
+    fi
+  fi
+
+  local loopdev=$(losetup -f --show -P "$iso_path") || log_and_exit "Failed to set up loop device" "$logfile"
+  mkdir -p /mnt/opencore >>"$logfile" 2>&1 || log_and_exit "Failed to create mount point" "$logfile"
+  mount "${loopdev}p1" /mnt/opencore >>"$logfile" 2>&1 || log_and_exit "Failed to mount ISO" "$logfile"
+  local config="/mnt/opencore/EFI/OC/config.plist"
+  [[ ! -e "$config.backup" ]] && cp "$config" "$config.backup" >>"$logfile" 2>&1
+
+  # Temporary file
+  local TEMP_FILE="${config}.tmp"
+  cp "$config" "$TEMP_FILE"
+
+  # Define base XPaths
+  local nvram_xpath="//key[text()='NVRAM']/following-sibling::dict/key[text()='Add']/following-sibling::dict/key[text()='7C436110-AB2A-4BBB-A880-FE41995C9F82']/following-sibling::dict"
+  local platform_generic_xpath="//key[text()='PlatformInfo']/following-sibling::dict/key[text()='Generic']/following-sibling::dict"
+
+  # Function to read a value from plist
+  read_plist_value() {
+    xmlstarlet sel -t -v "${2}/key[text()='${3}']/following-sibling::*[1]" "$1" 2>/dev/null
+  }
+
+  # Function to update a value in plist
+  update_plist_value() {
+    xmlstarlet ed -L -u "${2}/key[text()='${3}']/following-sibling::*[1]" -v "$4" "$1"
+  }
+
+  # Load and apply JSON values
+  declare -A json_values
+  json_values["SystemProductName"]=$(jq -r '.Type // empty' "$oc_json_path")
+  json_values["SystemSerialNumber"]=$(jq -r '.Serial // empty' "$oc_json_path")
+  json_values["MLB"]=$(jq -r '."Board Serial" // empty' "$oc_json_path")
+  json_values["SystemUUID"]=$(jq -r '.SmUUID // empty' "$oc_json_path")
+  json_values["ROM"]=$(jq -r '.ROM // empty' "$oc_json_path")  # HEX
+
+  updated=false
+  for key in SystemProductName SystemSerialNumber MLB SystemUUID ROM; do
+    if [ -n "${json_values[$key]}" ]; then
+      if [ "$key" == "ROM" ]; then
+        if command -v base64 >/dev/null 2>&1 && command -v xxd >/dev/null 2>&1; then
+          modified_value=$(echo -n "${json_values[$key]}" | xxd -r -p | base64)
+        else
+          display_and_log "Warning: base64 or xxd not available. Skipping ROM update." "$logfile"
+          continue
+        fi
+      else
+        modified_value="${json_values[$key]}"
+      fi
+      update_plist_value "$TEMP_FILE" "$platform_generic_xpath" "$key" "$modified_value"
+      display_and_log "Updated $key from JSON." "$logfile"
+      updated=true
+    fi
+  done
+
+  # Automatic boot-args adjustment
+  system_product_name=$(read_plist_value "$TEMP_FILE" "$platform_generic_xpath" "SystemProductName")
+  boot_args=$(read_plist_value "$TEMP_FILE" "$nvram_xpath" "boot-args")
+  flag=" -nehalem_error_disable"
+
+  if [ "$system_product_name" = "MacPro5,1" ]; then
+    if [[ ! "$boot_args" =~ $flag ]]; then
+      new_boot_args="$boot_args$flag"
+      update_plist_value "$TEMP_FILE" "$nvram_xpath" "boot-args" "$new_boot_args"
+      display_and_log "Automatically added '$flag' to boot-args." "$logfile"
+      updated=true
+    fi
+  else
+    if [[ "$boot_args" =~ $flag ]]; then
+      new_boot_args="${boot_args//$flag/}"
+      update_plist_value "$TEMP_FILE" "$nvram_xpath" "boot-args" "$new_boot_args"
+      display_and_log "Automatically removed '$flag' from boot-args." "$logfile"
+      updated=true
+    fi
+  fi
+
+  if $updated; then
+    display_and_log "Differences between original and modified file (unified format):" "$logfile"
+    xmlstarlet fo "$config" > "$config.fmt" || log_and_exit "Failed to format original file" "$logfile"
+    diff -u "$config.fmt" "$TEMP_FILE" || true
+    rm "$config.fmt"
+
+    read -p "Do you want to apply these changes to the original file? (y/n): " confirm
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+      mv "$TEMP_FILE" "$config"
+      display_and_log "Changes applied to $config" "$logfile"
+    else
+      display_and_log "Changes discarded." "$logfile"
+      rm "$TEMP_FILE"
+    fi
+  else
+    display_and_log "No updates needed from JSON." "$logfile"
+    rm "$TEMP_FILE"
+  fi
+
+  # Cleanup
+  umount /mnt/opencore >>"$logfile" 2>&1 || log_and_exit "Failed to unmount ISO" "$logfile"
+  losetup -d "$loopdev" >>"$logfile" 2>&1 || log_and_exit "Failed to detach loop device" "$logfile"
+}
+
+# Cleaned function to customize OpenCore config.plist
+customize_opencore_config() {
+  local oc_json_path iso logfile="${LOGDIR}/custom-oc-config.plist.log"
+  iso="${ISODIR}/${OPENCORE_ISO}"
+  oc_json_path="${ISODIR}/.smbios.json"
+  ensure_xmlstarlet_dependency
+  ensure_base64_xxd_dependency "$logfile"
+  ensure_jq_dependency
+
+  local loopdev=$(losetup -f --show -P "$iso") || log_and_exit "Failed to set up loop device" "$logfile"
+  mkdir -p /mnt/opencore >>"$logfile" 2>&1 || log_and_exit "Failed to create mount point" "$logfile"
+  mount "${loopdev}p1" /mnt/opencore >>"$logfile" 2>&1 || log_and_exit "Failed to mount ISO" "$logfile"
+  local config="/mnt/opencore/EFI/OC/config.plist"
+  [[ ! -e "$config.backup" ]] && cp "$config" "$config.backup" >>"$logfile" 2>&1
+
+  # Temporary file
+  local TEMP_FILE="${config}.tmp"
+  cp "$config" "$TEMP_FILE"
+
+  # Define base XPaths
+  local nvram_xpath="//key[text()='NVRAM']/following-sibling::dict/key[text()='Add']/following-sibling::dict/key[text()='7C436110-AB2A-4BBB-A880-FE41995C9F82']/following-sibling::dict"
+  local misc_boot_xpath="//key[text()='Misc']/following-sibling::dict/key[text()='Boot']/following-sibling::dict"
+  local platform_generic_xpath="//key[text()='PlatformInfo']/following-sibling::dict/key[text()='Generic']/following-sibling::dict"
+
+  # Define keys and sections
+  declare -A key_sections=( ["boot-args"]="nvram" ["csr-active-config"]="nvram" ["prev-lang:kbd"]="nvram" ["Timeout"]="misc_boot" ["MLB"]="platform_generic" ["SystemProductName"]="platform_generic" ["SystemSerialNumber"]="platform_generic" ["SystemUUID"]="platform_generic" ["ROM"]="platform_generic" )
+  keys=("boot-args" "csr-active-config" "prev-lang:kbd" "Timeout" "MLB" "SystemProductName" "SystemSerialNumber" "SystemUUID" "ROM")
+
+  # Function to read a value from plist
+  read_plist_value() {
+    xmlstarlet sel -t -v "${2}/key[text()='${3}']/following-sibling::*[1]" "$1" 2>/dev/null
+  }
+
+  # Function to update a value in plist
+  update_plist_value() {
+    xmlstarlet ed -L -u "${2}/key[text()='${3}']/following-sibling::*[1]" -v "$4" "$1"
+  }
+
+  # Function to remove a key from plist
+  remove_plist_key() {
+    local key_xpath="${2}/key[text()='${3}']"
+    local value_xpath="${2}/key[text()='${3}']/following-sibling::*[1]"
+    xmlstarlet ed -L -d "$key_xpath" -d "$value_xpath" "$1" || log_and_exit "Failed to remove $3" "$logfile"
+  }
+
+  # Integrate JSON logic
+  generate_new=false
+  if [ -f "$oc_json_path" ]; then
+    read -rp "Existing SMBIOS JSON found. Do you want to generate a new serial number? [y/N]: " GENSMBIOS
+    if [[ "${GENSMBIOS}" =~ ^[Yy]$ ]]; then
+      generate_new=true
+    else
+      # Apply existing JSON
+      declare -A json_values
+      json_values["SystemProductName"]=$(jq -r '.Type // empty' "$oc_json_path")
+      json_values["SystemSerialNumber"]=$(jq -r '.Serial // empty' "$oc_json_path")
+      json_values["MLB"]=$(jq -r '."Board Serial" // empty' "$oc_json_path")
+      json_values["SystemUUID"]=$(jq -r '.SmUUID // empty' "$oc_json_path")
+      json_values["ROM"]=$(jq -r '.ROM // empty' "$oc_json_path")
+      for key in SystemProductName SystemSerialNumber MLB SystemUUID ROM; do
+        if [ -n "${json_values[$key]}" ]; then
+          if [ "$key" == "ROM" ]; then
+            if command -v base64 >/dev/null 2>&1 && command -v xxd >/dev/null 2>&1; then
+              modified_value=$(echo -n "${json_values[$key]}" | xxd -r -p | base64)
+            else
+              display_and_log "Warning: base64 or xxd not available. Skipping ROM update." "$logfile"
+              continue
+            fi
+          else
+            modified_value="${json_values[$key]}"
+          fi
+          update_plist_value "$TEMP_FILE" "$platform_generic_xpath" "$key" "$modified_value"
+          display_and_log "Applied $key from existing JSON to temp file." "$logfile"
+        fi
+      done
+    fi
+  else
+    read -rp "No Serial number generated. Do you want to generate a unique serial number? [Y/n]: " GENSMBIOS
+    if [[ "${GENSMBIOS:-Y}" =~ ^[Yy]$ ]]; then
+      generate_new=true
+    fi
+  fi
+
+  # Generate new SMBIOS if requested
+  if $generate_new; then
+    SystemProductName="$(read_plist_value "$TEMP_FILE" "$platform_generic_xpath" "SystemProductName")"
+    read -e -p "Enter System Product Name (press Enter to keep current): " -i "$SystemProductName" new_value
+      if [ -n "$new_value" ] && [ "$new_value" != "$SystemProductName" ]; then
+        SystemProductName="$new_value"
+      fi
+    python3 "$SCRIPT_DIR"/tools/GenSMBIOS/GenSMBIOS.py --install
+    python3 "$SCRIPT_DIR"/tools/GenSMBIOS/GenSMBIOS.py --generate "$SystemProductName" -j "$oc_json_path" >>"$logfile" 2>&1 || log_and_exit "Failed to generate SMBIOS" "$logfile"
+    # Apply new JSON
+    declare -A json_values
+    json_values["SystemProductName"]=$(jq -r '.Type // empty' "$oc_json_path")
+    json_values["SystemSerialNumber"]=$(jq -r '.Serial // empty' "$oc_json_path")
+    json_values["MLB"]=$(jq -r '."Board Serial" // empty' "$oc_json_path")
+    json_values["SystemUUID"]=$(jq -r '.SmUUID // empty' "$oc_json_path")
+    json_values["ROM"]=$(jq -r '.ROM // empty' "$oc_json_path")
+    for key in SystemProductName SystemSerialNumber MLB SystemUUID ROM; do
+      if [ -n "${json_values[$key]}" ]; then
+        if [ "$key" == "ROM" ]; then
+          if command -v base64 >/dev/null 2>&1 && command -v xxd >/dev/null 2>&1; then
+            modified_value=$(echo -n "${json_values[$key]}" | xxd -r -p | base64)
+          else
+            display_and_log "Warning: base64 or xxd not available. Skipping ROM update." "$logfile"
+            continue
+          fi
+        else
+          modified_value="${json_values[$key]}"
+        fi
+        update_plist_value "$TEMP_FILE" "$platform_generic_xpath" "$key" "$modified_value"
+        display_and_log "Applied new $key from generated JSON to temp file." "$logfile"
+      fi
+    done
+  fi
+
+  # Prompt for edits
+  declare -A modified
+  for key in "${keys[@]}"; do
+    local section=${key_sections[$key]}
+    local base_xpath
+    case $section in
+      nvram) base_xpath="$nvram_xpath" ;;
+      misc_boot) base_xpath="$misc_boot_xpath" ;;
+      platform_generic) base_xpath="$platform_generic_xpath" ;;
+    esac
+    value=$(read_plist_value "$TEMP_FILE" "$base_xpath" "$key")
+    if [ -z "$value" ]; then
+      display_and_log "Warning: Could not read value for $key" "$logfile"
+      continue
+    fi
+
+    if [ "$key" == "csr-active-config" ]; then
+      current_value="$value"
+      echo "Current value for $key: $current_value"
+      read -rp "Remove csr-active-config (unlock SIP)? [Y/N] [N]: " RM_CSR_LOCK
+      if [[ "${RM_CSR_LOCK:-N}" =~ ^[Yy]$ ]]; then
+        modified[$key]="remove"
+        display_and_log "SIP unlocked. Use 'csrutil disable' in Recovery OS" "$logfile"
+        continue
+      fi
+      read -e -p "Edit value (press Enter to keep current): " -i "$current_value" new_value
+      if [ -n "$new_value" ] && [ "$new_value" != "$current_value" ]; then
+        modified[$key]="$new_value"
+      fi
+    elif [ "$key" == "ROM" ]; then
+      rom_convert=false
+      if command -v base64 >/dev/null && command -v xxd >/dev/null; then
+        rom_convert=true
+        current_value=$(echo -n "$value" | base64 -d | xxd -p -c 999 | tr -d '\n' | tr 'a-f' 'A-F')
+      else
+        current_value="$value"
+      fi
+      echo "Current value for $key (${rom_convert:+HEX}base64 if not): $current_value"
+      read -e -p "Edit value (press Enter to keep current): " -i "$current_value" new_value
+      if [ -n "$new_value" ] && [ "$new_value" != "$current_value" ]; then
+        if $rom_convert; then
+          modified[$key]=$(echo -n "$new_value" | xxd -r -p | base64)
+        else
+          modified[$key]="$new_value"
+        fi
+      fi
+    else
+      current_value="$value"
+      echo "Current value for $key: $current_value"
+      read -e -p "Edit value (press Enter to keep current): " -i "$current_value" new_value
+      if [ -n "$new_value" ] && [ "$new_value" != "$current_value" ]; then
+        modified[$key]="$new_value"
+      fi
+    fi
+  done
+
+  # Apply user modifications
+  if [ ${#modified[@]} -gt 0 ]; then
+    display_and_log "Applying user changes to temporary file..." "$logfile"
+    for key in "${!modified[@]}"; do
+      local section=${key_sections[$key]}
+      local base_xpath
+      case $section in
+        nvram) base_xpath="$nvram_xpath" ;;
+        misc_boot) base_xpath="$misc_boot_xpath" ;;
+        platform_generic) base_xpath="$platform_generic_xpath" ;;
+      esac
+      if [ "${modified[$key]}" == "remove" ]; then
+        remove_plist_key "$TEMP_FILE" "$base_xpath" "$key"
+      else
+        update_plist_value "$TEMP_FILE" "$base_xpath" "$key" "${modified[$key]}"
+      fi
+    done
+  fi
+
+  # Automatic boot-args adjustment
+  system_product_name=$(read_plist_value "$TEMP_FILE" "$platform_generic_xpath" "SystemProductName")
+  boot_args=$(read_plist_value "$TEMP_FILE" "$nvram_xpath" "boot-args")
+  flag=" -nehalem_error_disable"
+
+  if [ "$system_product_name" = "MacPro5,1" ]; then
+    if [[ ! "$boot_args" =~ $flag ]]; then
+      new_boot_args="$boot_args$flag"
+      update_plist_value "$TEMP_FILE" "$nvram_xpath" "boot-args" "$new_boot_args"
+      display_and_log "Automatically added '$flag' to boot-args." "$logfile"
+    fi
+  else
+    if [[ "$boot_args" =~ $flag ]]; then
+      new_boot_args="${boot_args//$flag/}"
+      update_plist_value "$TEMP_FILE" "$nvram_xpath" "boot-args" "$new_boot_args"
+      display_and_log "Automatically removed '$flag' from boot-args." "$logfile"
+    fi
+  fi
+
+  # Show diff if changes
+  xmlstarlet fo "$config" > "$config.fmt"
+  local diff_output=$(diff -u "$config.fmt" "$TEMP_FILE")
+  rm "$config.fmt"
+  if [ -n "$diff_output" ]; then
+    display_and_log "Differences between original and modified file (unified format):" "$logfile"
+    echo "$diff_output"
+
+    read -rp "Do you want to apply these changes to the original file? (y/n): " confirm
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+      mv "$TEMP_FILE" "$config"
+      display_and_log "Changes applied to $config" "$logfile"
+
+      # Extract and save to JSON
+      declare -A extracted
+      for key in SystemProductName SystemSerialNumber MLB SystemUUID ROM; do
+        val=$(read_plist_value "$config" "$platform_generic_xpath" "$key")
+        if [ -z "$val" ]; then
+          display_and_log "Warning: Could not read $key from plist." "$logfile"
+          continue
+        fi
+        if [ "$key" == "ROM" ]; then
+          if command -v base64 >/dev/null 2>&1 && command -v xxd >/dev/null 2>&1; then
+            val=$(echo -n "$val" | base64 -d | xxd -p -c 999 | tr -d '\n' | tr 'a-f' 'A-F')
+          else
+            display_and_log "Warning: base64 or xxd not available. Skipping ROM extraction." "$logfile"
+            continue
+          fi
+        fi
+        extracted[$key]="$val"
+      done
+
+      jq -n \
+        --arg Type "${extracted[SystemProductName]}" \
+        --arg Serial "${extracted[SystemSerialNumber]}" \
+        --arg board_serial "${extracted[MLB]}" \
+        --arg SmUUID "${extracted[SystemUUID]}" \
+        --arg ROM "${extracted[ROM]}" \
+        '{Type: $Type, Serial: $Serial, "Board Serial": $board_serial, SmUUID: $SmUUID, ROM: $ROM}' > "$oc_json_path"
+      display_and_log "Updated/Created SMBIOS JSON at $oc_json_path" "$logfile"
+    else
+      display_and_log "Changes discarded." "$logfile"
+      rm "$TEMP_FILE"
+    fi
+  else
+    display_and_log "No changes were made." "$logfile"
+    rm "$TEMP_FILE"
+  fi
+
+  # Cleanup
+  umount /mnt/opencore >>"$logfile" 2>&1 || log_and_exit "Failed to unmount ISO" "$logfile"
+  losetup -d "$loopdev" >>"$logfile" 2>&1 || log_and_exit "Failed to detach loop device" "$logfile"
+  display_and_log "OpenCore config customized" "$logfile"
+  read -n 1 -sp "Press any key to return to menu..."
+}
+
 # Function to update OpenCore ISO
 update_opencore_iso() {
+  local iso_path
   local logfile="${LOGDIR}/update-opencore-iso.log"
   local iso_url="https://github.com/luchina-gabriel/OSX-PROXMOX/raw/main/EFI/opencore-osx-proxmox-vm.iso"
-  local iso_path="${ISODIR}/opencore-osx-proxmox-vm.iso"
+  iso_path="${ISODIR}/${OPENCORE_ISO}"
+  oc_json_path="${ISODIR}/.smbios.json"
 
   rm -f "$iso_path" >>"$logfile" 2>&1
   if ! wget -q -O "$iso_path" "$iso_url" >>"$logfile" 2>&1; then
     log_and_exit "Failed to download OpenCore ISO" "$logfile"
   fi
+  ensure_base64_xxd_dependency
+  update_opencore_smbios "$iso_path" "$oc_json_path"
 
   display_and_log "OpenCore ISO updated" "$logfile"
   sleep 5
@@ -463,7 +878,7 @@ remove_subscription_notice() {
 # Function to configure network bridge
 configure_network_bridge() {
   local logfile="${LOGDIR}/configure-network-bridge.log"
-  
+
   # Logging functions
   die() {
     display_and_log "ERROR: $*" "$logfile"
@@ -505,7 +920,7 @@ configure_network_bridge() {
   ensure_dependencies() {
     local deps=("ipcalc")
     local missing=()
-    
+
     # Check for isc-dhcp-server
     if ! dpkg -l isc-dhcp-server &>/dev/null; then
       deps+=("isc-dhcp-server")
@@ -521,7 +936,7 @@ configure_network_bridge() {
       info "Installing missing dependencies: ${missing[*]}"
       apt-get update && apt-get install -y "${missing[@]}" >>"$logfile" 2>&1 || die "Failed to install dependencies"
     fi
-    
+
     # Ensure DHCP config directory exists
     mkdir -p "$DHCP_CONF_DIR"
     chown root:root "$DHCP_CONF_DIR"
@@ -532,26 +947,26 @@ configure_network_bridge() {
   calculate_network() {
     local subnet=$1
     declare -gA network_info
-    
+
     # Validate subnet format
     if [[ ! "$subnet" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}$ ]]; then
       warn "Invalid subnet format: $subnet"
       return 1
     fi
-    
+
     # Get ipcalc output
     if ! ipcalc_output=$(ipcalc -nb "$subnet"); then
       warn "ipcalc failed to process subnet: $subnet"
       return 1
     fi
-    
+
     # Parse network information
     network_info["network"]=$(echo "$ipcalc_output" | awk '/^Network:/ {print $2}' | cut -d'/' -f1)
     network_info["netmask"]=$(echo "$ipcalc_output" | awk '/^Netmask:/ {print $2}')
     network_info["broadcast"]=$(echo "$ipcalc_output" | awk '/^Broadcast:/ {print $2}')
     network_info["hostmin"]=$(echo "$ipcalc_output" | awk '/^HostMin:/ {print $2}')
     network_info["hostmax"]=$(echo "$ipcalc_output" | awk '/^HostMax:/ {print $2}')
-    
+
     # Calculate DHCP range (skip first 50 IPs)
     IFS='.' read -r i1 i2 i3 i4 <<< "${network_info[hostmin]}"
     network_info["range_start"]="$i1.$i2.$i3.$((i4 + 50))"
@@ -572,7 +987,7 @@ configure_network_bridge() {
   validate_bridge() {
     local bridge_num=$1
     [[ "$bridge_num" =~ ^[0-9]+$ ]] || { warn "Bridge number must be a positive integer"; return 1; }
-    
+
     if [[ -d "/sys/class/net/vmbr$bridge_num" || \
           -n $(grep -h "^iface vmbr$bridge_num" "$NETWORK_INTERFACES_FILE" 2>/dev/null) ]]; then
       return 1  # Bridge exists
@@ -583,7 +998,7 @@ configure_network_bridge() {
   # Find next available bridge
   find_next_bridge() {
     local bridge_num=0
-    while ! validate_bridge "$bridge_num"; do 
+    while ! validate_bridge "$bridge_num"; do
       ((bridge_num++))
     done
     echo "$bridge_num"
@@ -593,10 +1008,10 @@ configure_network_bridge() {
   validate_subnet() {
     local subnet=$1
     [[ "$subnet" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}$ ]] || { warn "Invalid CIDR format"; return 1; }
-    
+
     IFS='./' read -r ip1 ip2 ip3 ip4 mask <<< "$subnet"
     (( ip1 <= 255 && ip2 <= 255 && ip3 <= 255 && ip4 <= 255 && mask <= 32 )) || { warn "Invalid IP/Netmask"; return 1; }
-    
+
     # Check for conflicts
     while read -r existing; do
       if [[ -n "$existing" ]]; then
@@ -606,7 +1021,7 @@ configure_network_bridge() {
         fi
       fi
     done < <(get_existing_subnets)
-    
+
     return 0
   }
 
@@ -643,7 +1058,7 @@ configure_network_bridge() {
     for conf in "$DHCP_CONF_DIR"/*.conf; do
       [[ -f "$conf" ]] && interfaces+=("$(basename "${conf%.conf}")")
     done
-    
+
     # Update interfaces list
     printf "INTERFACESv4=\"%s\"\n" "${interfaces[*]}" > /etc/default/isc-dhcp-server
   }
@@ -652,12 +1067,12 @@ configure_network_bridge() {
   configure_dhcp() {
     local bridge_name=$1
     local subnet=$2
-    
+
     if ! calculate_network "$subnet"; then
       warn "Failed to calculate network parameters for $subnet"
       return 1
     fi
-    
+
     # Create bridge-specific config
     printf "subnet %s netmask %s {\n" "${network_info[network]}" "${network_info[netmask]}" > "$DHCP_CONF_DIR/$bridge_name.conf"
     printf "    range %s %s;\n" "${network_info[range_start]}" "${network_info[range_end]}" >> "$DHCP_CONF_DIR/$bridge_name.conf"
@@ -693,7 +1108,7 @@ configure_network_bridge() {
   configure_network() {
     local bridge_num=$1
     local subnet=$2
-    
+
     info "Calculating network parameters for $subnet..."
     if ! calculate_network "$subnet"; then
       die "Failed to calculate network parameters for $subnet"
@@ -746,7 +1161,7 @@ configure_network_bridge() {
     local default=$2
     local validation_func=$3
     local value
-    
+
     while true; do
       read -rp "$prompt [$default]: " value
       value=${value:-$default}
@@ -762,7 +1177,7 @@ configure_network_bridge() {
 
   # Main execution
   info "Configuring network bridge for macOS in Cloud..."
-  
+
   # Check root
   (( EUID == 0 )) || die "This function must be run as root"
 
@@ -804,45 +1219,12 @@ configure_network_bridge() {
   read -n 1 -s
 }
 
-# Function to customize OpenCore config.plist
-customize_opencore_config() {
-  local logfile="${LOGDIR}/custom-oc-config.plist.log"
-  local iso="${ISODIR}/opencore-osx-proxmox-vm.iso"
-  local loopdev=$(losetup -f --show -P "$iso") || log_and_exit "Failed to set up loop device" "$logfile"
-  mkdir -p /mnt/opencore >>"$logfile" 2>&1 || log_and_exit "Failed to create mount point" "$logfile"
-  mount "${loopdev}p1" /mnt/opencore >>"$logfile" 2>&1 || log_and_exit "Failed to mount ISO" "$logfile"
-  local config="/mnt/opencore/EFI/OC/config.plist"
-  [[ ! -e "$config.backup" ]] && cp "$config" "$config.backup" >>"$logfile" 2>&1
-  local prev_lang=$(grep -E '..-..:0' "$config" | sed 's/.*\(..-..\).*/\1/')
-  local boot_args=$(grep '<key>boot-args' "$config" -A1 | tail -n1 | sed 's/.*>\(.*\)<.*/\1/')
-  local timeout=$(grep -A1 '>Timeout<' "$config" | tail -n1 | sed 's/.*>\(.*\)<.*/\1/')
-  read -rp "Enter language-country code [${prev_lang}]: " NEW_PREV_LANG
-  sed -i "s/..-..:0/${NEW_PREV_LANG:-$prev_lang}:0/" "$config" >>"$logfile" 2>&1 || log_and_exit "Failed to update language" "$logfile"
-  read -rp "Enter boot-args [${boot_args}]: " NEW_BOOT_ARGS
-  sed -i "s|${boot_args}|${NEW_BOOT_ARGS:-$boot_args}|" "$config" >>"$logfile" 2>&1 || log_and_exit "Failed to update boot-args" "$logfile"
-  read -rp "Remove csr-active-config (unlock SIP)? [Y/N] [N]: " RM_CSR_LOCK
-  if [[ "${RM_CSR_LOCK:-N}" =~ ^[Yy]$ ]]; then
-    sed -i '/<key>csr-active-config>/,+1d' "$config" >>"$logfile" 2>&1 || log_and_exit "Failed to remove csr-active-config" "$logfile"
-    display_and_log "SIP unlocked. Use 'csrutil disable' in Recovery OS" "$logfile"
-  fi
-  read -rp "Enter timeout [${timeout}]: " NEW_TIMEOUT
-  NEW_TIMEOUT=${NEW_TIMEOUT:-$timeout}
-  if [[ "$NEW_TIMEOUT" != "$timeout" ]]; then
-    sed -i "/<key>Timeout<\/key>/{n;s/<integer>$timeout<\/integer>/<integer>$NEW_TIMEOUT<\/integer>/}" "$config" >>"$logfile" 2>&1 || log_and_exit "Failed to update timeout" "$logfile"
-  fi
-  diff -u "$config.backup" "$config" || true
-  umount /mnt/opencore >>"$logfile" 2>&1 || log_and_exit "Failed to unmount ISO" "$logfile"
-  losetup -d "$loopdev" >>"$logfile" 2>&1 || log_and_exit "Failed to detach loop device" "$logfile"
-  display_and_log "OpenCore config customized" "$logfile"
-  read -n 1 -sp "Press any key to return to menu..."
-}
-
 # Function to configure macOS VM
 configure_macos_vm() {
-  local opt=$1
+  local macopt=$1
   local nextid=$2
-  local version_name version board_id model_id iso_size disk_type
-  IFS='|' read -r version_name version board_id model_id iso_size disk_type <<< "${MACOS_CONFIG[$opt]}"
+  local version_name version board_id model_id iso_size disk_type opt=$3
+  IFS='|' read -r version_name version board_id model_id iso_size disk_type <<< "$macopt"
   local default_vm_name="${DEFAULT_VM_PREFIX}$(echo "$version_name" | tr -s ' ' | sed 's/^[ ]*//;s/[ ]*$//;s/[ ]/-/g' | tr '[:lower:]' '[:upper:]' | sed 's/-*$//')"
   validate_vm_name "$default_vm_name" || log_and_exit "Invalid default VM name: $default_vm_name" "${LOGDIR}/main-menu.log"
   clear
@@ -1049,7 +1431,7 @@ main_menu() {
     [[ -z "$OPT" || "$OPT" -eq 0 ]] && exit
 
     if [[ ${MACOS_CONFIG[$OPT]} ]]; then
-      configure_macos_vm "$OPT" "$NEXTID"
+      configure_macos_vm "${MACOS_CONFIG[$OPT]}" "$NEXTID" "$OPT"
     else
       case $OPT in
         200) add_no_subscription_repo ;;
@@ -1070,8 +1452,8 @@ init_dirs
 check_proxmox_version
 set_isodir
 # Check if OpenCore ISO exists, and install if not in the ISODIR.
-if [ ! -f "${ISODIR}/opencore-osx-proxmox-vm.iso" ]; then
-  update_opencore_iso
+if [ ! -f "${ISODIR}/${OPENCORE_ISO}" ]; then
+  update_opencore_iso "0"
 fi
 sleep 4
 OSX_PLATFORM=$(detect_cpu_platform)
