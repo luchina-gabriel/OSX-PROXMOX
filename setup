@@ -339,26 +339,126 @@ setup_prerequisites() {
     apt-get update >>"$logfile" 2>&1 || log_and_exit "Failed to update apt" "$logfile"
   }
   apt-get install -y vim unzip zip sysstat parted wget iptraf git htop ipcalc coreutils vim-common xmlstarlet >>"$logfile" 2>&1 || log_and_exit "Failed to install packages" "$logfile"
-  sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/g' /etc/default/grub
+
+  # Prompt user for system configuration options
+  echo ""
+  echo "==============================================="
+  echo "Proxmox Host Configuration Options"
+  echo "==============================================="
+  echo ""
+  
+  # GRUB timeout configuration
+  local modify_grub_timeout="n"
+  read -rp "Do you want to set GRUB timeout to 0 (faster boot)? (y/n) [n]: " modify_grub_timeout
+  modify_grub_timeout=${modify_grub_timeout:-n}
+  
+  # Proxmox subscription warning fix
+  local fix_subscription_warning="n"
+  read -rp "Do you want to disable Proxmox subscription warning? (y/n) [n]: " fix_subscription_warning
+  fix_subscription_warning=${fix_subscription_warning:-n}
+  
+  echo ""
+  echo "==============================================="
+  echo "GPU Passthrough Configuration Options"
+  echo "==============================================="
+  echo ""
+  echo "This setup can configure your Proxmox host for GPU passthrough to the macOS VM."
+  echo "This involves modifying GRUB parameters and blacklisting GPU drivers."
+  echo ""
+  echo "WARNING: These changes will affect your Proxmox host's display capabilities and booting behavior!"
+  echo "- If you plan to use VNC/web console only: These changes are OPTIONAL"
+  echo "- If you plan to use GPU passthrough: These changes are REQUIRED"
+  echo ""
+  
+  local modify_grub="n"
+  local blacklist_gpu="n"
+  
+  read -rp "Do you want to modify GRUB parameters for GPU passthrough? (y/n) [n]: " modify_grub
+  modify_grub=${modify_grub:-n}
+  
+  read -rp "Do you want to blacklist GPU drivers for passthrough? (y/n) [n]: " blacklist_gpu
+  blacklist_gpu=${blacklist_gpu:-n}
+
+  # Configure GRUB timeout if requested
+  if [[ "$modify_grub_timeout" =~ ^[Yy]$ ]]; then
+    display_and_log "Setting GRUB timeout to 0 for faster boot..." "$logfile"
+    sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/g' /etc/default/grub
+    display_and_log "GRUB timeout configured" "$logfile"
+  else
+    display_and_log "Keeping default GRUB timeout" "$logfile"
+  fi
+
+  # Configure GRUB parameters if requested
   local grub_cmd="quiet"
+  local grub_updated=false
+  
+  if [[ "$modify_grub" =~ ^[Yy]$ ]]; then
+    display_and_log "Configuring GRUB parameters for GPU passthrough..." "$logfile"
+    if [[ $OSX_PLATFORM == "AMD" ]]; then
+      grub_cmd="quiet amd_iommu=on iommu=pt video=vesafb:off video=efifb:off"
+    else
+      grub_cmd="quiet intel_iommu=on iommu=pt video=vesafb:off video=efifb:off"
+    fi
+    pveversion | grep -qE "pve-manager/(7.[2-4]|8.[0-4]|9)" && grub_cmd="$grub_cmd initcall_blacklist=sysfb_init"
+    sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"$grub_cmd\"/g" /etc/default/grub
+    printf "vfio\nvfio_iommu_type1\nvfio_pci\nvfio_virqfd\n" >> /etc/modules
+    grub_updated=true
+    display_and_log "GRUB parameters configured for GPU passthrough" "$logfile"
+  else
+    display_and_log "Skipping GRUB modifications - using default configuration" "$logfile"
+  fi
+
+  # Configure KVM nesting support (always enabled for virtualization performance)
+  display_and_log "Configuring KVM nesting support..." "$logfile"
   if [[ $OSX_PLATFORM == "AMD" ]]; then
-    grub_cmd="quiet amd_iommu=on iommu=pt video=vesafb:off video=efifb:off"
     printf "options kvm-amd nested=1\n" > /etc/modprobe.d/kvm-amd.conf
   else
-    grub_cmd="quiet intel_iommu=on iommu=pt video=vesafb:off video=efifb:off"
     printf "options kvm-intel nested=Y\n" > /etc/modprobe.d/kvm-intel.conf
   fi
-  pveversion | grep -qE "pve-manager/(7.[2-4]|8.[0-4]|9)" && grub_cmd="$grub_cmd initcall_blacklist=sysfb_init"
-  sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"$grub_cmd\"/g" /etc/default/grub
-  printf "vfio\nvfio_iommu_type1\nvfio_pci\nvfio_virqfd\n" >> /etc/modules
-  printf "blacklist nouveau\nblacklist nvidia\nblacklist snd_hda_codec_hdmi\nblacklist snd_hda_intel\nblacklist snd_hda_codec\nblacklist snd_hda_core\nblacklist radeon\nblacklist amdgpu\n" >> /etc/modprobe.d/pve-blacklist.conf
+  display_and_log "KVM nesting support configured" "$logfile"
+
+  # Configure GPU blacklisting if requested
+  if [[ "$blacklist_gpu" =~ ^[Yy]$ ]]; then
+    display_and_log "Blacklisting GPU drivers for passthrough..." "$logfile"
+    printf "blacklist nouveau\nblacklist nvidia\nblacklist snd_hda_codec_hdmi\nblacklist snd_hda_intel\nblacklist snd_hda_codec\nblacklist snd_hda_core\nblacklist radeon\nblacklist amdgpu\n" >> /etc/modprobe.d/pve-blacklist.conf
+    display_and_log "GPU drivers blacklisted for passthrough" "$logfile"
+  else
+    display_and_log "Skipping GPU driver blacklisting - host GPU will remain available" "$logfile"
+  fi
+
+  # Configure KVM and VFIO options (always needed for VM performance)
   printf "options kvm ignore_msrs=Y report_ignored_msrs=0\n" > /etc/modprobe.d/kvm.conf
   printf "options vfio_iommu_type1 allow_unsafe_interrupts=1\n" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
-  [ -f /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js ] && sed -i.backup -z "s/res === null || res === undefined || \!res || res\n\t\t\t.data.status.toLowerCase() \!== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+  
+  # Proxmox subscription warning fix
+  if [[ "$fix_subscription_warning" =~ ^[Yy]$ ]]; then
+    display_and_log "Disabling Proxmox subscription warning..." "$logfile"
+    [ -f /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js ] && sed -i.backup -z "s/res === null || res === undefined || \!res || res\n\t\t\t.data.status.toLowerCase() \!== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    display_and_log "Proxmox subscription warning disabled" "$logfile"
+  else
+    display_and_log "Keeping Proxmox subscription warning" "$logfile"
+  fi
+  
   touch /etc/pve/qemu-server/.osx-proxmox
-  update-grub >>"$logfile" 2>&1 || log_and_exit "Failed to update GRUB" "$logfile"
-  display_and_log "Prerequisites setup complete. Rebooting in 15 seconds..." "$logfile"
-  sleep 15 && reboot
+  
+  # Update GRUB if any modifications were made
+  if [[ "$grub_updated" == true ]] || [[ "$modify_grub_timeout" =~ ^[Yy]$ ]]; then
+    update-grub >>"$logfile" 2>&1 || log_and_exit "Failed to update GRUB" "$logfile"
+    display_and_log "Prerequisites setup complete. Rebooting in 15 seconds..." "$logfile"
+    echo ""
+    echo "NOTE: The system will reboot to apply GRUB changes."
+    if [[ "$modify_grub" =~ ^[Yy]$ ]]; then
+      echo "After reboot, your host's display configuration may be affected."
+    fi
+    echo "Run 'menu' again after reboot to continue setup"
+    sleep 15 && reboot
+  else
+    display_and_log "Prerequisites setup complete. No reboot required." "$logfile"
+    echo ""
+    echo "Setup completed without GRUB modifications."
+    echo "You can use VNC or the web console to access your macOS VMs."
+    echo "Run 'menu' again to continue setup"
+  fi
 }
 
 # Function to download recovery image
