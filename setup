@@ -357,7 +357,9 @@ setup_prerequisites() {
   [ -f /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js ] && sed -i.backup -z "s/res === null || res === undefined || \!res || res\n\t\t\t.data.status.toLowerCase() \!== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
   touch /etc/pve/qemu-server/.osx-proxmox
   update-grub >>"$logfile" 2>&1 || log_and_exit "Failed to update GRUB" "$logfile"
-  display_and_log "Prerequisites setup complete. Rebooting in 15 seconds..." "$logfile"
+  display_and_log "Prerequisites setup complete. A reboot is necessary to apply the required changes. Press enter to reboot or Ctrl+C if you intend to reboot later." "$logfile"
+  read noop
+  display_and_log "Enter pressed. Rebooting in 15 seconds..." "$logfile"
   sleep 15 && reboot
 }
 
