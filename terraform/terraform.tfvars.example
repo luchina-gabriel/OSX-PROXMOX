@@ -1,0 +1,84 @@
+# Terraform Variables - ORION Infrastructure
+# Copy this file to terraform.tfvars and fill in your values
+# DO NOT commit terraform.tfvars to git (it's in .gitignore)
+
+# =============================================================================
+# Proxmox Connection (REQUIRED)
+# =============================================================================
+
+# Method 1: API Token (Recommended - more secure)
+proxmox_api_token_id     = "terraform@pam!terraform-token"
+proxmox_api_token_secret = "your-token-secret-here"
+
+# Method 2: Username/Password (Less secure - not recommended)
+# proxmox_user     = "root@pam"
+# proxmox_password = "your-password-here"
+
+# Proxmox settings
+proxmox_api_url      = "https://192.168.100.10:8006/api2/json"
+proxmox_node         = "orion-pve"
+proxmox_tls_insecure = true  # Set to false if using valid SSL cert
+
+# =============================================================================
+# Network Configuration
+# =============================================================================
+
+network_gateway = "192.168.100.1"
+network_dns     = ["1.1.1.1", "8.8.8.8"]
+network_domain  = "orion.local"
+
+# =============================================================================
+# SSH Access
+# =============================================================================
+
+vm_ssh_keys = [
+  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC... user@workstation",
+  # Add more SSH public keys here
+]
+
+# =============================================================================
+# Storage
+# =============================================================================
+
+vm_storage_pool = "local-lvm"
+vm_iso_storage  = "local"
+
+# =============================================================================
+# NetBox VM
+# =============================================================================
+
+enable_netbox = true
+
+netbox_vm_id     = 500
+netbox_cores     = 4
+netbox_memory    = 8192
+netbox_disk_size = "100G"
+netbox_ip_address = "192.168.100.50"
+
+# =============================================================================
+# Kubernetes Cluster
+# =============================================================================
+
+enable_k8s_cluster = true
+
+k8s_master_count  = 1
+k8s_worker_count  = 3
+k8s_master_cores  = 4
+k8s_master_memory = 8192
+k8s_worker_cores  = 4
+k8s_worker_memory = 16384
+k8s_disk_size     = "100G"
+
+k8s_master_vm_id     = 600
+k8s_worker_vm_id_start = 601
+k8s_ip_range_start   = "192.168.100.60"
+
+# =============================================================================
+# General Settings
+# =============================================================================
+
+environment = "production"
+auto_start  = true
+enable_monitoring = true
+
+tags = ["terraform", "orion", "iac"]

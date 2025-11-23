@@ -5,3 +5,15 @@
 ehthumbs.db
 Thumbs.db
 logs
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate*
+terraform/terraform.tfvars
+terraform/*.backup
+
+# Claude Code
+.claude/settings.local.json
+.claude/.session/
+.claude/chats/

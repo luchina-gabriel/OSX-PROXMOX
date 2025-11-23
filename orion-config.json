@@ -169,7 +169,8 @@
     "router": {
       "id": 200,
       "name": "ORION-Router",
-      "os": "pfSense CE 2.7.2",
+      "os": "NixOS 24.11 + VyOS",
+      "description": "High-performance router with VyOS, BGP, and nftables firewall",
       "resources": {
         "cpu": {
           "cores": 8,
@@ -185,30 +186,79 @@
           "id": "net0",
           "bridge": "vmbr0",
           "model": "virtio",
-          "purpose": "WAN"
+          "purpose": "WAN (Telus Fiber)",
+          "mac": "auto"
         },
         {
           "id": "net1",
           "bridge": "vmbr1",
           "model": "virtio",
-          "purpose": "LAN"
+          "purpose": "LAN (192.168.100.0/24)",
+          "mac": "auto"
         },
         {
           "id": "net2",
           "bridge": "vmbr2",
           "model": "virtio",
-          "purpose": "OPT1"
+          "purpose": "Guest Network (192.168.200.0/24)",
+          "mac": "auto"
         },
         {
           "id": "net3",
-          "bridge": "vmbr3",
+          "bridge": "vmbr1",
           "model": "virtio",
-          "purpose": "OPT2"
+          "purpose": "Management (192.168.1.0/24)",
+          "mac": "auto"
         }
+      ],
+      "services": [
+        "BIRD2 BGP (AS 394955)",
+        "VyOS Routing",
+        "Unbound DNS (192.168.100.1)",
+        "Kea DHCP Server",
+        "nftables Firewall",
+        "Prometheus Node Exporter"
       ],
       "autostart": true,
       "startupOrder": 1,
-      "startupDelay": 30
+      "startupDelay": 30,
+      "configPath": "vm-configs/router-vm/configuration.nix"
+    },
+    "aiAgent": {
+      "id": 300,
+      "name": "ORION-AI-Agent",
+      "os": "NixOS 24.11",
+      "description": "Autonomous network monitoring and management agent",
+      "resources": {
+        "cpu": {
+          "cores": 4,
+          "type": "host",
+          "sockets": 1,
+          "numa": false
+        },
+        "memory": "16GB",
+        "storage": "50GB"
+      },
+      "network": [
+        {
+          "id": "net0",
+          "bridge": "vmbr1",
+          "model": "virtio",
+          "purpose": "LAN (192.168.100.20)",
+          "mac": "auto"
+        }
+      ],
+      "services": [
+        "Autonomous Network Agent (Python)",
+        "Prometheus Server (port 9090)",
+        "Grafana Dashboard (port 3000)",
+        "Alert Manager",
+        "Prometheus Node Exporter"
+      ],
+      "autostart": true,
+      "startupOrder": 2,
+      "startupDelay": 15,
+      "configPath": "vm-configs/ai-agent-vm/configuration.nix"
     },
     "macOS": {
       "id": 100,
@@ -251,7 +301,12 @@
     "routerVM": {
       "cpuCores": 8,
       "memory": "32GB",
-      "purpose": "Network routing, BGP, firewall"
+      "purpose": "NixOS + VyOS routing, BGP, firewall, DHCP, DNS"
+    },
+    "aiAgentVM": {
+      "cpuCores": 4,
+      "memory": "16GB",
+      "purpose": "Autonomous monitoring, Prometheus, Grafana"
     },
     "macOSPrimary": {
       "cpuCores": 12,
@@ -264,13 +319,14 @@
       "purpose": "macOS Sonoma testing (optional)"
     },
     "developmentVMs": {
-      "cpuCores": 24,
-      "memory": "240GB",
+      "cpuCores": 20,
+      "memory": "224GB",
       "purpose": "Linux/Windows VMs, containers, CI/CD"
     },
     "totalAllocated": {
       "cpuCores": 56,
-      "memory": "384GB"
+      "memory": "384GB",
+      "note": "Includes Router VM (8), AI Agent VM (4), macOS Primary (12), Proxmox (4), Development (20+)"
     }
   },
   "monitoring": {
@@ -331,10 +387,24 @@
     ]
   },
   "deployment": {
-    "version": "1.0.0",
+    "version": "2.0.0-hybrid",
+    "architecture": "Proxmox + NixOS/VyOS Router + AI Agent + macOS",
     "deployedDate": "",
-    "deployedBy": "ORION Automation Script",
-    "lastModified": "2025-01-19",
-    "status": "pending"
+    "deployedBy": "ORION Hybrid Deployment System",
+    "lastModified": "2025-01-20",
+    "status": "pending",
+    "features": [
+      "Full iDRAC Redfish API automation",
+      "Proxmox VE 8.x hypervisor",
+      "NixOS 24.11 + VyOS router VM (replaces pfSense)",
+      "Autonomous AI network agent",
+      "macOS Sequoia support via OSX-PROXMOX",
+      "BGP routing with BIRD2 (AS 394955)",
+      "Prometheus + Grafana monitoring",
+      "Declarative NixOS configurations",
+      "Self-healing network automation"
+    ],
+    "deploymentScript": "deploy-orion-hybrid.py",
+    "legacyScript": "deploy-orion.sh"
   }
 }

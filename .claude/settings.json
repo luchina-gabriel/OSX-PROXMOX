@@ -1,0 +1,131 @@
+{
+  "$schema": "https://storage.googleapis.com/claude-code-public/settings_schema.json",
+  "model": "sonnet",
+  "statusLine": "🚀 ORION Infrastructure | {model} | {sessionId}",
+  "includeCoAuthoredBy": true,
+  "cleanupPeriodDays": 90,
+  "outputStyle": "concise-technical",
+
+  "env": {
+    "ORION_PROJECT": "true",
+    "TERRAFORM_LOG": "INFO",
+    "ANSIBLE_STDOUT_CALLBACK": "yaml",
+    "SHELL": "/bin/zsh"
+  },
+
+  "permissions": {
+    "defaultMode": "ask",
+    "allow": [
+      {
+        "tool": "Read",
+        "description": "Read project files"
+      },
+      {
+        "tool": "Glob",
+        "description": "Search for files"
+      },
+      {
+        "tool": "Grep",
+        "description": "Search file contents"
+      },
+      {
+        "tool": "Bash",
+        "patterns": [
+          "terraform.*",
+          "ansible-playbook.*",
+          "kubectl.*",
+          "make.*",
+          "git.*",
+          "ls.*",
+          "cat.*",
+          "grep.*",
+          "find.*"
+        ],
+        "description": "Infrastructure commands"
+      }
+    ],
+    "ask": [
+      {
+        "tool": "Edit",
+        "description": "Modifications require review"
+      },
+      {
+        "tool": "Write",
+        "description": "New files require approval"
+      },
+      {
+        "tool": "Bash",
+        "patterns": [
+          "ssh.*",
+          "scp.*",
+          "rsync.*",
+          "rm -rf.*",
+          "terraform destroy.*"
+        ],
+        "description": "Potentially dangerous operations"
+      }
+    ],
+    "deny": [
+      {
+        "tool": "Bash",
+        "patterns": [
+          "curl.*| bash",
+          "wget.*| sh",
+          "dd if=.*",
+          "mkfs.*",
+          "fdisk.*"
+        ],
+        "description": "Blocked: Pipe to shell, disk operations"
+      },
+      {
+        "tool": "Read",
+        "patterns": [
+          "**/*.pem",
+          "**/*.key",
+          "**/id_rsa*",
+          "**/*.pfx",
+          "**/terraform.tfvars",
+          "**/.env",
+          "**/credentials*"
+        ],
+        "description": "Blocked: Sensitive credential files"
+      },
+      {
+        "tool": "Edit",
+        "patterns": [
+          "**/*.pem",
+          "**/*.key",
+          "**/terraform.tfvars"
+        ],
+        "description": "Blocked: Cannot edit credentials"
+      }
+    ]
+  },
+
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": false,
+    "network": {
+      "allowLocalBinding": true,
+      "allowUnixSockets": [
+        "/var/run/docker.sock"
+      ]
+    }
+  },
+
+  "hooks": {
+    "userPromptSubmit": {
+      "enabled": true,
+      "command": "git status --short",
+      "description": "Show git status before each command",
+      "continueOnError": true
+    }
+  },
+
+  "companyAnnouncements": [
+    "🚀 ORION Infrastructure Project",
+    "📘 Main docs: ARCHITECTURE.md",
+    "🔧 Deploy: make deploy-full",
+    "⚠️  Always review infrastructure changes carefully!"
+  ]
+}

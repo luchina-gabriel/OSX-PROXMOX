@@ -1,6 +1,8 @@
 <div align="center">
-  
-# 🚀 OSX-PROXMOX - Run macOS on ANY Computer (AMD & Intel)
+
+# 🚀 ORION - AI-First Infrastructure Stack
+
+## Dell R730 Proxmox VE + Terraform + Kubernetes + AI Agents
 
 ![GitHub stars](https://img.shields.io/github/stars/luchina-gabriel/osx-proxmox?style=flat-square)
 ![GitHub forks](https://img.shields.io/github/forks/luchina-gabriel/OSX-PROXMOX?style=flat-square)
@@ -9,8 +11,142 @@
 
 </div>
 
+---
+
+## 🎯 ORION v2.0 Architecture
+
+Complete **Infrastructure as Code** stack for Dell PowerEdge R730, designed from the ground up as an **AI-first, agent-driven architecture** with multi-layer infrastructure.
+
+### ✨ What's New in v2.0
+
+- ✅ **Infrastructure as Code** - Terraform for VMs, Ansible for configuration
+- ✅ **LXC AI/ML Stack** - Ollama, LiteLLM, FlowiseAI via helper scripts (5-minute deployment)
+- ✅ **Kubernetes on K3s** - Lightweight orchestration for Backstage + Vapor API
+- ✅ **Multi-Agent Architecture** - Proper 4-layer AI stack with specialized agents
+- ✅ **IPv6 BGP Routing** - AS394955 with 2602:F674::/48 prefix
+- ✅ **Security Through Obscurity** - "AI Maze" using Backstage + Swift/Vapor
+- ✅ **One-Command Deployment** - Complete stack via Makefile
+- ✅ **396 Helper Scripts** - Automated LXC container deployment
+
+### 🚀 Quick Start
+
+```bash
+# Clone repository
+git clone https://github.com/luci-digital/luci-macOSX-PROXMOX.git
+cd luci-macOSX-PROXMOX
+
+# Configure Terraform
+cp terraform/terraform.tfvars.example terraform/terraform.tfvars
+nano terraform/terraform.tfvars  # Add Proxmox API token
+
+# Deploy complete stack
+make deploy-full
+
+# Or deploy in phases:
+make apply              # Deploy VMs with Terraform
+make deploy-ai-stack    # Deploy AI/ML LXC containers
+make configure          # Configure VMs with Ansible
+make k8s-deploy         # Deploy K8s workloads
+```
+
+**Documentation**:
+- 📘 **[Architecture Guide](ARCHITECTURE.md)** - Complete v2.0 architecture (THIS IS THE MAIN DOC!)
+- 🔍 **[Architecture Review](ARCHITECTURE_REVIEW.md)** - AI engineering analysis
+- 🤖 **[Helper Scripts Integration](docs/HELPER_SCRIPTS_INTEGRATION.md)** - LXC deployment guide
+- 🌐 **[IPv6 Routing](docs/IPV6_ROUTING_INTEGRATION.md)** - BGP configuration
+- 🤖 **[Claude Code Integration](docs/CLAUDE_CODE_INTEGRATION.md)** - AI-assisted development setup
+- 💻 **[Development Environment](docs/DEVELOPMENT_ENVIRONMENT.md)** - Zsh, Oh My Zsh, Antigen setup
+- 🏗️ **[Terraform Guide](terraform/README.md)** - Infrastructure deployment
+- 📚 **[Reference Docs](docs/reference/)** - Archived v1.0 documentation
+
+### 🏗️ Architecture Overview
+
+```
+Dell R730 ORION (56 cores, 384GB RAM)
+├─ Proxmox VE 8.x (Hypervisor)
+│
+├─ Infrastructure VMs (Terraform)
+│  ├─ VM 200: Router (BIRD2 BGP, IPv6, Firewall) - 8C/32GB
+│  ├─ VM 300: AI Coordinator (Multi-agent orchestration) - 4C/16GB
+│  ├─ VM 500: NetBox (IPAM) - 4C/8GB
+│  └─ VM 600-603: K3s Cluster (1 master + 3 workers) - 16C/56GB
+│
+├─ LXC Containers (Helper Scripts - 5 min deploy)
+│  ├─ LXC 1000: Ollama (LLM inference)
+│  ├─ LXC 1001: OpenWebUI (ChatGPT-like UI)
+│  ├─ LXC 1002: LiteLLM (API gateway)
+│  ├─ LXC 1003: FlowiseAI (Visual agent builder)
+│  ├─ LXC 1004: PostgreSQL + pgvector
+│  ├─ LXC 1005: Redis
+│  ├─ LXC 1006: Minio (S3 storage)
+│  ├─ LXC 1007: Nginx Proxy Manager
+│  └─ LXC 1008: Wireguard VPN
+│
+└─ Kubernetes Workloads (K3s)
+   ├─ Infrastructure: Prometheus, Grafana, Cilium, Longhorn
+   ├─ Applications: Backstage, Vapor API (Swift)
+   └─ AI Agents: Infrastructure, Network, Security, DevOps
+```
+
+### 📦 Repository Structure
+
+```
+luci-macOSX-PROXMOX/
+├── terraform/              # Infrastructure as Code
+│   ├── main.tf            # VM definitions
+│   ├── variables.tf       # Variables
+│   └── outputs.tf         # Outputs
+├── ansible/               # Configuration management
+│   ├── playbooks/        # Ansible playbooks
+│   └── roles/            # Ansible roles
+├── kubernetes/            # K8s manifests
+│   ├── infrastructure/   # Core services
+│   ├── applications/     # Apps (Backstage, Vapor)
+│   └── ai-agents/        # AI agents
+├── router-configs/        # BIRD2/GoBGP configs
+├── docs/                  # Documentation
+│   ├── deployment-guide/
+│   ├── ai-agent-design/
+│   └── reference/        # Archived v1.0 docs
+├── Makefile              # One-command deployment
+├── ARCHITECTURE.md       # Main architecture doc
+└── README.md             # This file
+```
+
+### 🌟 Key Features
+
+**Infrastructure as Code**: Declarative, reproducible infrastructure via Terraform + Ansible
+
+**LXC for AI/ML**: 5-minute deployment vs hours of manual K8s configuration
+
+**4-Layer AI Stack**: Proper architecture - Inference → Orchestration → Agents → Coordinator
+
+**Security "AI Maze"**: Backstage frontend + Swift/Vapor API to confuse automated scanners
+
+**IPv6 BGP**: Production AS394955, peering with Telus AS6939, prefix 2602:F674::/48
+
+**Hybrid Orchestration**: VMs for infra, LXC for AI/ML, K8s for apps - right tool for the job
+
+**396 Helper Scripts**: Community-maintained automation for everything from databases to VPNs
+
+### 🎯 What Makes This Different?
+
+| Aspect | v1.0 (Old) | v2.0 (Current) |
+|--------|-----------|----------------|
+| **Deployment** | 4 conflicting scripts | Single Makefile path |
+| **AI Stack** | Manual K8s manifests | 5-min LXC deployment |
+| **Infrastructure** | Bash scripts | Terraform + Ansible |
+| **Documentation** | Scattered | Consolidated |
+| **Architecture** | Ambiguous | 4-layer AI stack |
+| **Deployment Time** | 4-6 hours | ~30 minutes |
+
+---
+
+## 🍎 Original OSX-PROXMOX Guide
+
 ![v15 - Sequoia](https://github.com/user-attachments/assets/4efd8874-dbc8-48b6-a485-73f7c38a5e06)
-Easily install macOS on Proxmox VE with just a few steps! This guide provides the simplest and most effective way to set up macOS on Proxmox, whether you're using AMD or Intel hardware.
+
+The following guide provides the original OSX-PROXMOX installation method for running macOS on Proxmox VE with AMD or Intel hardware.
 
 ---
 
