@@ -48,6 +48,7 @@ sudo spctl --master-disable
 ✅ macOS Ventura - 13  
 ✅ macOS Sonoma - 14  
 ✅ macOS Sequoia - 15  
+✅ macOS Tahoe - 26  
 
 ---
 
@@ -163,4 +164,3 @@ In some environments it is necessary to segment the IOMMU Groups to be able to p
 ## 🌎 Join Our Community - Universo Hackintosh Discord
 
 💬 [**Join Here!**](https://discord.universohackintosh.com.br)
-
