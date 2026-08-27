@@ -5,7 +5,7 @@
 # Author: Gabriel Luchina
 # https://luchina.com.br
 #
-# COPYRIGHT - 2021, 2022
+# COPYRIGHT - 2021 -> 2026
 #
 # All rights reserved - You may not copy, reproduce, distribute, publish, display, perform, modify,
 # create derivative works, transmit, or in any way exploit any such content, nor may you distribute
@@ -37,8 +37,8 @@ SCRIPT_DIR="/root/OSX-PROXMOX"
 LOGDIR="${SCRIPT_DIR}/logs"
 MAIN_LOG="${LOGDIR}/main.log"
 TMPDIR="${SCRIPT_DIR}/tmp"
-HACKPXVERSION="2025.07.23"
-OCVERSION="1.0.4"
+HACKPXVERSION="2026.08.27"
+OCVERSION="1.0.7"
 DEFAULT_VM_PREFIX="HACK-"
 BASE_RAM_SIZE=4096
 RAM_PER_CORE=512
@@ -60,6 +60,7 @@ declare -A MACOS_CONFIG=(
   ["6"]="Ventura|13|Mac-B4831CEBD52A0C4C|00000000000000000|1024M|virtio0"
   ["7"]="Sonoma|14|Mac-827FAC58A8FDFA22|00000000000000000|1450M|virtio0"
   ["8"]="Sequoia|15|Mac-7BA5B2D9E42DDD94|00000000000000000|1450M|virtio0"
+  ["9"]="Tahoe|26|Mac-27AD2F918AE68F61|00000000000000000|1450M|virtio0"
 )
 
 # Display and log function
@@ -314,10 +315,10 @@ check_proxmox_version() {
   fi
 
   # Warn about preliminary Proxmox 9 support
-  if [[ "$version" == pve-manager/9.* ]]; then
-    display_and_log "Proxmox 9 is in preliminary testing. Use at your own risk." "$log_file"
-    sleep 5
-  fi
+  # if [[ "$version" == pve-manager/9.* ]]; then
+  #  display_and_log "Proxmox 9 is in preliminary testing. Use at your own risk." "$log_file"
+  #  sleep 5
+  # fi
 }
 
 # Function to detect CPU platform
@@ -378,7 +379,7 @@ download_recovery_image() {
   mount "$loopdev" /mnt/APPLE >>"$logfile" 2>&1 || log_and_exit "Failed to mount image" "$logfile"
   cd /mnt/APPLE
   local recovery_args="-b $board_id -m $model_id download"
-  [[ "$version_name" == "Sequoia" ]] && recovery_args="$recovery_args -os latest"
+  [[ "$version_name" == "Tahoe" ]] && recovery_args="$recovery_args -os latest"
   python3 "${SCRIPT_DIR}/tools/macrecovery/macrecovery.py" $recovery_args >>"$logfile" 2>&1 || log_and_exit "Failed to download recovery" "$logfile"
   cd "$SCRIPT_DIR"
   umount /mnt/APPLE >>"$logfile" 2>&1 || log_and_exit "Failed to unmount image" "$logfile"
@@ -398,13 +399,13 @@ create_vm() {
   [[ ! -d "/sys/class/net/$bridge" ]] && log_and_exit "Bridge $bridge does not exist" "$logfile"
 
   local cpu_args device_args='-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2'
-  if [[ "$version_name" =~ ^(Sonoma|Sequoia)$ ]]; then
+  if [[ "$version_name" =~ ^(Sonoma|Sequoia|Tahoe)$ ]]; then
     device_args="$device_args -device qemu-xhci -device usb-kbd -device usb-tablet -global nec-usb-xhci.msi=off"
   else
     device_args="$device_args -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3"
   fi
   if [[ "$OSX_PLATFORM" == "AMD" ]]; then
-    if [[ "$version_name" =~ ^(Ventura|Sonoma|Sequoia)$ ]]; then
+    if [[ "$version_name" =~ ^(Ventura|Sonoma|Sequoia|Tahoe)$ ]]; then
       cpu_args="-cpu Cascadelake-Server,vendor=GenuineIntel,+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,kvm=on,vmware-cpuid-freq=on"
     else
       cpu_args="-cpu Penryn,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+ssse3,+sse4.2,+popcnt,+avx,+avx2,+aes,+fma,+bmi1,+bmi2,+xsave,+xsaveopt,check"
@@ -1415,7 +1416,7 @@ main_menu() {
       echo "$version|$key"
     done | sort -t'|' -k1,1V | cut -d'|' -f2); do
       IFS='|' read -r name version _ _ _ _ <<< "${MACOS_CONFIG[$i]}"
-      [[ "$name" == "Sequoia" ]] && display_name="macOS Sequoia" || display_name="$name"
+      [[ "$name" == "Tahoe" ]] && display_name="Tahoe" || display_name="$name"
       echo " $i - $display_name - $version"
     done
     echo
@@ -1457,7 +1458,7 @@ set_isodir
 if [ ! -f "${ISODIR}/${OPENCORE_ISO}" ]; then
   update_opencore_iso "0"
 fi
-sleep 4
+sleep 2
 OSX_PLATFORM=$(detect_cpu_platform)
 [[ ! -e /etc/pve/qemu-server/.osx-proxmox ]] && setup_prerequisites
 main_menu
