@@ -5,7 +5,7 @@
 # 
 # Author: Gabriel Luchina
 # https://luchina.com.br
-# 20220128T1112
+# 20260827T1431
 
 # Check for IOMMU or DMAR messages in dmesg
 iommu_check=$(dmesg | grep -E 'DMAR|IOMMU')

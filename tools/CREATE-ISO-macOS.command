@@ -5,9 +5,7 @@
 # 
 # Author: Gabriel Luchina
 # https://luchina.com.br
-# 20211116T2245
-
-set -e
+# 20260827T1431
 
 clear
 
@@ -16,27 +14,21 @@ echo -e "BY: https://luchina.com.br"
 echo -e "SUPPORT: https://osx-proxmox.com"
 
 echo -n -e "\nPath to temporary files (work dir): "
-read -r TEMPDIR
+read TEMPDIR
 
 echo -n -e "Path to macOS Installation (.app) file: "
-read -r APPOSX
+read APPOSX
 
 echo " "
 
 ## Core 
-if [ -d "$TEMPDIR" ]; then
-    cd "$TEMPDIR" || exit 1
-    rm -rf macOS-install* > /dev/null 2> /dev/null
-    hdiutil create -o macOS-install -size 16g -layout GPTSPUD -fs HFS+J > /dev/null 2> /dev/null
-    hdiutil attach -noverify -mountpoint /Volumes/install_build macOS-install.dmg > /dev/null 2> /dev/null
-    sudo "${APPOSX}/Contents/Resources/createinstallmedia" --volume /Volumes/install_build --nointeraction
-    hdiutil detach -force "/Volumes/Install macOS"* > /dev/null 2> /dev/null && sleep 3s > /dev/null 2> /dev/null
-    hdiutil detach -force "/Volumes/Shared Support"* > /dev/null 2> /dev/null
-    mv macOS-install.dmg macOS-install.iso > /dev/null 2> /dev/null
-else
-    echo "The temporary directory does not exist!"
-    exit 1
-fi
+cd ${TEMPDIR} > /dev/null 2> /dev/null
+rm -rf macOS-install* > /dev/null 2> /dev/null
+hdiutil create -o macOS-install -size 26g -layout GPTSPUD -fs HFS+J > /dev/null 2> /dev/null
+hdiutil attach -noverify -mountpoint /Volumes/install_build macOS-install.dmg > /dev/null 2> /dev/null
+sudo "${APPOSX}/Contents/Resources/createinstallmedia" --volume /Volumes/install_build --nointeraction
+hdiutil detach -force "/Volumes/Install macOS"* > /dev/null 2> /dev/null && sleep 3s > /dev/null 2> /dev/null
+hdiutil detach -force "/Volumes/Shared Support"* > /dev/null 2> /dev/null
+mv macOS-install.dmg macOS-install.iso > /dev/null 2> /dev/null
 
 echo " "
-

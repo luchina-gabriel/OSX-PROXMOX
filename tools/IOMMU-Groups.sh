@@ -5,7 +5,7 @@
 # 
 # Author: Gabriel Luchina
 # https://luchina.com.br
-# 20250627T2331
+# 20260827T1431
 
 #!/bin/bash
 shopt -s nullglob
