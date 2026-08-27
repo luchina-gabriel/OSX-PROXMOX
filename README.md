@@ -24,9 +24,9 @@ Easily install macOS on Proxmox VE with just a few steps! This guide provides th
 /bin/bash -c "$(curl -fsSL https://install.osx-proxmox.com)"
 ```
 
-🎉 Voilà! You can now install macOS!
-![osx-terminal](https://github.com/user-attachments/assets/ea81b920-f3e2-422e-b1ff-0d9045adc55e)
----
+## 🎉 Voilà! You can now install macOS!
+
+<img width="1358" height="761" alt="osx-terminal" src="https://github.com/user-attachments/assets/5220cf15-6b2a-454e-a2c9-f5499c50ed0d" />
 
 ## 🔧 Additional Configuration
 
