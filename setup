@@ -358,7 +358,8 @@ setup_prerequisites() {
   [ -f /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js ] && sed -i.backup -z "s/res === null || res === undefined || \!res || res\n\t\t\t.data.status.toLowerCase() \!== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
   touch /etc/pve/qemu-server/.osx-proxmox
   update-grub >>"$logfile" 2>&1 || log_and_exit "Failed to update GRUB" "$logfile"
-  display_and_log "Prerequisites setup complete. A reboot is necessary to apply the required changes. Press enter to reboot or Ctrl+C if you intend to reboot later." "$logfile"
+  display_and_log "Prerequisites setup complete. A reboot is necessary to apply the required changes." "$logfile"
+  display_and_log "Press enter to reboot or Ctrl+C if you intend to reboot later." "$logfile"
   read noop
   display_and_log "Enter pressed. Rebooting in 15 seconds..." "$logfile"
   sleep 15 && reboot
@@ -434,7 +435,9 @@ create_vm() {
   display_and_log "VM ($vm_name) created successfully" "$logfile"
   local bridge_ip=$(ip -4 addr show "$bridge" | awk '/inet/ {print $2}' | cut -d'/' -f1 || echo "unknown")
   if [[ "$version_name" =~ "High Sierra" ]]; then
-    display_and_log "\nNOTE: High Sierra has a 'The Recovery Server Could Not Be Contacted' Error!\n - Goto https://mrmacintosh.com/how-to-fix-the-recovery-server-could-not-be-contacted-error-high-sierra-recovery-is-still-online-but-broken/ and do the Fix #3\n\n" "$logfile"
+    display_and_log "NOTE: High Sierra has a 'The Recovery Server Could Not Be Contacted' Error!" "$logfile"
+    display_and_log "Goto https://github.com/luchina-gabriel/OSX-PROXMOX#-high-sierra--below---recovery-server-could-not-be-contacted" "$logfile"
+    display_and_log "and do the Fix." "$logfile"
   fi
   display_and_log "Access Proxmox Web Panel: https://$bridge_ip:8006" "$logfile"
 }
