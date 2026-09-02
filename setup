@@ -407,7 +407,7 @@ create_vm() {
   fi
   if [[ "$OSX_PLATFORM" == "AMD" ]]; then
     if [[ "$version_name" =~ ^(Ventura|Sonoma|Sequoia|Tahoe)$ ]]; then
-      cpu_args="-cpu Cascadelake-Server,vendor=GenuineIntel,+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,-spec-ctrl,kvm=on,vmware-cpuid-freq=on"
+      cpu_args="-cpu Skylake-Client-v4,vendor=GenuineIntel,+invtsc,-pcid,-hle,-rtm,-avx512f,-avx512dq,-avx512cd,-avx512bw,-avx512vl,-avx512vnni,-spec-ctrl,kvm=on,vmware-cpuid-freq=on"
     else
       cpu_args="-cpu Penryn,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+ssse3,+sse4.2,+popcnt,+avx,+avx2,+aes,+fma,+bmi1,+bmi2,+xsave,+xsaveopt,check"
     fi
@@ -419,17 +419,26 @@ create_vm() {
   local qemu_version=$(qemu-system-x86_64 --version | awk '/version/ {print $4}' | cut -d'(' -f1)
   version_compare "$qemu_version" "6.1" && device_args="$device_args -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off"
 
+  # CD-ROM bus: High Sierra (10.13) and Mojave (10.14) use sata0 as the system
+  # disk, so their CD-ROMs stay on IDE to avoid colliding with it.
+  local cdrom_boot cdrom_recovery
+  if [[ "$version_name" =~ ^(High\ Sierra|Mojave)$ ]]; then
+    cdrom_boot="ide0"; cdrom_recovery="ide2"
+  else
+    cdrom_boot="sata0"; cdrom_recovery="sata2"
+  fi
+
   qm create "$vm_id" \
     --agent 1 --args "$device_args $cpu_args" --autostart 0 \
-    --balloon 0 --bios ovmf --boot "order=sata0;$disk_type" \
+    --balloon 0 --bios ovmf --boot "order=${cdrom_boot};$disk_type" \
     --cores "$core_count" --description "Hackintosh VM - $version_name" \
     --efidisk0 "${storage}:4" --machine q35 --memory "$ram_size" \
     --name "$vm_name" --net0 "vmxnet3,bridge=$bridge" --numa 0 \
     --onboot 0 --ostype other --sockets 1 --start 0 --tablet 1 \
     --vga vmware --vmgenid 1 --scsihw virtio-scsi-pci \
     --"$disk_type" "${storage}:${disk_size},cache=none,discard=on" \
-    --sata0 "${storage_iso}:iso/${iso_file},media=cdrom,cache=unsafe,size=96M" \
-    --sata2 "${storage_iso}:iso/recovery-${version_name,,}.iso,media=cdrom,cache=unsafe,size=${iso_size}" >>"$logfile" 2>&1 || log_and_exit "Failed to create VM" "$logfile"
+    --"$cdrom_boot" "${storage_iso}:iso/${iso_file},media=cdrom,cache=unsafe,size=96M" \
+    --"$cdrom_recovery" "${storage_iso}:iso/recovery-${version_name,,}.iso,media=cdrom,cache=unsafe,size=${iso_size}" >>"$logfile" 2>&1 || log_and_exit "Failed to create VM" "$logfile"
   sed -i 's/media=cdrom/media=disk/' "/etc/pve/qemu-server/$vm_id.conf" >>"$logfile" 2>&1 || log_and_exit "Failed to update VM config" "$logfile"
 
   display_and_log "VM ($vm_name) created successfully" "$logfile"
