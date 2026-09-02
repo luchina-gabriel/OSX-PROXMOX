@@ -65,10 +65,34 @@ log_message "Installing git..."
 apt-get install -y git >> "$LOG_FILE" 2>&1
 check_status "Failed to install git"
 
-# Clone repository
-log_message "Cloning OSX-PROXMOX repository..."
-git clone --recurse-submodules https://github.com/luchina-gabriel/OSX-PROXMOX.git /root/OSX-PROXMOX >> "$LOG_FILE" 2>&1
-check_status "Failed to clone repository"
+# Download repository (latest version only, without full history)
+REPO_URL="https://github.com/luchina-gabriel/OSX-PROXMOX.git"
+REPO_DIR="/root/OSX-PROXMOX"
+
+# Shallow + partial + sparse checkout: fetches only the files the setup needs.
+# The OpenCore ISO is left out on purpose - the setup downloads it into the ISO
+# storage on its own, so checking it out here would just duplicate ~96 MB.
+clone_latest_only() {
+    git clone --depth 1 --filter=blob:none --sparse "$REPO_URL" "$REPO_DIR" &&
+    git -C "$REPO_DIR" sparse-checkout set tools
+}
+
+log_message "Downloading OSX-PROXMOX repository (latest version only)..."
+if ! clone_latest_only >> "$LOG_FILE" 2>&1; then
+    log_message "Partial clone unavailable. Falling back to shallow clone..."
+    rm -rf "$REPO_DIR"
+    git clone --depth 1 "$REPO_URL" "$REPO_DIR" >> "$LOG_FILE" 2>&1
+    check_status "Failed to clone repository"
+fi
+
+# Download submodules (GenSMBIOS) at their pinned revision only
+log_message "Downloading submodules..."
+if ! git -C "$REPO_DIR" submodule update --init --depth 1 >> "$LOG_FILE" 2>&1; then
+    log_message "Shallow submodule fetch failed. Retrying with full history..."
+    git -C "$REPO_DIR" submodule deinit -f --all >> "$LOG_FILE" 2>&1 || true
+    git -C "$REPO_DIR" submodule update --init --force >> "$LOG_FILE" 2>&1
+    check_status "Failed to download submodules"
+fi
 
 # Ensure directory exists and setup is executable
 if [ -f "/root/OSX-PROXMOX/setup" ]; then

@@ -220,6 +220,16 @@ ensure_base64_xxd_dependency() {
   fi
 }
 
+# Function to ensure wget is installed
+ensure_wget_dependency() {
+  local logfile="${LOGDIR}/wget-dependency.log"
+  if ! command -v wget >/dev/null 2>&1; then
+    display_and_log "Installing wget..." "$logfile"
+    apt-get update >>"$logfile" 2>&1 || log_and_exit "Failed to update apt" "$logfile"
+    apt-get install -y wget >>"$logfile" 2>&1 || log_and_exit "Failed to install wget" "$logfile"
+  fi
+}
+
 # Function to set ISODIR based on selected ISO storage
 set_isodir() {
   local logfile="${LOGDIR}/iso-storage-detection.log"
@@ -328,7 +338,7 @@ detect_cpu_platform() {
 # Function to setup prerequisites
 setup_prerequisites() {
   local logfile="${LOGDIR}/prerequisites-setup.log"
-  cp "${SCRIPT_DIR}/EFI/"*.iso "$ISODIR" || log_and_exit "Failed to copy EFI files" "$logfile"
+  # The OpenCore ISO is already provisioned in ISODIR by update_opencore_iso at startup
   printf "alias osx-setup='%s/setup'\n" "$SCRIPT_DIR" >> /root/.bashrc
   printf "LANG=en_US.UTF-8\nLC_ALL=en_US.UTF-8\n" > /etc/environment
   printf "set mouse-=a\n" > ~/.vimrc
@@ -862,6 +872,7 @@ update_opencore_iso() {
   iso_path="${ISODIR}/${OPENCORE_ISO}"
   oc_json_path="${ISODIR}/.smbios.json"
 
+  ensure_wget_dependency
   rm -f "$iso_path" >>"$logfile" 2>&1
   if ! wget -q -O "$iso_path" "$iso_url" >>"$logfile" 2>&1; then
     log_and_exit "Failed to download OpenCore ISO" "$logfile"
