@@ -42,9 +42,8 @@ OCVERSION="1.0.7"
 DEFAULT_VM_PREFIX="HACK-"
 BASE_RAM_SIZE=4096
 RAM_PER_CORE=512
-BASE_DISK_SIZE=64
-DISK_INCREMENT=8
-MAX_CORES=16
+BASE_DISK_SIZE=128
+MAX_CORES=32
 DHCP_CONF_DIR="/etc/dhcp/dhcpd.d"
 NETWORK_INTERFACES_FILE="/etc/network/interfaces"
 DHCP_USER="dhcpd"
@@ -412,7 +411,7 @@ create_vm() {
       cpu_args="-cpu Penryn,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+ssse3,+sse4.2,+popcnt,+avx,+avx2,+aes,+fma,+bmi1,+bmi2,+xsave,+xsaveopt,check"
     fi
   else
-    cpu_args="-cpu host,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc"
+    cpu_args="-cpu Skylake-Client-v4,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+vmx,vmware-cpuid-freq=on"
   fi
 
   # Check QEMU version and append hotplug fix if 6.1 or newer
@@ -1238,7 +1237,7 @@ configure_network_bridge() {
 configure_macos_vm() {
   local macopt=$1
   local nextid=$2
-  local version_name version board_id model_id iso_size disk_type opt=$3
+  local version_name version board_id model_id iso_size disk_type
   IFS='|' read -r version_name version board_id model_id iso_size disk_type <<< "$macopt"
   local default_vm_name="${DEFAULT_VM_PREFIX}$(echo "$version_name" | tr -s ' ' | sed 's/^[ ]*//;s/[ ]*$//;s/[ ]/-/g' | tr '[:lower:]' '[:upper:]' | sed 's/-*$//')"
   validate_vm_name "$default_vm_name" || log_and_exit "Invalid default VM name: $default_vm_name" "${LOGDIR}/main-menu.log"
@@ -1268,7 +1267,7 @@ configure_macos_vm() {
   done
 
   # Disk Size
-  default_disk_size=$((BASE_DISK_SIZE + (opt > 6 ? 2 : opt == 4 ? 1 : 0) * DISK_INCREMENT))
+  local default_disk_size=$BASE_DISK_SIZE
   while true; do
     read -rp "Disk size (GB) [default: $default_disk_size]: " SIZEDISK
     SIZEDISK=${SIZEDISK:-$default_disk_size}
@@ -1446,7 +1445,7 @@ main_menu() {
     [[ -z "$OPT" || "$OPT" -eq 0 ]] && exit
 
     if [[ ${MACOS_CONFIG[$OPT]} ]]; then
-      configure_macos_vm "${MACOS_CONFIG[$OPT]}" "$NEXTID" "$OPT"
+      configure_macos_vm "${MACOS_CONFIG[$OPT]}" "$NEXTID"
     else
       case $OPT in
         200) add_no_subscription_repo ;;
@@ -1470,7 +1469,6 @@ set_isodir
 if [ ! -f "${ISODIR}/${OPENCORE_ISO}" ]; then
   update_opencore_iso "0"
 fi
-sleep 2
 OSX_PLATFORM=$(detect_cpu_platform)
 [[ ! -e /etc/pve/qemu-server/.osx-proxmox ]] && setup_prerequisites
 main_menu
