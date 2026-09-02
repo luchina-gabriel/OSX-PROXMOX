@@ -28,6 +28,10 @@ Easily install macOS on Proxmox VE with just a few steps! This guide provides th
 
 <img width="1358" height="761" alt="osx-terminal" src="https://github.com/user-attachments/assets/5220cf15-6b2a-454e-a2c9-f5499c50ed0d" />
 
+## ⚠️ This screen is NORMAL after install of osx-proxmox
+
+<img width="715" height="195" alt="Screenshot 2026-09-02 at 00 16 45" src="https://github.com/user-attachments/assets/5237274f-c6fc-4d24-b1cb-ec61e1d06938" />
+
 ## 🔧 Additional Configuration
 
 ### Install EFI Package in macOS (Disable Gatekeeper First)
