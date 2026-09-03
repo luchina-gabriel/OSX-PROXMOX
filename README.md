@@ -147,6 +147,9 @@ In some environments it is necessary to segment the IOMMU Groups to be able to p
 2. Some environments, add de content `pcie_port_pm=off disable_idle_d3=1` in the file `/etc/default/grub` at the end of the line `GRUB_CMDLINE_LINUX_DEFAULT`;
 3. After changing the grub file, run the command `update-grub` and reboot your PVE.
 
+Some environments, you need create a `/etc/modprobe.d/vfio-pci.conf` with content:
+`options vfio-pci ids=XXXX:XXXX,XXXX:XXXX disable_vga=on`
+
 ---
 
 ## 🎥 Demonstration (in Portuguese)
