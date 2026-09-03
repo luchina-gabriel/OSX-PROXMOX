@@ -342,6 +342,7 @@ detect_intel_uarch() {
   model=$(awk -F': ' '/^model[[:space:]]*:/ {print $2; exit}' /proc/cpuinfo)
   if [[ "$family" == "6" ]]; then
     case "$model" in
+      60|69|70) echo "HASWELL" ;;         # Core i5/i7 4xxx Desktop/Mobile (Haswell DT, ULT, GT3e)
       63) echo "HASWELL_HEDT" ;;          # Xeon E5 v3 / Core i7 HEDT (Haswell-E/EP)
       79|86) echo "BROADWELL_HEDT" ;;     # Xeon E5 v4 / Core i7 HEDT (Broadwell-E/EP), Xeon D (Broadwell-DE)
       *) echo "GENERIC" ;;
@@ -438,6 +439,9 @@ create_vm() {
     fi
   else
     case "$OSX_INTEL_UARCH" in
+      HASWELL)
+        cpu_args="-cpu Haswell-noTSX,stepping=3,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+vmx,vmware-cpuid-freq=on"
+        ;;
       HASWELL_HEDT)
         cpu_args="-cpu Haswell-noTSX,model=158,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+vmx,vmware-cpuid-freq=on"
         ;;
