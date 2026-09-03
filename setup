@@ -335,6 +335,22 @@ detect_cpu_platform() {
   lscpu | grep -qi "Vendor ID.*AMD" && echo "AMD" || echo "INTEL"
 }
 
+# Function to detect the Intel microarchitecture (CPUID family/model)
+detect_intel_uarch() {
+  local family model
+  family=$(awk -F': ' '/^cpu family/ {print $2; exit}' /proc/cpuinfo)
+  model=$(awk -F': ' '/^model[[:space:]]*:/ {print $2; exit}' /proc/cpuinfo)
+  if [[ "$family" == "6" ]]; then
+    case "$model" in
+      63) echo "HASWELL_HEDT" ;;          # Xeon E5 v3 / Core i7 HEDT (Haswell-E/EP)
+      79|86) echo "BROADWELL_HEDT" ;;     # Xeon E5 v4 / Core i7 HEDT (Broadwell-E/EP), Xeon D (Broadwell-DE)
+      *) echo "GENERIC" ;;
+    esac
+  else
+    echo "GENERIC"
+  fi
+}
+
 # Function to setup prerequisites
 setup_prerequisites() {
   local logfile="${LOGDIR}/prerequisites-setup.log"
@@ -421,7 +437,17 @@ create_vm() {
       cpu_args="-cpu Penryn,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+ssse3,+sse4.2,+popcnt,+avx,+avx2,+aes,+fma,+bmi1,+bmi2,+xsave,+xsaveopt,check"
     fi
   else
-    cpu_args="-cpu Skylake-Client-v4,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+vmx,vmware-cpuid-freq=on"
+    case "$OSX_INTEL_UARCH" in
+      HASWELL_HEDT)
+        cpu_args="-cpu Haswell-noTSX,model=158,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+vmx,vmware-cpuid-freq=on"
+        ;;
+      BROADWELL_HEDT)
+        cpu_args="-cpu Broadwell-noTSX,model=158,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+vmx,vmware-cpuid-freq=on"
+        ;;
+      *)
+        cpu_args="-cpu Skylake-Client-v4,kvm=on,vendor=GenuineIntel,+kvm_pv_unhalt,+kvm_pv_eoi,+hypervisor,+invtsc,+vmx,vmware-cpuid-freq=on"
+        ;;
+    esac
   fi
 
   # Check QEMU version and append hotplug fix if 6.1 or newer
@@ -1481,5 +1507,6 @@ if [ ! -f "${ISODIR}/${OPENCORE_ISO}" ]; then
   update_opencore_iso "0"
 fi
 OSX_PLATFORM=$(detect_cpu_platform)
+OSX_INTEL_UARCH=$(detect_intel_uarch)
 [[ ! -e /etc/pve/qemu-server/.osx-proxmox ]] && setup_prerequisites
 main_menu
