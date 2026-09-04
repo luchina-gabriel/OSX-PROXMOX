@@ -1,4 +1,6 @@
-macOS/VM Crash when try connect in WiFi [for BCM94360, in macOS Sonoma or Sequoia]
+macOS/VM Crash when try connect in WiFi [for BCM94360, in macOS Sonoma, Sequoia or Tahoe]
+
+FOR PVE v7 ONLY
 
 1. Run osx-setup and choose option '200 - Add Promox VE NO Subscription repository'
 

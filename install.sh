@@ -74,7 +74,7 @@ REPO_DIR="/root/OSX-PROXMOX"
 # storage on its own, so checking it out here would just duplicate ~96 MB.
 clone_latest_only() {
     git clone --depth 1 --filter=blob:none --sparse "$REPO_URL" "$REPO_DIR" &&
-    git -C "$REPO_DIR" sparse-checkout set tools
+    git -C "$REPO_DIR" sparse-checkout set tools Patches
 }
 
 log_message "Downloading OSX-PROXMOX repository (latest version only)..."
