@@ -930,42 +930,61 @@ remove_subscription_notice() {
   read -n 1 -sp "Press any key to return to menu..."
 }
 
-# Function to append pcie_port_pm=off to the kernel command line
-apply_pcie_port_pm_off() {
-  local logfile="${LOGDIR}/apply-pcie-port-pm-off.log"
-  local param="pcie_port_pm=off"
+# Function to append parameters to the end of the kernel command line, covering
+# both bootloaders used by Proxmox VE: GRUB (/etc/default/grub) and systemd-boot
+# (/etc/kernel/cmdline, used when the root filesystem is ZFS)
+apply_kernel_cmdline_params() {
+  local logname="$1"; shift
+  local params=("$@")
+  local logfile="${LOGDIR}/${logname}.log"
   local stamp=$(date '+%Y%m%d%H%M%S')
   local handled=0 changed=0 failed=0 boot_mode="Legacy BIOS"
+  local p current append ok
   [[ -d /sys/firmware/efi ]] && boot_mode="UEFI"
-  display_and_log "Applying ${param} to the kernel command line (firmware: ${boot_mode})" "$logfile"
+  display_and_log "Applying '${params[*]}' to the kernel command line (firmware: ${boot_mode})" "$logfile"
 
-  # GRUB - the parameter is appended to the end of GRUB_CMDLINE_LINUX_DEFAULT
+  # GRUB - the parameters are appended to the end of GRUB_CMDLINE_LINUX_DEFAULT
   if [[ -f /etc/default/grub ]] && command -v update-grub >/dev/null 2>&1; then
     handled=1
     if ! grep -Eq '^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=' /etc/default/grub; then
       display_and_log "GRUB: GRUB_CMDLINE_LINUX_DEFAULT not found in /etc/default/grub, skipping" "$logfile"
-    elif grep -Eq '^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=.*pcie_port_pm=' /etc/default/grub; then
-      display_and_log "GRUB: pcie_port_pm is already set in /etc/default/grub, nothing to do" "$logfile"
     else
-      cp /etc/default/grub "/etc/default/grub.bak-${stamp}" || log_and_exit "GRUB: failed to back up /etc/default/grub" "$logfile"
-      sed -i -E \
-        -e "s/^([[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=\")(.*)(\"[[:space:]]*)\$/\1\2 ${param}\3/" \
-        -e "s/^([[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=\")[[:space:]]+/\1/" \
-        /etc/default/grub
-      if grep -Eq "^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=.*${param}" /etc/default/grub; then
-        display_and_log "GRUB: $(grep -E '^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=' /etc/default/grub)" "$logfile"
-        if update-grub >>"$logfile" 2>&1; then
-          changed=1
-          display_and_log "GRUB: /etc/default/grub updated and update-grub completed" "$logfile"
+      current=$(grep -E '^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=' /etc/default/grub | head -n 1)
+      append=""
+      for p in "${params[@]}"; do
+        if grep -Eq "(^|[[:space:]])${p}([[:space:]\"]|\$)" <<< "$current"; then
+          display_and_log "GRUB: ${p} is already set in /etc/default/grub, skipping it" "$logfile"
+        else
+          append="${append} ${p}"
+        fi
+      done
+      if [[ -z "$append" ]]; then
+        display_and_log "GRUB: nothing to add to GRUB_CMDLINE_LINUX_DEFAULT" "$logfile"
+      else
+        cp /etc/default/grub "/etc/default/grub.bak-${stamp}" || log_and_exit "GRUB: failed to back up /etc/default/grub" "$logfile"
+        sed -i -E \
+          -e "s/^([[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=\")(.*)(\"[[:space:]]*)\$/\1\2${append}\3/" \
+          -e "s/^([[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=\")[[:space:]]+/\1/" \
+          /etc/default/grub
+        ok=1
+        for p in "${params[@]}"; do
+          grep -Eq "^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=.*${p}" /etc/default/grub || ok=0
+        done
+        if ((ok == 1)); then
+          display_and_log "GRUB: $(grep -E '^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=' /etc/default/grub | head -n 1)" "$logfile"
+          if update-grub >>"$logfile" 2>&1; then
+            changed=1
+            display_and_log "GRUB: /etc/default/grub updated and update-grub completed" "$logfile"
+          else
+            failed=1
+            cp "/etc/default/grub.bak-${stamp}" /etc/default/grub
+            display_and_log "GRUB: update-grub failed, /etc/default/grub restored from backup" "$logfile"
+          fi
         else
           failed=1
           cp "/etc/default/grub.bak-${stamp}" /etc/default/grub
-          display_and_log "GRUB: update-grub failed, /etc/default/grub restored from backup" "$logfile"
+          display_and_log "GRUB: unable to edit GRUB_CMDLINE_LINUX_DEFAULT (unexpected quoting), file restored from backup" "$logfile"
         fi
-      else
-        failed=1
-        cp "/etc/default/grub.bak-${stamp}" /etc/default/grub
-        display_and_log "GRUB: unable to edit GRUB_CMDLINE_LINUX_DEFAULT (unexpected quoting), file restored from backup" "$logfile"
       fi
     fi
   fi
@@ -973,12 +992,25 @@ apply_pcie_port_pm_off() {
   # systemd-boot - hosts booting with proxmox-boot-tool read the cmdline from /etc/kernel/cmdline
   if [[ -f /etc/kernel/cmdline ]] && command -v proxmox-boot-tool >/dev/null 2>&1; then
     handled=1
-    if grep -q 'pcie_port_pm=' /etc/kernel/cmdline; then
-      display_and_log "systemd-boot: pcie_port_pm is already set in /etc/kernel/cmdline, nothing to do" "$logfile"
+    current=$(head -n 1 /etc/kernel/cmdline)
+    append=""
+    for p in "${params[@]}"; do
+      if grep -Eq "(^|[[:space:]])${p}([[:space:]]|\$)" <<< "$current"; then
+        display_and_log "systemd-boot: ${p} is already set in /etc/kernel/cmdline, skipping it" "$logfile"
+      else
+        append="${append} ${p}"
+      fi
+    done
+    if [[ -z "$append" ]]; then
+      display_and_log "systemd-boot: nothing to add to /etc/kernel/cmdline" "$logfile"
     else
       cp /etc/kernel/cmdline "/etc/kernel/cmdline.bak-${stamp}" || log_and_exit "systemd-boot: failed to back up /etc/kernel/cmdline" "$logfile"
-      sed -i -E "1s/[[:space:]]*\$/ ${param}/" /etc/kernel/cmdline
-      if grep -q "${param}" /etc/kernel/cmdline; then
+      sed -i -E "1s/[[:space:]]*\$/${append}/" /etc/kernel/cmdline
+      ok=1
+      for p in "${params[@]}"; do
+        grep -Eq "${p}" /etc/kernel/cmdline || ok=0
+      done
+      if ((ok == 1)); then
         display_and_log "systemd-boot: $(head -n 1 /etc/kernel/cmdline)" "$logfile"
         if proxmox-boot-tool refresh >>"$logfile" 2>&1; then
           changed=1
@@ -1000,11 +1032,23 @@ apply_pcie_port_pm_off() {
     display_and_log "No supported bootloader configuration found (/etc/default/grub or /etc/kernel/cmdline). Nothing was changed." "$logfile"
   fi
   if ((changed == 1)); then
-    display_and_log "${param} applied. A reboot is required for it to take effect." "$logfile"
+    display_and_log "Parameters applied. A reboot is required for them to take effect." "$logfile"
   fi
   if ((failed == 1)); then
     display_and_log "One or more steps failed, check ${logfile}" "$logfile"
   fi
+  return 0
+}
+
+# Function to apply the pcie_port_pm=off fix to the kernel command line
+apply_pcie_port_pm_off() {
+  apply_kernel_cmdline_params "apply-pcie-port-pm-off" "pcie_port_pm=off"
+  read -n 1 -sp "Press any key to return to menu..."
+}
+
+# Function to apply the PCIe ACS override fix to the kernel command line
+apply_pcie_acs_override() {
+  apply_kernel_cmdline_params "apply-pcie-acs-override" "pcie_acs_override=downstream,multifunction" "pci=nommconf"
   read -n 1 -sp "Press any key to return to menu..."
 }
 
@@ -1558,6 +1602,7 @@ main_menu() {
     echo " 204 - Add new bridge (macOS in cloud)"
     echo " 205 - Customize OpenCore config.plist"
     echo " 206 - Apply pcie_port_pm=off (kernel command line)"
+    echo " 207 - Apply pcie_acs_override + pci=nommconf (kernel command line)"
     echo
     echo " 0 - Quit (or ENTER)"
     echo
@@ -1575,6 +1620,7 @@ main_menu() {
         204) configure_network_bridge ;;
         205) customize_opencore_config ;;
         206) apply_pcie_port_pm_off ;;
+        207) apply_pcie_acs_override ;;
         *) echo "Invalid option"; read -n 1 -s ;;
       esac
     fi
