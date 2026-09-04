@@ -1,0 +1,91 @@
+# Disable screensaver
+defaults -currentHost write com.apple.screensaver idleTime 0
+
+# Disable transparency and motion effects
+defaults write com.apple.universalaccess reduceTransparency -bool true
+defaults write com.apple.universalaccess reduceMotion -bool true
+
+# Disable Dock animations
+defaults write com.apple.dock launchanim -bool false
+defaults write com.apple.dock autohide-delay -float 0
+defaults write com.apple.dock autohide-time-modifier -float 0
+defaults write com.apple.dock expose-animation-duration -float 0.1
+defaults write com.apple.dock no-glass -bool true
+defaults write com.apple.dock no-bouncing -bool true
+defaults write com.apple.dock magnification -bool false
+defaults write com.apple.dock show-recents -bool false
+defaults write com.apple.dock mineffect -string "scale"
+defaults write com.apple.dock springboard-show-duration -float 0
+defaults write com.apple.dock springboard-hide-duration -float 0
+defaults write com.apple.dock springboard-page-duration -float 0
+defaults write com.apple.dock workspaces-swoosh-animation-off -bool true
+defaults write com.apple.dock minimize-to-application -bool true
+defaults write com.apple.dock slow-motion-allowed -bool false
+defaults write com.apple.dock missioncontrol-animation-duration -float 0.1
+defaults write com.apple.dock workspaces-edge-delay -float 0
+defaults write com.apple.dock springboard-blur-radius -int 0
+
+# Disable general window and system animations
+defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
+defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+defaults write -g NSMenuAnimationDuration -float 0
+defaults write -g NSPopUpMenuAnimationDuration -float 0
+defaults write -g NSComboBoxAnimationDuration -float 0
+defaults write -g NSToolbarAnimationDuration -float 0
+defaults write -g NSToolbarFullScreenAnimationDuration -float 0
+defaults write -g NSSheetAnimationEnabled -bool false
+defaults write -g NSWindowAnimationsEnabled -bool false
+defaults write -g NSViewAnimationsEnabled -bool false
+defaults write -g NSScrollAnimationEnabled -bool false
+defaults write -g NSUseAnimatedFocusRing -bool false
+defaults write -g NSScrollViewRubberbanding -bool false
+defaults write -g NSOverlayScrollerHideDelay -float 0
+defaults write -g QLPanelAnimationDuration -float 0
+defaults write -g NSWindowSupportsAutomaticFullScreen -bool false
+defaults write -g NSFullScreenAnimationDuration -float 0
+defaults write NSGlobalDomain com.apple.springing.enabled -bool false
+
+# Disable Finder animations
+defaults write com.apple.finder DisableAllAnimations -bool true
+defaults write com.apple.finder AnimateInfoPanes -bool false
+defaults write com.apple.finder AnimateSnapToGrid -bool false
+
+# GPU / Rendering — Switch to software renderer
+sudo defaults write /Library/Preferences/com.apple.windowserver UseMetal -bool false
+sudo defaults write /Library/Preferences/com.apple.windowserver UseOpenGL -bool false
+sudo defaults write /Library/Preferences/com.apple.windowserver HardwareAccelerated -bool false
+sudo defaults write /Library/Preferences/com.apple.windowserver EnableShadows -bool false
+sudo defaults write /Library/Preferences/com.apple.CoreDisplay useMetal -bool false
+sudo defaults write /Library/Preferences/com.apple.CoreDisplay useIOP -bool false
+defaults write com.apple.CoreAnimation useSoftwareRenderer -bool true
+defaults write com.apple.opengl ForceSoftwareRenderer -bool true
+defaults write com.apple.CoreImage CISoftwareRenderer -bool true
+defaults write com.apple.screencapture disable-shadow -bool true
+defaults write com.apple.GPU gpuSwitchingPolicy -int 0
+
+# Disable Spotlight indexing
+sudo mdutil -a -i off
+
+# Disable crash reporter, auto update, Time Machine
+defaults write com.apple.CrashReporter DialogType -string "none"
+defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
+defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+
+# Disable Siri
+defaults write com.apple.assistant.support "Assistant Enabled" -bool false
+
+# Other optimizations
+defaults write com.apple.spotlight AnimationDuration -float 0
+defaults write -g CGFontRenderingFontSmoothingDisabled -bool true
+defaults write com.apple.frameworks.diskimages skip-verify -bool true
+defaults write com.apple.frameworks.diskimages skip-verify-locked -bool true
+defaults write com.apple.frameworks.diskimages skip-verify-remote -bool true
+defaults write com.apple.mail DisableReplyAnimations -bool true
+defaults write com.apple.mail DisableSendAnimations -bool true
+defaults write -g NSDocumentSaveNewDocumentsToCloud -bool false
+defaults write com.apple.finder WarnOnEmptyTrash -bool false
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write -g userMenuExtraStyle -int 1
+
+# Apply changes
+killall Dock && killall Finder && killall SystemUIServer
