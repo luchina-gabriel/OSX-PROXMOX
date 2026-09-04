@@ -930,6 +930,84 @@ remove_subscription_notice() {
   read -n 1 -sp "Press any key to return to menu..."
 }
 
+# Function to append pcie_port_pm=off to the kernel command line
+apply_pcie_port_pm_off() {
+  local logfile="${LOGDIR}/apply-pcie-port-pm-off.log"
+  local param="pcie_port_pm=off"
+  local stamp=$(date '+%Y%m%d%H%M%S')
+  local handled=0 changed=0 failed=0 boot_mode="Legacy BIOS"
+  [[ -d /sys/firmware/efi ]] && boot_mode="UEFI"
+  display_and_log "Applying ${param} to the kernel command line (firmware: ${boot_mode})" "$logfile"
+
+  # GRUB - the parameter is appended to the end of GRUB_CMDLINE_LINUX_DEFAULT
+  if [[ -f /etc/default/grub ]] && command -v update-grub >/dev/null 2>&1; then
+    handled=1
+    if ! grep -Eq '^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=' /etc/default/grub; then
+      display_and_log "GRUB: GRUB_CMDLINE_LINUX_DEFAULT not found in /etc/default/grub, skipping" "$logfile"
+    elif grep -Eq '^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=.*pcie_port_pm=' /etc/default/grub; then
+      display_and_log "GRUB: pcie_port_pm is already set in /etc/default/grub, nothing to do" "$logfile"
+    else
+      cp /etc/default/grub "/etc/default/grub.bak-${stamp}" || log_and_exit "GRUB: failed to back up /etc/default/grub" "$logfile"
+      sed -i -E \
+        -e "s/^([[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=\")(.*)(\"[[:space:]]*)\$/\1\2 ${param}\3/" \
+        -e "s/^([[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=\")[[:space:]]+/\1/" \
+        /etc/default/grub
+      if grep -Eq "^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=.*${param}" /etc/default/grub; then
+        display_and_log "GRUB: $(grep -E '^[[:space:]]*GRUB_CMDLINE_LINUX_DEFAULT=' /etc/default/grub)" "$logfile"
+        if update-grub >>"$logfile" 2>&1; then
+          changed=1
+          display_and_log "GRUB: /etc/default/grub updated and update-grub completed" "$logfile"
+        else
+          failed=1
+          cp "/etc/default/grub.bak-${stamp}" /etc/default/grub
+          display_and_log "GRUB: update-grub failed, /etc/default/grub restored from backup" "$logfile"
+        fi
+      else
+        failed=1
+        cp "/etc/default/grub.bak-${stamp}" /etc/default/grub
+        display_and_log "GRUB: unable to edit GRUB_CMDLINE_LINUX_DEFAULT (unexpected quoting), file restored from backup" "$logfile"
+      fi
+    fi
+  fi
+
+  # systemd-boot - hosts booting with proxmox-boot-tool read the cmdline from /etc/kernel/cmdline
+  if [[ -f /etc/kernel/cmdline ]] && command -v proxmox-boot-tool >/dev/null 2>&1; then
+    handled=1
+    if grep -q 'pcie_port_pm=' /etc/kernel/cmdline; then
+      display_and_log "systemd-boot: pcie_port_pm is already set in /etc/kernel/cmdline, nothing to do" "$logfile"
+    else
+      cp /etc/kernel/cmdline "/etc/kernel/cmdline.bak-${stamp}" || log_and_exit "systemd-boot: failed to back up /etc/kernel/cmdline" "$logfile"
+      sed -i -E "1s/[[:space:]]*\$/ ${param}/" /etc/kernel/cmdline
+      if grep -q "${param}" /etc/kernel/cmdline; then
+        display_and_log "systemd-boot: $(head -n 1 /etc/kernel/cmdline)" "$logfile"
+        if proxmox-boot-tool refresh >>"$logfile" 2>&1; then
+          changed=1
+          display_and_log "systemd-boot: /etc/kernel/cmdline updated and proxmox-boot-tool refresh completed" "$logfile"
+        else
+          failed=1
+          cp "/etc/kernel/cmdline.bak-${stamp}" /etc/kernel/cmdline
+          display_and_log "systemd-boot: proxmox-boot-tool refresh failed, /etc/kernel/cmdline restored from backup" "$logfile"
+        fi
+      else
+        failed=1
+        cp "/etc/kernel/cmdline.bak-${stamp}" /etc/kernel/cmdline
+        display_and_log "systemd-boot: unable to edit /etc/kernel/cmdline, file restored from backup" "$logfile"
+      fi
+    fi
+  fi
+
+  if ((handled == 0)); then
+    display_and_log "No supported bootloader configuration found (/etc/default/grub or /etc/kernel/cmdline). Nothing was changed." "$logfile"
+  fi
+  if ((changed == 1)); then
+    display_and_log "${param} applied. A reboot is required for it to take effect." "$logfile"
+  fi
+  if ((failed == 1)); then
+    display_and_log "One or more steps failed, check ${logfile}" "$logfile"
+  fi
+  read -n 1 -sp "Press any key to return to menu..."
+}
+
 # Function to configure network bridge
 configure_network_bridge() {
   local logfile="${LOGDIR}/configure-network-bridge.log"
@@ -1479,6 +1557,7 @@ main_menu() {
     echo " 203 - Remove Proxmox subscription notice"
     echo " 204 - Add new bridge (macOS in cloud)"
     echo " 205 - Customize OpenCore config.plist"
+    echo " 206 - Apply pcie_port_pm=off (kernel command line)"
     echo
     echo " 0 - Quit (or ENTER)"
     echo
@@ -1495,6 +1574,7 @@ main_menu() {
         203) remove_subscription_notice ;;
         204) configure_network_bridge ;;
         205) customize_opencore_config ;;
+        206) apply_pcie_port_pm_off ;;
         *) echo "Invalid option"; read -n 1 -s ;;
       esac
     fi
