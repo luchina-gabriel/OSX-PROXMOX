@@ -150,6 +150,9 @@ In some environments it is necessary to segment the IOMMU Groups to be able to p
 Some environments, you need create a `/etc/modprobe.d/vfio-pci.conf` with content:
 `options vfio-pci ids=XXXX:XXXX,XXXX:XXXX disable_vga=on`
 
+More Information of Passthrough
+[Proxmox Docs](https://pve.proxmox.com/wiki/PCI(e)_Passthrough#_host_device_passthrough)
+
 ---
 
 ## 🎥 Demonstration (in Portuguese)
