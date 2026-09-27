@@ -1,0 +1,3 @@
+Device path: PciRoot(0x0)/Pci(0x1B,0x0)
+Controller: Intel ICH9 HD Audio Controller
+Vendor Id: 0x293E8086

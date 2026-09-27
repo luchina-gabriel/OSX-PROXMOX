@@ -1,0 +1,42 @@
+CPU BrandString: AMD Ryzen 9 5950X 16-Core Processor            
+MicrocodeRevision: 0x00000000
+Virtualization 1
+CPUID 00A20F10 00040800 FFF83203 178BFBFF
+ExtSigEcx 00C003F7
+ExtSigEdx 2E500800
+Type 0x00
+Family 0x0F
+Model 0x21
+ExtModel 0x02
+ExtFamily 0x0A
+Stepping 0x00
+Features 0xFFF83203178BFBFF
+ExtFeatures 0x00C003F72E500800
+Signature 0x00A20F10
+Brand 0x00
+AppleProcessorType 0x0605
+CstConfigLock 0
+CpuGeneration 2
+MaxId 0x00000010
+MaxExtId 0x80000022
+PackageCount 1
+CoreCount 4
+ThreadCount 4
+ExternalClock 1000
+ARTFrequency 0
+CPUFrequency 3400208000
+CPUFrequencyFromTSC 0
+CPUFrequencyFromART 0
+TscAdjust 0
+CPUFrequencyFromApple 0
+CPUFrequencyFromVMT 3400208000
+FSBFrequency 1000000000
+
+CPU00:
+
+CPU01:
+
+CPU02:
+
+CPU03:
+

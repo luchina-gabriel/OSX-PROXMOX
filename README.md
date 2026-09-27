@@ -59,7 +59,7 @@ sudo spctl --master-disable
 ✅ v7.XX.XX ~ 9.XX.XX
 
 ### 🔄 OpenCore Version
-- **March/2026 - 1.0.7** → with SIP Enabled, DMG only signed by Apple and all features of securities
+- **September/2026 - 1.0.8** → with SIP Enabled, DMG only signed by Apple and all features of securities
 
 ---
 
