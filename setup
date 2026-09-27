@@ -37,7 +37,7 @@ SCRIPT_DIR="/root/OSX-PROXMOX"
 LOGDIR="${SCRIPT_DIR}/logs"
 MAIN_LOG="${LOGDIR}/main.log"
 TMPDIR="${SCRIPT_DIR}/tmp"
-HACKPXVERSION="2026.09.08"
+HACKPXVERSION="2026.09.27"
 OCVERSION="1.0.8"
 DEFAULT_VM_PREFIX="HACK-"
 BASE_RAM_SIZE=4096
@@ -426,7 +426,10 @@ create_vm() {
   [[ ! -d "/sys/class/net/$bridge" ]] && log_and_exit "Bridge $bridge does not exist" "$logfile"
 
   local cpu_args device_args='-device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" -smbios type=2'
-  if [[ "$version_name" =~ ^(Sonoma|Sequoia|Tahoe)$ ]]; then
+  if [[ "$version_name" == "Tahoe" ]]; then
+    # macOS 26: USB tablet causes random cursor freezes; use virtio-tablet-pci instead
+    device_args="$device_args -device qemu-xhci -device usb-kbd -device virtio-tablet-pci -global nec-usb-xhci.msi=off"
+  elif [[ "$version_name" =~ ^(Sonoma|Sequoia)$ ]]; then
     device_args="$device_args -device qemu-xhci -device usb-kbd -device usb-tablet -global nec-usb-xhci.msi=off"
   else
     device_args="$device_args -device usb-kbd,bus=ehci.0,port=2 -device usb-mouse,bus=ehci.0,port=3"
@@ -467,13 +470,17 @@ create_vm() {
     cdrom_boot="sata0"; cdrom_recovery="sata2"
   fi
 
+  # Tahoe uses virtio-tablet-pci (in args), so Proxmox's "Use tablet for pointer" must stay off
+  local tablet=1
+  [[ "$version_name" == "Tahoe" ]] && tablet=0
+
   qm create "$vm_id" \
     --agent 1 --args "$device_args $cpu_args" --autostart 0 \
     --balloon 0 --bios ovmf --boot "order=${cdrom_boot};$disk_type" \
     --cores "$core_count" --description "Hackintosh VM - $version_name" \
     --efidisk0 "${storage}:4" --machine q35 --memory "$ram_size" \
     --name "$vm_name" --net0 "vmxnet3,bridge=$bridge" --numa 0 \
-    --onboot 0 --ostype other --sockets 1 --start 0 --tablet 1 \
+    --onboot 0 --ostype other --sockets 1 --start 0 --tablet "$tablet" \
     --vga vmware --vmgenid 1 --scsihw virtio-scsi-pci \
     --"$disk_type" "${storage}:${disk_size},cache=none,discard=on" \
     --"$cdrom_boot" "${storage_iso}:iso/${iso_file},media=cdrom,cache=unsafe,size=96M" \
@@ -486,6 +493,9 @@ create_vm() {
     display_and_log "NOTE: High Sierra has a 'The Recovery Server Could Not Be Contacted' Error!" "$logfile"
     display_and_log "Goto https://github.com/luchina-gabriel/OSX-PROXMOX#-high-sierra--below---recovery-server-could-not-be-contacted" "$logfile"
     display_and_log "and do the Fix." "$logfile"
+  fi
+  if [[ "$version_name" == "Tahoe" ]]; then
+    display_and_log "NOTE: Tahoe uses virtio-tablet-pci as pointer (cursor freeze fix); middle-click acts as right-click." "$logfile"
   fi
   display_and_log "Access Proxmox Web Panel: https://$bridge_ip:8006" "$logfile"
 }

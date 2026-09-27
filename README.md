@@ -137,6 +137,21 @@ If you encounter this error, you need to switch from **HTTPS** to **HTTP** in th
 
 [Reference & More Details](https://mrmacintosh.com/how-to-fix-the-recovery-server-could-not-be-contacted-error-high-sierra-recovery-is-still-online-but-broken/)
 
+### ❌ macOS Tahoe - Cursor Freeze
+
+On **macOS 26**, the cursor may randomly freeze when using a USB tablet. VMs created by the setup for Tahoe already use `virtio-tablet-pci` (with **Use tablet for pointer** disabled in the VM's **Options** tab).
+
+For Tahoe VMs created with an older version of the setup, disable **Use tablet for pointer** in the VM's **Options** tab, then run this in the Proxmox shell:
+
+```bash
+clear; read -p "Enter your macOS VM ID number: " VMID; \
+ARGS="$(qm config $VMID | grep ^args: | cut -d' ' -f2-)"; \
+ARGS="${ARGS/ -device usb-tablet/}"; \
+qm set $VMID -args "$ARGS -device virtio-tablet-pci"
+```
+
+> **Note:** With `virtio-tablet-pci`, middle-click acts as right-click in the VM.
+
 ### ❌ Problem for GPU Passthrough
 
 If you see an Apple logo and the bar doesn’t move on your external display, you need to disable “above 4g decoding” in the motherboard’s BIOS.
